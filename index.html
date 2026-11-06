@@ -87,6 +87,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .pri{width:100%;margin-top:18px;border:0;border-radius:16px;padding:15px;background:var(--red);color:#fff;font-weight:750;font-size:17.5px;box-shadow:0 8px 18px rgba(232,55,42,.28)}
 .pri:disabled{opacity:.6}
 .note{font-size:13.5px;color:var(--dim);margin-top:14px;line-height:1.55}#loginMsg{color:var(--err);font-weight:600}#loginMsg:empty{display:none}
+#appLoginView .card{max-width:520px;margin-left:auto;margin-right:auto}
+#appLoginError{color:var(--err);font-size:13px;font-weight:600;min-height:1px}
+#appLoginError:empty{display:none}
+#appLoginView .hero{padding-bottom:65px}
 /* ERP connection switch */
 .erp-control{padding:12px;margin-top:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
 .erp-switch{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:0;color:var(--ink);font-size:16px;cursor:pointer}
@@ -146,11 +150,30 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="tt"><b>HUYỀN · Trợ lý IDECO</b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
+  <section class="pairv" id="appLoginView" aria-labelledby="appLoginTitle">
+    <div class="hero">
+      <img src="icon-192.png" alt="IDECO">
+      <h1 id="appLoginTitle">HUYỀN AI · Trợ lý IDECO</h1>
+      <p>Đăng nhập để trò chuyện, tra cứu và chuẩn hóa ngay trên điện thoại</p>
+      <div class="quote">Chỉ khi chủ động bật kết nối ERP mới cần máy tính trạm.</div>
+    </div>
+    <div class="card">
+      <h2>🔐 Đăng nhập HUYỀN MOBILE</h2>
+      <label for="appLoginName">Tên người sử dụng</label>
+      <input class="in" id="appLoginName" autocomplete="name" placeholder="Nhập tên nhân viên / người dùng">
+      <label for="appLoginPassword">Mật khẩu truy cập</label>
+      <div class="pw"><input class="in" id="appLoginPassword" type="password" autocomplete="current-password" placeholder="Nhập mật khẩu HUYỀN MOBILE"><button type="button" class="eye" id="appLoginEye" aria-label="Hiện mật khẩu đăng nhập">👁</button></div>
+      <div class="note" id="appLoginError" role="alert" aria-live="polite"></div>
+      <button class="pri" id="appLoginBtn" type="button">Vào HUYỀN AI</button>
+      <button class="ghost" id="installFromAppLogin" type="button">📲 Cài ứng dụng lên màn hình</button>
+      <div class="note">Chat AI, gợi ý sản phẩm, đọc file và chuẩn hóa đơn không yêu cầu ERP. Nếu điện thoại chưa kích hoạt khóa AI dùng chung, chỉ cần nhập mã nhóm một lần trong mục AI.</div>
+    </div>
+  </section>
   <section class="pairv" id="pairView" hidden>
     <div class="hero">
       <img src="icon-192.png" alt="IDECO">
-      <h1>HUYỀN AI · Trợ lý IDECO</h1>
-      <p>Trò chuyện và chuẩn hóa tại Mobile; kết nối ERP chỉ khi cần</p>
+      <h1>🔗 Ghép máy trạm ERP</h1>
+      <p>Chỉ thực hiện khi anh/chị bật kết nối ERP trong Cài đặt</p>
       <div class="quote">“IDECO luôn không thỏa hiệp với việc áp dụng công nghệ mới — giúp mình tốt hơn, công ty phát triển hơn.”</div>
     </div>
     <div class="card">
@@ -161,11 +184,11 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <label for="pPw">Mật khẩu 🔗 Kết nối ERP</label>
       <div class="pw"><input class="in" id="pPw" type="password" autocomplete="current-password" placeholder="Mật khẩu ERP"><button type="button" class="eye" id="eye" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button></div>
       <label class="rem"><input type="checkbox" id="pRem" checked> Ghi nhớ đăng nhập — lần sau vào thẳng</label>
-      <button class="pri" id="pairBtn">Vào ngay</button>
-      <button class="ghost" id="offlineNorm" type="button">✨ Chuẩn hóa đơn hàng không cần PC</button>
+      <button class="pri" id="pairBtn">Kết nối máy trạm ERP</button>
+      <button class="ghost" id="offlineNorm" type="button">↩ Trở về chatbot (không kết nối PC)</button>
       <button class="ghost" id="installFromLogin" type="button">📲 Cài Huyền Mobile lên màn hình</button>
       <div class="note" id="loginMsg"></div>
-      <div class="note">Máy tính trạm: mở ERP → 🔗 Kết nối → biểu tượng extension <b>HUYỀN AI-AGENT</b> → <b>📱 Trạm điện thoại</b>.</div>
+      <div class="note">Chỉ khi kết nối ERP: trên máy tính mở ERP → 🔗 Kết nối → biểu tượng extension <b>HUYỀN AI-AGENT</b> → <b>📱 Trạm điện thoại</b>.</div>
     </div>
   </section>
   <main class="list" id="list" hidden></main>
@@ -202,15 +225,16 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <h2>Tùy chọn</h2>
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
+  <button class="ghost" id="appLogout" type="button">🔒 Khóa ứng dụng / Đăng xuất Mobile</button>
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
   <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
   <div class="erp-control" role="group" aria-label="Kết nối ERP">
-    <label class="erp-switch" for="erpToggle"><span><b>🔗 Kết nối ERP</b><small>Bật khi lên đơn thật, truy vấn và phân tích ERP</small></span><input id="erpToggle" type="checkbox" role="switch" aria-label="Bật hoặc tắt kết nối ERP"><span class="switch-track" aria-hidden="true"></span></label>
+    <label class="erp-switch" for="erpToggle"><span><b>🔗 Kết nối ERP</b><small>Mặc định tắt khi mở ứng dụng. Chỉ bật để làm việc với trạm PC.</small></span><input id="erpToggle" type="checkbox" role="switch" aria-label="Bật hoặc tắt kết nối ERP"><span class="switch-track" aria-hidden="true"></span></label>
     <div id="erpToggleInfo" class="note" role="status" aria-live="polite">ERP đang tắt · trò chuyện và chuẩn hóa trên điện thoại.</div>
     <button class="ghost" id="connectPc" type="button" hidden>Thiết lập kết nối ERP</button>
   </div>
   <div class="dset ai-settings"><h3>🤖 HUYỀN AI — trả lời ngay trên Mobile</h3>
-    <div class="note">Hỏi đáp thông thường trực tiếp trên điện thoại, không cần kết nối PC. Chỉ cần Internet và khóa API hợp lệ. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
+    <div class="note">Chatbot hoạt động khi đăng nhập Mobile, không cần bật ERP hay PC. Cần Internet, khóa API hợp lệ và lịch AI đang cho phép. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
     <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
     <label class="rem"><input type="checkbox" id="aiRemember"> Ghi nhớ API Key trên máy này (chỉ nên dùng thiết bị riêng)</label>
@@ -350,9 +374,9 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   var st = { cfg: null, sid: '', key: null, dkey: null, stES: null, station: null, pend: {} };
   var hist = [], shots = [], docs = [];
   // ERP opt-in: lệnh và truy vấn ERP không bao giờ chuyển qua PC khi công tắc tắt.
-  var erpOn = false;
-  try { erpOn = localStorage.getItem(ERP_PREF) === '1'; } catch (_) {}
-  function saveErpChoice(on) { erpOn = !!on; try { localStorage.setItem(ERP_PREF, erpOn ? '1':'0'); } catch (_) {} }
+  var erpOn = false; // Mỗi lần mở ứng dụng ERP luôn TẮT, kể cả lần trước đã bật.
+  try { localStorage.removeItem(ERP_PREF); } catch (_) {}
+  function saveErpChoice(on) { erpOn = !!on; /* chỉ giữ trạng thái trong phiên hiện tại, không tự kết nối ở lần mở sau */ }
   function erpReady() { return !!(erpOn && st.dkey); }
   function erpUi() {
     var toggle = $('erpToggle'); if (toggle) toggle.checked = erpOn;
@@ -518,6 +542,39 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   // Shared unlock phrase is not stored in localStorage / Firebase / application code.
   var AI_SHARED_DB = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_ai_vault/v1';
   var sharedAiConfig = null;
+  var LOCAL_AI_VAULT = 'huyen_mobile_ai_device_v251', LOCAL_AI_SALT = 'huyen_mobile_ai_device_salt_v251';
+  var appUnlocked = false, appDeviceVaultKey = null, appLoginFails = 0, appLoginBlockedUntil = 0;
+  async function getDeviceVaultKey(password) {
+    var salt;
+    try { salt=localStorage.getItem(LOCAL_AI_SALT); } catch (_) {}
+    if (!salt) {
+      salt=sharedB64(crypto.getRandomValues(new Uint8Array(16)));
+      try { localStorage.setItem(LOCAL_AI_SALT,salt); } catch (_) { return null; }
+    }
+    return sharedDerive(password,sharedUnb64(salt),180000);
+  }
+  async function rememberDeviceAi() {
+    if (!appDeviceVaultKey || !sharedAiConfig || (!sharedAiConfig.key1 && !sharedAiConfig.key2)) return;
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    var content={key1:sharedAiConfig.key1,key2:sharedAiConfig.key2,policy:aiPolicy(),savedAt:Date.now(),expiry:Date.now()+7*86400000};
+    var encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},appDeviceVaultKey,new TextEncoder().encode(JSON.stringify(content)));
+    try { localStorage.setItem(LOCAL_AI_VAULT,JSON.stringify({v:1,iv:sharedB64(iv),payload:sharedB64(new Uint8Array(encrypted))})); } catch (_) {}
+  }
+  async function restoreDeviceAi() {
+    if (!appDeviceVaultKey) return false;
+    var record;try{record=JSON.parse(localStorage.getItem(LOCAL_AI_VAULT)||'null');}catch(_){return false;}
+    if(!record || record.v!==1 || !record.payload) return false;
+    try {
+      var data=await crypto.subtle.decrypt({name:'AES-GCM',iv:sharedUnb64(record.iv)},appDeviceVaultKey,sharedUnb64(record.payload));
+      var conf=JSON.parse(new TextDecoder().decode(data));
+      if(!conf || !conf.expiry || Date.now()>conf.expiry || (!conf.key1&&!conf.key2)) { localStorage.removeItem(LOCAL_AI_VAULT);return false; }
+      sharedAiConfig={key1:conf.key1||'',key2:conf.key2||'',remember:false};
+      if(conf.policy && typeof conf.policy==='object') try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(conf.policy));}catch(_){}
+      $('sharedAccessBtn').style.display='none';
+      updateAiPolicyUi(); loadAiSettings();
+      return true;
+    } catch (_) { return false; }
+  }
   function readAiConfig() {
     if (sharedAiConfig && (sharedAiConfig.key1 || sharedAiConfig.key2)) return sharedAiConfig;
     try { return JSON.parse(sessionStorage.getItem(AI_STORE) || localStorage.getItem(AI_STORE) || '{}') || {}; }
@@ -578,6 +635,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     updateAiPolicyUi();
     $('sharedAccessBtn').textContent='✅ HUYỀN AI dùng chung đã sẵn sàng';
     $('sharedAccessBtn').style.display='none';
+    await rememberDeviceAi();
     return config;
   }
   $('sharedVaultPath').textContent=AI_SHARED_DB;
@@ -597,6 +655,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       var checked=await sharedFetch(AI_SHARED_DB+'.json'+(token?'?auth='+encodeURIComponent(token):''));
       var verified=await sharedDecrypt(checked,pass);
       sharedAiConfig={key1:verified.key1||'',key2:verified.key2||'',remember:false};
+      await rememberDeviceAi();
       $('sharedAdminPass').value='';$('sharedFirebaseAuth').value='';
       sharedSetUi('Đã lưu MÃ HÓA lên Firebase và đọc lại xác nhận. Các máy khác dùng nút “Kích hoạt AI dùng chung” để nhập mã nhóm.');
       $('sharedAccessBtn').style.display='none';
@@ -841,14 +900,60 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function resume() { if (!erpOn || !st.key) return; watchStation(); if (erpReady()) retrackAll(); }
 
   /* ---------- đăng nhập: mã + tên + mật khẩu ERP ---------- */
-  function view(v) { $('pairView').hidden = v !== 'login'; $('topBar').hidden = v === 'login'; var chat = v === 'chat'; $('list').hidden = !chat; $('comp').hidden = !chat; }
+  function view(v) {
+    $('appLoginView').hidden = v !== 'app-login';
+    $('pairView').hidden = v !== 'login';
+    $('topBar').hidden = v !== 'chat';
+    var chat = v === 'chat'; $('list').hidden = !chat; $('comp').hidden = !chat;
+  }
   function loadCfg() { try { st.cfg = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) { st.cfg = null; } }
+  function showAppLogin(note) {
+    view('app-login');
+    $('appLoginError').textContent=note||'';
+    $('appLoginPassword').value='';
+    $('appLoginName').value=st.cfg && st.cfg.name || '';
+  }
+  async function doAppLogin() {
+    if(Date.now()<appLoginBlockedUntil) {
+      $('appLoginError').textContent='Nhập sai nhiều lần; thử lại sau '+Math.ceil((appLoginBlockedUntil-Date.now())/1000)+' giây.';
+      return;
+    }
+    var password=$('appLoginPassword').value;
+    var btn=$('appLoginBtn');btn.disabled=true;
+    try {
+      if (!password) { $('appLoginError').textContent='Nhập mật khẩu để vào HUYỀN MOBILE.';return; }
+      var digest=await sha(password);
+      if(hex(digest)!==SETTINGS_PASS_HASH){
+        appLoginFails++;$('appLoginPassword').value='';
+        if(appLoginFails>=5){appLoginBlockedUntil=Date.now()+60000;appLoginFails=0;$('appLoginError').textContent='Đã sai 5 lần. Thử lại sau 60 giây.';}
+        else $('appLoginError').textContent='Mật khẩu không đúng (còn '+(5-appLoginFails)+' lần thử).';
+        return;
+      }
+      appLoginFails=0;appUnlocked=true;
+      var username=$('appLoginName').value.trim()||(st.cfg && st.cfg.name)||'Nhân viên IDECO';
+      st.cfg=Object.assign({code:'IDECO'},st.cfg||{},{name:username.slice(0,48)});
+      saveCfg(!!st.cfg.h);
+      $('appLoginPassword').value='';
+      appDeviceVaultKey=await getDeviceVaultKey(password).catch(function(){return null;});
+      enterChat();
+      restoreDeviceAi().then(function(restored){
+        if(restored) toast('✅ Đã mở AI đã kích hoạt trên điện thoại.');
+        else if(!readAiConfig().key1&&!readAiConfig().key2) toast('Đăng nhập thành công. Hãy kích hoạt khóa AI dùng chung lần đầu để trò chuyện.');
+      }).catch(function(){});
+    } finally { btn.disabled=false; }
+  }
+  $('appLoginBtn').onclick=doAppLogin;
+  $('appLoginPassword').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();doAppLogin();}});
+  $('appLoginName').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('appLoginPassword').focus();}});
+  $('appLoginEye').onclick=function(){var el=$('appLoginPassword');el.type=el.type==='password'?'text':'password';this.textContent=el.type==='password'?'👁':'🙈';};
   function saveCfg(remember) { try { if (remember) localStorage.setItem(LS, JSON.stringify(st.cfg)); else { localStorage.setItem(LS, JSON.stringify({ code: st.cfg.code, name: st.cfg.name, db: st.cfg.db })); } } catch (e) {} }
   function logout(msg) {
-    st.dkey = null; if (st.cfg) { delete st.cfg.h; saveCfg(false); }
-    showLogin(msg);
+    erpDisconnect(); if (st.cfg) { delete st.cfg.h; saveCfg(false); }
+    if (appUnlocked) { enterChat(); toast(msg || 'Đã ngắt kết nối ERP.'); }
+    else showAppLogin(msg);
   }
   function showLogin(msg) {
+    if(!appUnlocked) { showAppLogin('Đăng nhập Mobile trước khi kết nối ERP.'); return; }
     view('login'); $('loginMsg').textContent = msg || '';
     if (st.cfg) { $('pCode').value = st.cfg.code || 'IDECO'; $('pName').value = st.cfg.name || ''; }
     setTimeout(function () { (($('pName').value ? $('pPw') : $('pName'))).focus(); }, 250);
@@ -893,6 +998,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     }).catch(function (e) { st.dkey = null; msg('⚠ ' + e.message); }).then(function () { btn.disabled = false; });
   }
   function enterChat() {
+    if(!appUnlocked){showAppLogin();return;}
     dataBoot = dataInit().catch(function () {}); // Nạp dữ liệu cục bộ không chặn giao diện; chuẩn hóa sẽ đợi dữ liệu này.
     view('chat'); loadHist(); renderAll(); stationText();
     if (erpReady()) retrackAll();
@@ -924,7 +1030,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (st.dkey) { stationText(); toast('Đã bật kết nối ERP.'); return; }
     if (st.cfg && st.cfg.h && st.cfg.code) { quickStart(); toast('Đang khôi phục kết nối ERP…'); return; }
     $('sheet').classList.remove('open');
-    showLogin('Bật ERP: cần ghép cặp máy trạm một lần. Để quay lại Chat, chọn chế độ không cần PC.');
+    showLogin('Chỉ cần ghép máy trạm khi sử dụng ERP. Có thể quay về chatbot bất cứ lúc nào.');
   };
   ['pCode', 'pName', 'pPw'].forEach(function (k) { $(k).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); if (k === 'pPw') doLogin(); else $(k === 'pCode' ? 'pName' : 'pPw').focus(); } }); });
   $('eye').onclick = function () { var i = $('pPw'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; this.textContent = show ? '🙈' : '👁'; this.setAttribute('aria-pressed', String(show)); this.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'); };
@@ -1072,6 +1178,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('closeSheet').onclick = function () { $('sheet').classList.remove('open'); };
   $('sheet').onclick = function (e) { if (e.target === this) this.classList.remove('open'); };
   $('lockNow').onclick = function () { $('sheet').classList.remove('open'); erpDisconnect(); if (st.cfg) { delete st.cfg.h; saveCfg(false); } toast('Đã ngắt ERP; tiếp tục sử dụng HUYỀN AI trên điện thoại.'); };
+  $('appLogout').onclick = function () {
+    $('sheet').classList.remove('open');
+    erpDisconnect(); appUnlocked=false; appDeviceVaultKey=null; sharedAiConfig=null;
+    try {sessionStorage.removeItem(AI_STORE);}catch(_){}
+    $('sharedAccessBtn').style.display='';
+    $('sharedAccessBtn').textContent='🔓 Kích hoạt AI dùng chung từ Firebase';
+    showAppLogin('Đã khóa ứng dụng. Nhập mật khẩu Mobile để sử dụng tiếp.');
+  };
   $('clearChat').onclick = function () { if (!confirm('Xóa lịch sử trò chuyện trên điện thoại này?')) return; hist = []; saveHist(); renderAll(); $('sheet').classList.remove('open'); };
   $('themeBtn').onclick = function () { var cur = document.documentElement.getAttribute('data-theme'), dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches, nx = dark ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nx); try { localStorage.setItem('huyen_mobile_theme', nx); } catch (e) {} };
 
@@ -1541,10 +1655,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   $('installApp').addEventListener('click', installPwa);
   $('installFromLogin').addEventListener('click', installPwa);
-  loadCfg(); grow(); erpUi(); st.pairDb = hp.db || '';
-  if (erpOn && st.cfg && st.cfg.h && (!hp.pair || norm(hp.pair) === norm(st.cfg.code))) quickStart();
-  else if (hp.pair || erpOn) { showLogin(''); if (hp.pair) $('pCode').value = norm(hp.pair); if (hp.n && !$('pName').value) $('pName').value = hp.n; }
-  else { st.cfg = st.cfg || {name:'Người dùng IDECO',code:'IDECO'}; enterChat(); }
+  $('installFromAppLogin').addEventListener('click', installPwa);
+  loadCfg(); grow(); saveErpChoice(false); erpUi(); st.pairDb = hp.db || '';
+  // Đăng nhập Mobile độc lập. KHÔNG kết nối Firebase bridge/PC khi chưa bật ERP.
+  showAppLogin();
+  if (hp.pair) $('pCode').value=norm(hp.pair);
+  if (hp.n && !($('appLoginName').value||'').trim()) $('appLoginName').value=hp.n;
 })();
 </script>
 <script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>

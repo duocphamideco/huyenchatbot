@@ -1,0 +1,10 @@
+HUYỀN MOBILE v2.51 – MẬT KHẨU VÀO APP RIÊNG, CHAT ĐỘC LẬP ERP
+
+1. Đăng nhập HUYỀN MOBILE bằng mật khẩu quản trị đang áp dụng, nhập tên sử dụng (mặc định nếu để trống).
+2. Sau khi mở, vào thẳng khung trò chuyện HUYỀN AI. ERP mặc định TẮT mỗi khi ứng dụng được mở lại.
+3. Để chat AI: nhập API Key trong Cài đặt hoặc kích hoạt khóa AI dùng chung từ Firebase bằng mã nhóm (chỉ cần lần đầu trên từng điện thoại). Khi đã kích hoạt, bản sao mã hóa trên chính điện thoại có hiệu lực tối đa 7 ngày; dùng mật khẩu Mobile để mở lại, không lưu mật khẩu đăng nhập.
+4. AI online chỉ phản hồi khi Internet hoạt động, API Key hợp lệ và lịch/hạn mức trong Cài đặt cho phép. Chuẩn hóa danh mục đã tải không cần PC.
+5. Khi cần thao tác ERP, vào Tùy chọn (mật khẩu quản trị) → bật Kết nối ERP; nếu chưa ghép thì nhập mã, tên và mật khẩu ERP trên màn hình chỉ dành cho kết nối PC. Tắt công tắc để trở về chat độc lập.
+6. Upload toàn bộ thư mục vào thư mục GitHub Pages cũ, đừng đổi manifest hoặc đường dẫn PWA.
+
+LƯU Ý BẢO MẬT: Mật khẩu chạy trên website tĩnh chỉ là lớp khóa giao diện, không thay thế đăng nhập xác thực phía máy chủ. Không mở Firebase Rules đọc/ghi công khai; mã API dùng chung vẫn có thể bị sử dụng bởi người có quyền mở khóa trên thiết bị. Để quản lý tập trung theo nhân viên, cần Firebase Auth và backend/proxy API.
