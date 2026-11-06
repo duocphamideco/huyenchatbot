@@ -1,4 +1,4 @@
-HUYỀN MOBILE v2.45.0 — CHUẨN HÓA ĐỘC LẬP FIREBASE
+HUYỀN MOBILE v2.45.1 — CHUẨN HÓA ĐỘC LẬP FIREBASE
 
 1) Cập nhật toàn bộ tệp trong ZIP lên thư mục GitHub Pages đang dùng. File mới catalog_normalizer.js phải nằm CÙNG THƯ MỤC index.html. KHÔNG chỉ chép index.html.
 2) Mở website HTTPS. Nếu chưa ghép cặp PC, chọn “Chuẩn hóa đơn hàng không cần PC”. Nếu đã đăng nhập PC, vẫn chuẩn hóa độc lập được kể cả trạm tắt.

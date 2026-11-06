@@ -1,0 +1,26 @@
+HUYỀN MOBILE v2.45.1 — SỬA CÀI ĐẶT / MỞ ỨNG DỤNG PWA
+
+BẢN NÀY DỰA TRÊN HAI GÓI ĐÃ CUNG CẤP:
+- "HUYEN MOBILE.zip" (bản gốc cài/mở từ lối tắt hoạt động)
+- "HUYEN_MOBILE_V2.45_FIREBASE_CHUAN_HOA_DOC_LAP_PWA.zip" (index mới, chức năng chuẩn hóa Firebase độc lập)
+
+THAY ĐỔI SO VỚI v2.45:
+1. Khôi phục manifest.json nguyên bản: id = /huyenchatbot/, start_url = ./, scope = ./, tên = HUYỀN TRỢ LÝ; giúp shortcut cũ trỏ cùng định danh ứng dụng.
+2. Giữ nguyên icon và apple-touch-icon từ gói gốc.
+3. Sửa service worker theo kiểu bản gốc: tải trang mới trước, mất mạng sử dụng bộ nhớ đệm; quá trình cài không thất bại vì một tệp bị thiếu hoặc bị trả lỗi.
+4. Chỉ dọn cache thuộc HUYỀN MOBILE, không xóa cache chung của các website/app khác.
+5. Index mới và catalog_normalizer.js giữ nguyên từ v2.45 để Chuẩn hóa AI độc lập không cần PC, Firebase và Excel tiếp tục sử dụng.
+
+CÁCH CẬP NHẬT:
+1. Giải nén ZIP, chọn TẤT CẢ các tệp bên trong (không tạo thư mục con), tải lên đúng thư mục GitHub Pages đã dùng cho HUYỀN MOBILE.
+2. Quan trọng: nếu dùng URL "https://...github.io/huyenchatbot/" thì index.html, sw.js, manifest.json, catalog_normalizer.js, logo phải ở đúng thư mục huyenchatbot được xuất bản.
+3. Kiểm tra link website hiện tại, rồi kiểm tra /manifest.json, /sw.js, /catalog_normalizer.js, /icon-192.png cùng đường dẫn.
+4. Trên điện thoại, mở website bằng trình duyệt. Đóng PWA/lối tắt cũ rồi mở lại, đợi cập nhật service worker.
+5. Nếu shortcut cũ vẫn báo không mở được: kiểm tra GitHub Pages đã triển khai hoàn tất và thử mở trực tiếp URL gốc bằng Chrome/Safari. Sau đó xóa shortcut cũ và thêm lại. Không cần xóa dữ liệu Firebase hoặc gỡ Chrome extension.
+6. Android: Chrome → menu 3 chấm → Cài đặt ứng dụng hoặc Thêm vào màn hình chính. iOS: Safari → Chia sẻ → Thêm vào Màn hình chính.
+
+LƯU Ý:
+- manifest giữ định danh /huyenchatbot/ như đúng gói gốc. Nếu sau này đổi repo/URL, phải cập nhật id cho phù hợp và cài shortcut lại.
+- File HTML mở trực tiếp từ máy qua file:// sẽ KHÔNG hỗ trợ cài PWA; bắt buộc tải HTTPS qua GitHub Pages.
+- Phiên bản này chưa kiểm thử trực tiếp trên điện thoại của người dùng và môi trường GitHub Pages thực tế.
+- Không thay đổi cơ chế phê duyệt đơn hàng, CK, ERP hay yêu cầu đăng nhập.
