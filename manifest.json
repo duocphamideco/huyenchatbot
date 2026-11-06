@@ -1,9 +1,9 @@
 {
-  "name": "HUYỀN TRỢ LÝ",
-  "short_name": "HUYỀN TRỢ LÝ",
-  "description": "Huyền – trợ lý AI IDECO: lên đơn, tra giá, tồn kho, công nợ, doanh số qua máy tính trạm ERP.",
-  "id": "/huyenchatbot/",
-  "start_url": "./",
+  "name": "HUYỀN MOBILE · IDECO",
+  "short_name": "HUYỀN IDECO",
+  "description": "Huyền Mobile IDECO: chuẩn hóa đơn từ dữ liệu Firebase không cần PC; kết nối máy trạm chỉ khi làm việc với ERP",
+  "id": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
@@ -11,9 +11,29 @@
   "theme_color": "#e8372a",
   "lang": "vi",
   "icons": [
-    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ]
 }

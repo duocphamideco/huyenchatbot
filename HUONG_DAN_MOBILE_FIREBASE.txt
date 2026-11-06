@@ -1,0 +1,16 @@
+HUYỀN MOBILE v2.45.0 — CHUẨN HÓA ĐỘC LẬP FIREBASE
+
+1) Cập nhật toàn bộ tệp trong ZIP lên thư mục GitHub Pages đang dùng. File mới catalog_normalizer.js phải nằm CÙNG THƯ MỤC index.html. KHÔNG chỉ chép index.html.
+2) Mở website HTTPS. Nếu chưa ghép cặp PC, chọn “Chuẩn hóa đơn hàng không cần PC”. Nếu đã đăng nhập PC, vẫn chuẩn hóa độc lập được kể cả trạm tắt.
+3) Tùy chọn → Dữ liệu Excel trên Firebase. Nguồn mặc định tham chiếu hai node đã được HUYỀN SALES sử dụng:
+ - Khách hàng: https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_customer_directory
+ - Sản phẩm: https://webcty-ecf1b-default-rtdb.firebaseio.com/priceData
+ Ấn ⟳ Khách hàng / ⟳ Sản phẩm để đọc thẳng từ Firebase, không dùng máy trạm. Nếu file Excel ở Firebase khác, dán đường dẫn node mới và bấm Lưu nguồn Firebase rồi đồng bộ.
+4) Có thể nhập Excel .xlsx hoặc .csv trực tiếp trong Tùy chọn, chọn node riêng của HUYỀN MOBILE rồi bấm “Đọc Excel & lưu lên Firebase Mobile”. Chỉ tiến hành nếu Firebase Rules/Authentication cấp quyền ghi phù hợp. Tính năng này KHÔNG mở quyền truy cập tự động; không đặt Rules public-read/public-write cho dữ liệu khách hàng.
+5) Nhập chữ hoặc nói lệnh: “Lên đơn cho nhà thuốc Minh Châu dầu gội Hamifa Đen 32 hộp”, bấm ✨ Chuẩn hóa AI. Mobile chạy đối chiếu dữ liệu tại thiết bị, cho chỉnh lại KH, SP, SL. Tên trùng/không rõ sẽ yêu cầu chọn bằng tay.
+6) Chuẩn hóa tại Mobile KHÔNG TÍNH CK/KM và KHÔNG lưu ERP. Chỉ nút Gửi/Nạp đơn (sau ghép cặp PC) mới gửi sang ERP; HUYỀN SALES phải tra/chốt chính sách, giá, KM theo dữ liệu hiện hành.
+7) Ảnh đơn chưa thể OCR độc lập không PC; Mobile hỗ trợ chuẩn hóa VĂN BẢN và giọng nói (nhận dạng bằng dịch vụ trình duyệt, tùy máy).
+8) PWA: Upload toàn bộ ZIP, kiểm tra manifest.json, sw.js và tệp PNG, dùng HTTPS. Android Chrome menu ⋮ → Cài đặt ứng dụng; iPhone Safari → Chia sẻ → Thêm vào màn hình chính. Khi cập nhật PWA cũ, đóng/mở lại hoặc xoá cache nếu chưa nhận bản mới.
+9) Sản phẩm/khách được cache trên từng điện thoại để tra offline; muốn dữ liệu mới hãy bấm làm mới. Firebase Rules có thể chặn đọc/ghi; app sẽ thông báo thay vì treo.
+
+Kiểm tra nội bộ: Node --check, thử trình duyệt headless (mô phỏng Firebase), XLSX với 2 sản phẩm Hamifa Đen/Nâu: PASS. Chưa kiểm thử trên điện thoại thật, Firebase thật, ERP thật.

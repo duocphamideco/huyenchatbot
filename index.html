@@ -52,6 +52,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .slogan{margin:14px auto 0;padding:12px 14px;border-radius:14px;background:var(--redSoft);color:var(--red2);font-weight:650;font-size:15px;line-height:1.5;border-left:4px solid var(--red);text-align:left}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .slogan{color:#ffb4ab}}
 :root[data-theme="dark"] .slogan{color:#ffb4ab}
+.norm-status{font-size:12px;line-height:1.4;color:var(--dim);padding:0 8px 4px}.norm-status:empty{display:none}
 /* composer */
 .dock{flex:none;background:var(--card);border-top:1px solid var(--line);padding:8px 10px calc(var(--safeB) + 10px);box-shadow:0 -6px 18px rgba(60,20,15,.05)}
 .chips{display:flex;gap:7px;overflow-x:auto;padding:2px 2px 8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
@@ -95,7 +96,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 /* 2.43.0: dữ liệu ERP + chuẩn hóa đơn */
 .chip.ai{background:var(--red);color:#fff;border-color:var(--red)}
 .dset{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}.dset h3{margin:0 0 6px;font-size:16px}
-.dstat{font-size:14px;color:var(--dim);line-height:1.6}.dstat b{color:var(--ink)}
+.dstat{font-size:14px;color:var(--dim);line-height:1.6}.dstat b{color:var(--ink)}.upload-area{border-top:1px solid var(--line);padding-top:10px;margin-top:13px}.upload-area label{font-size:12px;margin-top:10px}.upload-area input{max-width:100%}
 .dres{max-height:34vh;overflow:auto;margin-top:8px;font-size:14px}.dres div{padding:7px 2px;border-top:1px dashed var(--line)}.dres small{color:var(--dim)}
 .sheet .card.tall{max-height:92dvh;overflow:auto}
 .dl{border:1px solid var(--line);border-radius:14px;padding:10px;margin-top:10px;background:var(--bg)}
@@ -110,13 +111,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <body>
 <div class="app" id="app">
   <header class="top" id="topBar">
-    <img src="data:image/png;base64,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" alt="IDECO">
+    <img src="icon-192.png" alt="IDECO">
     <div class="tt"><b>HUYỀN · Trợ lý IDECO</b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
   <section class="pairv" id="pairView" hidden>
     <div class="hero">
-      <img src="data:image/png;base64,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" alt="IDECO">
+      <img src="icon-192.png" alt="IDECO">
       <h1>Huyền · Trợ lý ERP</h1>
       <p>Lên đơn, tra giá, xem số liệu ERP ngay trên điện thoại</p>
       <div class="quote">“IDECO luôn không thỏa hiệp với việc áp dụng công nghệ mới — giúp mình tốt hơn, công ty phát triển hơn.”</div>
@@ -130,6 +131,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <div class="pw"><input class="in" id="pPw" type="password" autocomplete="current-password" placeholder="Mật khẩu ERP"><button type="button" class="eye" id="eye" aria-label="Hiện mật khẩu" aria-pressed="false">👁</button></div>
       <label class="rem"><input type="checkbox" id="pRem" checked> Ghi nhớ đăng nhập — lần sau vào thẳng</label>
       <button class="pri" id="pairBtn">Vào ngay</button>
+      <button class="ghost" id="offlineNorm" type="button">✨ Chuẩn hóa đơn hàng không cần PC</button>
+      <button class="ghost" id="installFromLogin" type="button">📲 Cài Huyền Mobile lên màn hình</button>
       <div class="note" id="loginMsg"></div>
       <div class="note">Máy tính trạm: mở ERP → 🔗 Kết nối → biểu tượng extension <b>HUYỀN AI-AGENT</b> → <b>📱 Trạm điện thoại</b>.</div>
     </div>
@@ -145,6 +148,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <button class="chip" data-t="Công nợ của khách hàng ">💳 Công nợ</button>
       <button class="chip" data-t="Doanh số tháng này theo nhân viên">📈 Doanh số</button>
     </div>
+    <div id="normStatus" aria-live="polite" class="norm-status"></div>
     <div class="thumbs" id="thumbs"></div>
     <div class="box" id="box">
       <textarea id="ta" rows="2" placeholder="Nhắn Huyền… (dán đơn của khách cũng được)" enterkeyhint="send"></textarea>
@@ -163,12 +167,29 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🚪 Đăng xuất</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
-  <div class="dset"><h3>📚 Dữ liệu ERP trên máy này</h3>
+  <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
+  <button class="ghost" id="connectPc" type="button">🔗 Kết nối PC để nạp đơn lên ERP</button>
+  <div class="dset"><h3>📚 Danh sách Excel trên Firebase · độc lập PC</h3>
     <div class="dstat" id="dStat">Chưa tải.</div>
+    <label for="catalogP">Nguồn sản phẩm (Firebase Realtime URL)</label>
+    <input class="in" id="catalogP" type="url" inputmode="url" autocomplete="url" spellcheck="false" style="font-size:12px;padding:10px" />
+    <label for="catalogC">Nguồn khách hàng (Firebase Realtime URL)</label>
+    <input class="in" id="catalogC" type="url" inputmode="url" autocomplete="url" spellcheck="false" style="font-size:12px;padding:10px" />
+    <button class="ghost" id="saveCatalog" type="button">💾 Lưu nguồn Firebase</button>
+    <div class="upload-area">
+      <label for="catalogUploadBase">Lưu danh sách Excel vào node riêng của HUYỀN MOBILE</label>
+      <input class="in" id="catalogUploadBase" type="url" inputmode="url" autocomplete="off" spellcheck="false" style="font-size:12px;padding:10px" />
+      <label for="excelP">Chọn Excel danh sách sản phẩm (.xlsx / .csv)</label>
+      <input id="excelP" type="file" accept=".xlsx,.csv,.tsv,.txt" class="in" style="font-size:13px;padding:8px">
+      <label for="excelC">Chọn Excel danh sách khách hàng (.xlsx / .csv)</label>
+      <input id="excelC" type="file" accept=".xlsx,.csv,.tsv,.txt" class="in" style="font-size:13px;padding:8px">
+      <button class="ghost" id="uploadExcel" type="button">☁️ Đọc Excel &amp; lưu lên Firebase Mobile</button>
+      <div class="note" id="uploadStatus" aria-live="polite">Chỉ ghi vào node riêng của Mobile, không thay đổi danh sách Sales/ERP. Cần quyền ghi Firebase hợp lệ.</div>
+    </div>
     <div class="row"><button class="ghost" id="dLoadP" style="margin-top:8px">⟳ Sản phẩm</button><button class="ghost" id="dLoadC" style="margin-top:8px">⟳ Khách hàng</button></div>
     <input class="in" id="dFind" placeholder="Tra nhanh: tên / mã SP, tên KH, SĐT…" style="margin-top:10px" autocomplete="off">
     <div class="dres" id="dRes"></div>
-    <div class="note">Dùng để <b>✨ Chuẩn hóa AI</b>: đọc ảnh / chữ đơn → khớp đúng MÃ KH, MÃ SP trước khi <b>📤 Nạp đơn hàng</b>. Lấy từ ERP qua máy tính trạm, lưu mã hóa trên máy này.</div>
+    <div class="note">Hai danh sách Excel đã đồng bộ thành dữ liệu trên Firebase được tải <b>thẳng về điện thoại</b>, lưu bản đệm để tra cứu khi offline. ✨ Chuẩn hóa chữ/giọng nói ngay trên máy, <b>không gọi PC hoặc ERP</b>. Ảnh đơn hàng chưa hỗ trợ OCR ở chế độ này. Chỉ bước 📤 Nạp đơn lên ERP mới yêu cầu máy tính trạm.</div>
   </div>
   <button class="pri" id="closeSheet">Đóng</button>
 </div></div>
@@ -182,7 +203,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <label>Ghi chú đơn</label><input class="in" id="dfNote" placeholder="Giao hàng, thanh toán…" style="padding:11px">
   <label class="rem"><input type="checkbox" id="dfCash"> 💵 Khách trả tiền mặt (tự bật nút Tiền mặt)</label>
   <div class="dsum" id="dfSum"></div>
-  <button class="pri" id="dfSend">📤 Nạp đơn hàng</button>
+  <button class="pri" id="dfSend">📤 Nạp đơn lên ERP (cần kết nối PC)</button>
   <button class="ghost" id="dfClose">Đóng (giữ nháp)</button>
 </div></div>
 <div class="sheet" id="camSheet"><div class="card">
@@ -194,10 +215,19 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <input type="file" id="fShot" accept="image/*" capture="environment" hidden>
 <input type="file" id="fLib" accept="image/*" multiple hidden>
 <div class="toast" id="toast"></div>
+<script src="catalog_normalizer.js"></script>
 <script>
 (function () {
   'use strict';
   var DB_DEFAULT = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_mobile_bridge';
+  // Trùng nguồn đã triển khai của HUYỀN SALES: danh sách khách được nạp Excel trong Cài đặt;
+  // danh sách sản phẩm từ các tệp Excel nhập vào bảng tra giá. Có thể thay bằng node Firebase riêng của Mobile.
+  var CAT_SOURCE_DEFAULT = {
+    customers: 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_customer_directory',
+    products: 'https://webcty-ecf1b-default-rtdb.firebaseio.com/priceData'
+  };
+  var CAT_SETTINGS_KEY = 'huyen_mobile_firebase_excel_v1';
+  var CAT_UPLOAD_DEFAULT = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_catalogs';
   var SLOGAN = 'IDECO luôn không thỏa hiệp với việc áp dụng công nghệ mới — giúp mình tốt hơn, công ty phát triển hơn.';
   var LS = 'huyen_mobile_v2', LS_HIST = 'huyen_mobile_hist_v1';
   var $ = function (id) { return document.getElementById(id); };
@@ -226,8 +256,17 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function decAny(box) { return dec(st.dkey, box).catch(function () { return dec(st.key, box); }); }
   function dbBase() { return ((st.cfg && st.cfg.db) || DB_DEFAULT).replace(/\/+$/, ''); }
   function url(p) { return dbBase() + '/' + st.sid + (p ? '/' + p : '') + '.json'; }
+  function netFetch(resource, opts, seconds) {
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var timer = ctrl ? setTimeout(function () { ctrl.abort(); }, (seconds || 15) * 1000) : null;
+    var options = Object.assign({}, opts || {}); if (ctrl) options.signal = ctrl.signal;
+    return fetch(resource, options).catch(function (e) {
+      if (ctrl && ctrl.signal.aborted) throw new Error('Quá thời gian chờ mạng (' + (seconds || 15) + ' giây). Kiểm tra Firebase/4G.');
+      throw e;
+    }).finally(function () { if (timer) clearTimeout(timer); });
+  }
   function put(p, v) {
-    return fetch(url(p), { method: v === null ? 'DELETE' : 'PUT', headers: { 'Content-Type': 'application/json' }, body: v === null ? undefined : JSON.stringify(v) })
+    return netFetch(url(p), { method: v === null ? 'DELETE' : 'PUT', headers: { 'Content-Type': 'application/json' }, body: v === null ? undefined : JSON.stringify(v) }, 20)
       .then(function (r) { if (r.status === 401 || r.status === 403) throw new Error('Firebase từ chối ghi (Rules) — báo quản trị mở quyền node ideco_mobile_bridge'); if (!r.ok) throw new Error('Firebase ' + r.status); },
         function () { throw new Error('Không có mạng hoặc Firebase bị chặn'); });
   }
@@ -287,15 +326,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function fresh() { var s = st.station; return !!(s && s.online && Date.now() - (s.at || 0) < 75000); }
   function stationText() {
     var s = st.station, dot = $('dot'), t = $('stt');
-    if (!st.key) { dot.className = 'dot'; t.textContent = 'Chưa đăng nhập'; return false; }
+    if (!st.key) { dot.className = 'dot'; t.textContent = 'Chuẩn hóa độc lập · không cần PC'; return false; }
     if (!fresh()) { dot.className = 'dot off'; t.textContent = 'Máy tính trạm đang offline'; return false; }
     if (!s.erp) { dot.className = 'dot warn'; t.textContent = 'Trạm online · chưa kết nối ERP'; return true; }
     dot.className = 'dot ok'; t.textContent = 'ERP đã kết nối' + (s.user ? ' · ' + s.user : '') + (s.busy ? ' · đang xử lý' + (s.queue ? ' (' + s.queue + ' chờ)' : '') : ''); return true;
   }
   function listen(path, onData) {
-    var es = new EventSource(url(path));
-    es.addEventListener('put', function (e) { try { var m = JSON.parse(e.data); if (m.path === '/' || m.path === '') onData(m.data); else fetch(url(path)).then(function (r) { return r.json(); }).then(onData).catch(function () {}); } catch (x) {} });
-    es.addEventListener('patch', function () { fetch(url(path)).then(function (r) { return r.json(); }).then(onData).catch(function () {}); });
+    var es = new EventSource(url(path)); es.__lastData = Date.now();
+    es.addEventListener('put', function (e) { es.__lastData = Date.now(); try { var m = JSON.parse(e.data); if (m.path === '/' || m.path === '') onData(m.data); else netFetch(url(path), { cache: 'no-store' }, 12).then(function (r) { return r.json(); }).then(onData).catch(function () {}); } catch (x) {} });
+    es.addEventListener('patch', function () { es.__lastData = Date.now(); netFetch(url(path), { cache: 'no-store' }, 12).then(function (r) { return r.json(); }).then(onData).catch(function () {}); });
     es.addEventListener('cancel', function () { st.denied = true; });
     return es;
   }
@@ -318,7 +357,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function sendRaw(obj) { return enc(st.dkey, obj).then(function (box) { return put('cmd/' + obj.id, box); }); }
   function send(text, imgs) {
     text = String(text || '').trim(); imgs = imgs || [];
-    if ((!text && !imgs.length) || !st.dkey) return;
+    if ((!text && !imgs.length)) return;
+    if (!st.dkey) { toast('Chưa kết nối PC. Chọn 🔗 Kết nối PC trong Tùy chọn để nạp ERP; lệnh trong ô soạn vẫn được giữ lại.'); return; }
     var online = stationText(), id = newId(), now = Date.now();
     hist.push({ role: 'me', text: text, at: now, imgs: imgs, nImg: imgs.length });
     var bot = { role: 'bot', id: id, status: 'sending', text: online ? (imgs.length ? 'Đang gửi ' + imgs.length + ' ảnh tới máy tính trạm…' : 'Đang gửi tới máy tính trạm…') : 'Trạm đang offline — lệnh sẽ được xử lý khi máy tính mở lại (trong 10 phút).', at: now, q: text, nImg: imgs.length };
@@ -344,14 +384,16 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     delete st.pend[bot.id];
     if (clean) put('res/' + bot.id, null).catch(function () {});
   }
-  function pollOnce(bot) { return fetch(url('res/' + bot.id) + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (box) { if (box) return decAny(box).then(function (r) { applyRes(bot, r); }, function () {}); }).catch(function () {}); }
+  function pollOnce(bot) { return netFetch(url('res/' + bot.id) + '?t=' + Date.now(), { cache: 'no-store' }, 12).then(function (r) { return r.ok ? r.json() : null; }).then(function (box) { if (box) return decAny(box).then(function (r) { applyRes(bot, r); }, function () {}); }).catch(function () {}); }
   function track(bot) {
     if (st.pend[bot.id] || !st.dkey) return;
     var left = 12 * 60000 - (Date.now() - (bot.at || Date.now()));
     if (left <= 0) { bot.status = 'error'; bot.text = 'Quá 12 phút chưa có kết quả từ máy tính trạm.'; saveHist(); upsert(bot); return; }
     var t = st.pend[bot.id] = {};
     t.es = listen('res/' + bot.id, function (box) { if (box) decAny(box).then(function (r) { applyRes(bot, r); }, function () {}); });
-    t.poll = setInterval(function () { if (!document.hidden) pollOnce(bot); }, 2000); // 2.42.1: 2 giây (nhạy hơn khi EventSource bị mạng di động cắt)
+    t.poll = setInterval(function () { if (!document.hidden && !t.polling && (!t.es || t.es.readyState !== 1 || Date.now() - (t.es.__lastData || 0) > 12000)) {
+      t.polling = true; pollOnce(bot).finally(function () { t.polling = false; });
+    } }, 4500); // SSE ưu tiên; chỉ GET dự phòng nếu SSE gián đoạn/im lặng
     t.timer = setTimeout(function () { if (bot.status !== 'done' && bot.status !== 'error') { bot.status = 'error'; bot.text = 'Quá 12 phút chưa có kết quả từ máy tính trạm.'; saveHist(); upsert(bot); untrack(bot, true); } }, left);
   }
   function retrackAll() {
@@ -409,13 +451,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     }).then(function (h) {
       return verify(h).then(function () { st.cfg.h = h; });
     }).then(function () {
-      saveCfg(rem); $('pPw').value = ''; enterChat(); toast('Đã vào ✓');
+      try { localStorage.removeItem('huyen_mobile_offline_mode'); } catch (_) {} saveCfg(rem); $('pPw').value = ''; enterChat(); toast('Đã vào ✓');
     }).catch(function (e) { st.dkey = null; msg('⚠ ' + e.message); }).then(function () { btn.disabled = false; });
   }
   function enterChat() {
-    try { dataInit(); } catch (e) {} // 2.43.0: nạp danh sách SP / KH đã lưu trên máy (theo kênh mã)
+    dataBoot = dataInit().catch(function () {}); // Nạp dữ liệu cục bộ không chặn giao diện; chuẩn hóa sẽ đợi dữ liệu này.
     view('chat'); loadHist(); renderAll(); stationText();
-    retrackAll();
+    if (st.dkey) retrackAll();
   }
   /* vào nhanh: đã ghi nhớ → vào thẳng màn hình chat, kiểm tra lại với trạm ở nền */
   function quickStart() {
@@ -428,6 +470,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     });
   }
   $('pairBtn').onclick = doLogin;
+  $('offlineNorm').onclick = function () {
+    st.dkey = null; st.key = null; st.sid = '';
+    st.cfg = { name: $('pName').value.trim() || 'Người dùng IDECO', code: 'IDECO' };
+    try { localStorage.setItem('huyen_mobile_offline_mode','1'); } catch (_) {}
+    enterChat(); toast('✨ Chế độ chuẩn hóa độc lập. Không cần mở PC.');
+  };
+  $('connectPc').onclick = function () { try { localStorage.removeItem('huyen_mobile_offline_mode'); } catch (_) {} $('sheet').classList.remove('open'); showLogin('Nhập thông tin ghép cặp khi muốn nạp đơn lên ERP.'); };
   ['pCode', 'pName', 'pPw'].forEach(function (k) { $(k).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); if (k === 'pPw') doLogin(); else $(k === 'pCode' ? 'pName' : 'pPw').focus(); } }); });
   $('eye').onclick = function () { var i = $('pPw'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; this.textContent = show ? '🙈' : '👁'; this.setAttribute('aria-pressed', String(show)); this.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'); };
 
@@ -519,7 +568,6 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   /* ---------- tùy chọn ---------- */
   $('menuBtn').onclick = function () {
     try { dataStat(); } catch (e) {}
-    if (!st.dkey) return;
     $('sheetInfo').textContent = (st.cfg.name || '') + ' · mã ' + st.cfg.code + (st.station && st.station.user ? ' · ERP ' + st.station.user : '') + (st.cfg.h ? ' · đã ghi nhớ đăng nhập' : '');
     $('sheet').classList.add('open');
   };
@@ -532,7 +580,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   /* ---------- soạn tin ---------- */
   $('ta').addEventListener('input', grow);
   $('ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); $('send').click(); } });
-  $('send').onclick = function () { var t = $('ta').value, im = shots.slice(); if (micOn) micStop(); $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); send(t, im); };
+  $('send').onclick = function () { if (!st.dkey) { toast('Chưa kết nối PC. Lệnh đã chuẩn hóa vẫn nằm trong ô soạn; vào Tùy chọn → Kết nối PC để gửi ERP.'); return; } var t = $('ta').value, im = shots.slice(); if (micOn) micStop(); $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); send(t, im); };
   $('mic').onclick = micToggle;
   $('grow').onclick = function () { var b = $('box'), on = b.classList.toggle('big'); this.textContent = on ? '⤡' : '⤢'; $('chips').hidden = on; grow(); $('ta').focus(); };
   Array.prototype.forEach.call(document.querySelectorAll('.chip[data-t]'), function (b) { b.onclick = function () { var ta = $('ta'); ta.value = b.dataset.t + ta.value; grow(); ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {} }; });
@@ -550,53 +598,120 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
    *  • ✨ Chuẩn hóa AI: máy tính đọc ảnh / chữ → JSON đơn → app tự khớp MÃ KH, MÃ SP (gần đúng chữ viết tay, đúng hàm lượng),
    *    người dùng chọn lại nếu cần → 📤 Nạp đơn hàng gửi lệnh có MÃ cho extension (không còn phải đoán).
    * ===================================================================== */
-  var DATA = { products: null, customers: null };
+  var DATA = { products: null, customers: null }, dataLoading = {}, dataBoot = Promise.resolve();
   function idb() { return new Promise(function (res, rej) { if (!window.indexedDB) return rej(new Error('no idb')); var r = indexedDB.open('huyen_mobile_data', 1); r.onupgradeneeded = function () { r.result.createObjectStore('kv'); }; r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
   function idbGet(k) { return idb().then(function (db) { return new Promise(function (res) { var q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = function () { res(q.result || null); }; q.onerror = function () { res(null); }; }); }).catch(function () { return null; }); }
   function idbSet(k, v) { return idb().then(function (db) { return new Promise(function (res) { var t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = function () { res(true); }; t.onerror = function () { res(false); }; }); }).catch(function () { return false; }); }
-  function dataKeyName(w) { return (st.sid || 'x') + ':' + w; }
-  function gunzipB64(z) {
-    var u = unb64(z);
-    if (typeof DecompressionStream !== 'function') return Promise.reject(new Error('Trình duyệt chưa hỗ trợ giải nén — cập nhật Chrome/Safari.'));
-    return new Response(new Blob([u]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
+  function dataKeyName(w) { return 'firebase-excel-v1:' + w; } // Không phụ thuộc mã ghép cặp/ID máy trạm.
+  function catalogSources() {
+    var v = {}; try { v = JSON.parse(localStorage.getItem(CAT_SETTINGS_KEY) || '{}') || {}; } catch (_) {}
+    return { products: v.products || CAT_SOURCE_DEFAULT.products, customers: v.customers || CAT_SOURCE_DEFAULT.customers, uploadBase: v.uploadBase || CAT_UPLOAD_DEFAULT };
   }
-  /* lệnh phụ tới máy tính trạm → chờ kết quả cuối (data / parsed / error) */
-  function sideCmd(obj, onStep, ms) {
-    if (!st.dkey) return Promise.reject(new Error('Chưa đăng nhập.'));
-    var id = newId(); obj.id = id; obj.from = st.cfg.name || 'Điện thoại'; obj.ts = Date.now();
-    return new Promise(function (res, rej) {
-      var done = false, es, poll, tm;
-      function fin(f, v) { if (done) return; done = true; try { es && es.close(); } catch (e) {} clearInterval(poll); clearTimeout(tm); put('res/' + id, null).catch(function () {}); f(v); }
-      function on(box) { if (!box || done) return; decAny(box).then(function (r) {
-        if (!r) return;
-        if (r.status === 'running' || r.status === 'queued') { if (onStep && r.steps) onStep(r.steps[r.steps.length - 1]); return; }
-        if (r.status === 'error' || (r.status === 'auth' && !r.ok)) return fin(rej, new Error(r.error || 'Lỗi không rõ'));
-        fin(res, r);
-      }, function () {}); }
-      es = listen('res/' + id, on);
-      poll = setInterval(function () { fetch(url('res/' + id) + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(on).catch(function () {}); }, 2000);
-      tm = setTimeout(function () { fin(rej, new Error(fresh() ? 'Máy tính trạm phản hồi quá lâu.' : 'Máy tính trạm đang offline.')); }, ms || 150000);
-      sendRaw(obj).catch(function (e) { fin(rej, e); });
+  function catalogUrl(v) {
+    var s = String(v || '').trim().replace(/[?].*$/, '').replace(/\.json$/i, '').replace(/\/+$/, '');
+    if (!/^https:\/\/[a-z0-9-]+(?:-default-rtdb)?\.(?:firebaseio\.com|[a-z0-9-]+\.firebasedatabase\.app)\/[a-zA-Z0-9_\/-]+$/i.test(s))
+      throw new Error('Nguồn phải là đường dẫn HTTPS tới node Firebase Realtime Database, không phải URL tệp Excel tải xuống.');
+    return s;
+  }
+  function initCatalogInputs() {
+    var src = catalogSources(); $('catalogP').value = src.products; $('catalogC').value = src.customers; $('catalogUploadBase').value = src.uploadBase;
+  }
+  $('saveCatalog').onclick = function () {
+    try {
+      var sources = { products: catalogUrl($('catalogP').value), customers: catalogUrl($('catalogC').value), uploadBase: catalogUrl($('catalogUploadBase').value) };
+      localStorage.setItem(CAT_SETTINGS_KEY, JSON.stringify(sources));
+      DATA.products = null; DATA.customers = null; dataStat();
+      toast('✅ Đã lưu nguồn Firebase. Bấm ⟳ Sản phẩm / Khách hàng để đồng bộ.');
+    } catch (e) { toast('⚠ ' + e.message); }
+  };
+  initCatalogInputs();
+  $('uploadExcel').onclick = async function () {
+    var btn = this, files = [ { w: 'products', file: $('excelP').files[0] }, { w: 'customers', file: $('excelC').files[0] } ].filter(function (x) { return !!x.file; });
+    var status = $('uploadStatus');
+    if (!files.length) { status.textContent = '⚠ Chọn ít nhất một file Excel sản phẩm hoặc khách hàng.'; return; }
+    btn.disabled = true;
+    try {
+      var base = catalogUrl($('catalogUploadBase').value), datasets = [];
+      for (var i = 0; i < files.length; i++) {
+        status.textContent = '⏳ Đang đọc ' + files[i].file.name + ' ngay trên điện thoại…';
+        var rows = await HuyenMobileCatalog.readExcel(files[i].file, files[i].w);
+        if (rows.length > 50000) throw new Error(files[i].file.name + ': danh sách quá 50.000 dòng. Hãy chia tệp để tránh treo điện thoại.');
+        datasets.push({ what: files[i].w, rows: rows, file: files[i].file.name });
+      }
+      var info = datasets.map(function (d) { return (d.what === 'customers' ? 'khách hàng' : 'sản phẩm') + ': ' + d.rows.length.toLocaleString('vi-VN') + ' dòng'; }).join(', ');
+      if (!confirm('Đã đọc Excel: ' + info + '.\nBạn có quyền ghi node Firebase Mobile này và đồng ý THAY THẾ danh sách tương ứng trên đó?\n\n' + base)) {
+        status.textContent = 'Chưa ghi Firebase. Dữ liệu Sales/ERP không thay đổi.'; return;
+      }
+      var settings = catalogSources(); settings.uploadBase = base;
+      for (var j = 0; j < datasets.length; j++) {
+        var d = datasets[j], path = base + '/' + d.what;
+        status.textContent = '☁️ Đang ghi ' + d.rows.length + ' dòng ' + d.what + ' lên Firebase…';
+        var payload = { rows: d.rows, meta: { file: d.file, count: d.rows.length, at: Date.now(), by: 'HUYEN MOBILE' } };
+        var res = await netFetch(path + '.json', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }, 40);
+        if (res.status === 401 || res.status === 403) throw new Error('Firebase từ chối quyền GHI. Cần đăng nhập Firebase Auth/Rules phù hợp; không được mở quyền ghi công khai.');
+        if (!res.ok) throw new Error('Firebase không lưu được ' + d.what + ' (HTTP ' + res.status + ').');
+        settings[d.what] = path;
+        // Chỉ đánh dấu hoàn tất khi Firebase đã trả thành công; không ghi đè nguồn Sales.
+        localStorage.setItem(CAT_SETTINGS_KEY, JSON.stringify(settings));
+        DATA[d.what] = prep(d.what, { rows: d.rows, at: Date.now(), store: path, source: 'firebase' });
+        await idbSet(dataKeyName(d.what), { rows: d.rows, at: Date.now(), store: path, source: 'firebase' });
+      }
+      initCatalogInputs(); dataStat();
+      status.textContent = '✅ Firebase đã xác nhận lưu: ' + info + '. Đã chuyển nguồn Mobile sang node vừa cập nhật.';
+      toast('✅ Đã lưu Excel lên Firebase Mobile');
+    } catch (e) {
+      status.textContent = '⚠ ' + e.message + ' — kiểm tra URL, quyền Firebase và định dạng Excel.';
+    } finally { btn.disabled = false; }
+  };
+  function catalogFetch(what) {
+    var root = catalogUrl(catalogSources()[what]);
+    return netFetch(root + '.json?print=silent&_=' + Date.now(), { cache: 'no-store' }, 22).then(function (r) {
+      if (r.status === 401 || r.status === 403) throw new Error('Firebase từ chối quyền đọc danh sách ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + '. Cần Rules hoặc Firebase Auth phù hợp.');
+      if (!r.ok) throw new Error('Firebase trả mã ' + r.status);
+      return r.json();
+    }).then(function (payload) {
+      if (payload && payload.error) throw new Error(String(payload.error).slice(0, 180));
+      var rows = HuyenMobileCatalog.extract(what, payload);
+      if (!rows.length) throw new Error('Không tìm thấy bảng Excel hợp lệ tại ' + root + '. Kiểm tra cột Mã và Tên trong dữ liệu Firebase.');
+      return { rows: rows, at: Date.now(), source: 'firebase', store: root };
     });
   }
   function dataLoad(what, quiet) {
-    if (!quiet) toast('⏳ Đang lấy danh sách ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + ' từ ERP…');
-    return sideCmd({ type: 'data', what: what }, function (s) { if (!quiet && s) toast(s); }, 240000).then(function (r) {
-      return (r.gz ? gunzipB64(r.z) : Promise.resolve(r.z)).then(function (txt) {
-        var rows = JSON.parse(txt), rec = { rows: rows, at: r.at || Date.now(), store: r.store || '', source: r.source || 'erp' };
-        DATA[what] = prep(what, rec); idbSet(dataKeyName(what), rec); dataStat();
-        if (!quiet) toast('✅ Đã lưu ' + rows.length.toLocaleString('vi-VN') + (what === 'customers' ? ' khách hàng (danh sách chuẩn)' : ' sản phẩm'));
+    if (dataLoading[what]) return dataLoading[what];
+    var btn = $(what === 'customers' ? 'dLoadC' : 'dLoadP'); if (btn) btn.disabled = true;
+    if (!quiet) toast('⏳ Đang đọc danh sách ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + ' từ Firebase (không cần PC)…');
+    dataLoading[what] = catalogFetch(what).then(function (rec) {
+      DATA[what] = prep(what, rec); dataStat();
+      return idbSet(dataKeyName(what), rec).then(function () {
+        if (!quiet) toast('✅ Đã đồng bộ ' + rec.rows.length.toLocaleString('vi-VN') + ' ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm'));
         return DATA[what];
       });
-    });
+    }).catch(function (e) {
+      // Dùng bản đệm khi mất mạng; cảnh báo rõ không phải dữ liệu mới nhất.
+      if (DATA[what] && DATA[what].rows && DATA[what].rows.length) {
+        if (!quiet) toast('⚠ ' + e.message + ' — dùng bản lưu trên điện thoại.');
+        return DATA[what];
+      }
+      throw e;
+    }).finally(function () { dataLoading[what] = null; if (btn) btn.disabled = false; });
+    return dataLoading[what];
   }
-  function dataInit() { return Promise.all(['products', 'customers'].map(function (w) { return idbGet(dataKeyName(w)).then(function (rec) {
-    if (w === 'customers' && rec && rec.source !== 'dir') { idbSet(dataKeyName(w), null); rec = null; } // 2.43.1: bỏ bản cũ lấy nhầm cả bảng Customer ERP
-    if (rec && rec.rows) DATA[w] = prep(w, rec); }); })).then(dataStat); }
+  function dataInit() {
+    return Promise.all(['products', 'customers'].map(function (w) {
+      return idbGet(dataKeyName(w)).then(function (rec) {
+        if (rec && rec.rows && rec.store === catalogSources()[w]) DATA[w] = prep(w, rec);
+        // Chỉ nhận bộ nhớ cùng nguồn tránh lấy nhầm dữ liệu của dự án Firebase khác.
+      });
+    })).then(dataStat);
+  }
   function dataStat() {
     var e = $('dStat'); if (!e) return;
-    function line(w, lb) { var d = DATA[w]; return d ? '<b>' + d.rows.length.toLocaleString('vi-VN') + '</b> ' + lb + ' · cập nhật ' + new Date(d.at).toLocaleString('vi-VN') + (d.store && w === 'products' ? ' · kho ' + esc(d.store) : '') : lb + ': <span class="wr">chưa tải</span>'; }
-    e.innerHTML = line('products', 'sản phẩm (danh mục ERP của kho)') + '<br>' + line('customers', 'khách hàng (danh sách chuẩn trong Cài đặt)');
+    function line(w, lb) {
+      var d = DATA[w];
+      return d ? '<b>' + d.rows.length.toLocaleString('vi-VN') + '</b> ' + lb + ' · đồng bộ ' + new Date(d.at).toLocaleString('vi-VN') + ' <small>(bộ nhớ thiết bị)</small>'
+        : lb + ': <span class="wr">chưa tải Firebase</span>';
+    }
+    e.innerHTML = line('products', 'sản phẩm') + '<br>' + line('customers', 'khách hàng');
   }
   /* ---- chuẩn hóa chữ & so gần đúng (giống extension: Dice cặp ký tự, bỏ quy cách, giữ hàm lượng) ---- */
   function vn(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/[()\[\],.;:\/\\_\-+'"]/g, ' ').replace(/\s+/g, ' ').trim(); }
@@ -648,23 +763,36 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     C.forEach(function (x) { h += '<div>🏪 <b>' + esc(x.it.code) + '</b> ' + esc(x.it.name) + '<br><small>' + esc(x.it.addr || '') + (x.it.tel ? ' · ' + esc(x.it.tel) : '') + '</small></div>'; });
     out.innerHTML = h || '<div><small>Không thấy — bấm ⟳ để tải dữ liệu mới.</small></div>';
   };
-  /* ---- ✨ CHUẨN HÓA AI ---- */
+  /* ---- ✨ CHUẨN HÓA ĐỘC LẬP TRÊN MOBILE: KHÔNG GỌI PC/ERP/AI CLOUD ---- */
   var draft = null;
   function needData() {
-    var miss = ['products', 'customers'].filter(function (w) { return !DATA[w]; });
-    return miss.reduce(function (p, w) { return p.then(function () { return dataLoad(w, true); }); }, Promise.resolve());
+    return Promise.resolve(dataBoot).then(function () {
+      var missing = ['customers', 'products'].filter(function (w) { return !(DATA[w] && DATA[w].rows && DATA[w].rows.length); });
+      if (!missing.length) return true;
+      return Promise.all(missing.map(function (w) { return dataLoad(w, true); })).then(function () { return true; });
+    });
   }
   $('normBtn').onclick = function () {
     var text = $('ta').value.trim(), imgs = shots.slice();
-    if (!text && !imgs.length) { toast('Chụp ảnh đơn 📷 hoặc dán / nói nội dung đơn trước, rồi bấm ✨ Chuẩn hóa AI.'); return; }
-    if (!st.dkey) return;
-    var b = this; b.disabled = true; var t0 = b.textContent; b.textContent = '⏳ Đang chuẩn hóa…';
-    var stepT = function (s) { if (s) toast(s); };
-    toast(DATA.products && DATA.customers ? '✨ Máy tính đang đọc & chuẩn hóa đơn…' : '📚 Lần đầu: tải danh sách SP / KH từ ERP…');
-    needData().then(function () { return sideCmd({ type: 'parse', text: text, images: imgs }, stepT, 180000); })
-      .then(function (r) { openDraft(r.data || {}, text, imgs.length); })
-      .catch(function (e) { toast('⚠ ' + e.message); })
-      .then(function () { b.disabled = false; b.textContent = t0; });
+    var normStatus = $('normStatus');
+    if (!text) {
+      var err = imgs.length ? 'Chế độ Mobile độc lập chưa hỗ trợ OCR ảnh. Anh dùng giọng nói 🎙 hoặc nhập chữ đơn hàng để chuẩn hóa mà không cần PC.' : 'Nhập hoặc đọc lời đơn hàng trước khi chuẩn hóa.';
+      if (normStatus) normStatus.textContent = '⚠ ' + err;
+      toast('⚠ ' + err); return;
+    }
+    var b = this; if (b.disabled) return;
+    var t0 = b.textContent; b.disabled = true; b.textContent = '⏳ Đang đối chiếu…';
+    if (normStatus) normStatus.textContent = '📚 Đang tra danh sách Excel trên Firebase / bộ nhớ điện thoại…';
+    needData().then(function () {
+      if (normStatus) normStatus.textContent = '🔎 Đã tải danh sách; đang đối chiếu tên, mã và số lượng tại điện thoại…';
+      var result = HuyenMobileCatalog.parse(text, DATA.products.rows, DATA.customers.rows);
+      openDraft(result, text, 0);
+      if (normStatus) normStatus.textContent = '✅ Đã chuẩn hóa độc lập. Kiểm tra khách, sản phẩm và số lượng trước khi nạp ERP.';
+      if (imgs.length) toast('Lưu ý: chuẩn hóa phần chữ; ảnh chưa được nhận diện.');
+    }).catch(function (e) {
+      if (normStatus) normStatus.textContent = '⚠ ' + e.message;
+      toast('⚠ ' + e.message);
+    }).finally(function () { b.disabled = false; b.textContent = t0; });
   };
   function openDraft(o, text, nImg) {
     var cands = [];
@@ -678,7 +806,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function confTag(s, amb) { return amb ? '⚠ trùng/gần giống — chọn đúng' : s >= 1.2 ? '✔ trùng mã' : s >= 0.75 ? '✔ ' + Math.round(s * 100) + '%' : '⚠ ' + Math.round(s * 100) + '%'; }
   /* chưa chắc: không khớp, điểm thấp, hoặc ứng viên thứ hai gần bằng (2 khách trùng tên, 2 quy cách cùng hàm lượng…) mà người dùng CHƯA tự chọn */
   function amb(c, sel, picked) { return !picked && sel >= 0 && c.length > 1 && c.some(function (x, j) { return j !== sel && x.s >= c[sel].s - 0.03; }); }
-  function weakOf(c, sel, picked) { return sel < 0 || c[sel].s < 0.75 || amb(c, sel, picked); }
+  function weakOf(c, sel, picked) { return sel < 0 || !c[sel] || (!picked && (c[sel].s < 0.75 || amb(c, sel, false))); }
   function renderDraft() {
     if (!draft) return;
     var cs = $('dfCust');
@@ -724,20 +852,46 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var skipped = draft.lines.length - L.length;
     if (skipped && !confirm(skipped + ' dòng chưa chọn SP / thiếu SL sẽ bị BỎ. Vẫn nạp đơn?')) return;
     var unsure = (weakOf(draft.cust, draft.custSel, draft.custPicked) ? ['khách hàng'] : []).concat(L.filter(function (l) { return weakOf(l.cands, l.sel, l.picked); }).map(function (l) { return '“' + (l.raw || '') + '”'; }));
-    if (unsure.length && !confirm('Còn ' + unsure.length + ' mục ⚠ chưa chắc (' + unsure.join(', ') + ').\nĐã kiểm tra đúng chưa? Bấm OK để nạp đơn.')) return;
+    if (unsure.length) { toast('⚠ Cần chọn và xác nhận thủ công ' + unsure.length + ' mục chưa chắc: ' + unsure.slice(0, 2).join(', ')); return; }
+    var wrongUnit = L.filter(function (l) { return l.unit && l.cands[l.sel].it.unit && vn(l.unit) !== vn(l.cands[l.sel].it.unit); });
+    if (wrongUnit.length) { toast('⚠ Đơn vị Excel và đơn khách khác nhau. Hãy chỉnh quy đổi/SL đúng trong Excel trước khi gửi ERP; không tự quy đổi.'); return; }
     var cmd = 'Lên đơn hàng cho khách MÃ KH ' + c.it.code + ' (' + c.it.name + '):\n' +
       L.map(function (l, i) { var p = l.cands[l.sel].it; return (i + 1) + '. MÃ SP ' + p.code + ' — ' + p.name + ' — SL ' + l.qty + ' ' + (p.unit || ''); }).join('\n') +
       (draft.note ? '\nGhi chú: ' + draft.note : '') + (draft.cash ? '\nThanh toán: tiền mặt.' : '') +
       '\n(Đơn đã CHUẨN HÓA trên app điện thoại: dùng ĐÚNG MÃ KH / MÃ SP ở trên, không đổi sản phẩm; CK và khuyến mại áp theo chính sách.)';
+    if (!st.dkey) {
+      $('draftSheet').classList.remove('open');
+      $('ta').value = cmd; shots = []; renderShots(); grow();
+      // Không gửi về ERP khi chưa có PC. Người dùng vẫn có thể kiểm tra hoặc gửi sau khi kết nối.
+      toast('✅ Đã chuẩn hóa và điền lệnh. Muốn nạp ERP: kết nối PC rồi bấm Gửi.');
+      return;
+    }
     $('draftSheet').classList.remove('open');
     $('ta').value = ''; shots = []; renderShots(); grow();
     send(cmd, []); draft = null;
   };
   var h = location.hash.replace(/^#/, ''), hp = {}; h.split('&').forEach(function (kv) { var i = kv.indexOf('='); if (i > 0) hp[kv.slice(0, i)] = decodeURIComponent(kv.slice(i + 1)); });
   if (hp.pair) history.replaceState(null, '', location.pathname + location.search);
+  var pwaInstallEvent = null;
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); pwaInstallEvent = e; });
+  window.addEventListener('appinstalled', function () { pwaInstallEvent = null; toast('✅ Đã cài ứng dụng.'); });
+  async function installPwa() {
+    if (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) { toast('Ứng dụng đã mở ở chế độ cài đặt.'); return; }
+    if (pwaInstallEvent) {
+      var event = pwaInstallEvent; pwaInstallEvent = null;
+      try { await event.prompt(); await event.userChoice; } catch (_) { toast('Trình duyệt không mở được trình cài.'); }
+      return;
+    }
+    var ios = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    var tip = ios ? 'Trên iPhone: Safari → nút Chia sẻ → Thêm vào Màn hình chính → Thêm.' : 'Trên Android: Chrome → menu ⋮ → Cài đặt ứng dụng hoặc Thêm vào màn hình chính. Mở bằng HTTPS.';
+    alert(tip);
+  }
+  $('installApp').addEventListener('click', installPwa);
+  $('installFromLogin').addEventListener('click', installPwa);
   loadCfg(); grow(); st.pairDb = hp.db || '';
   if (st.cfg && st.cfg.h && (!hp.pair || norm(hp.pair) === norm(st.cfg.code))) quickStart();
-  else { showLogin(''); if (hp.pair) $('pCode').value = norm(hp.pair); if (hp.n && !$('pName').value) $('pName').value = hp.n; }
+  else { showLogin(''); if (hp.pair) $('pCode').value = norm(hp.pair); if (hp.n && !$('pName').value) $('pName').value = hp.n;
+    try { if (!hp.pair && localStorage.getItem('huyen_mobile_offline_mode') === '1') $('offlineNorm').click(); } catch (_) {} }
 })();
 </script>
 <script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>
