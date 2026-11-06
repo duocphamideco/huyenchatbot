@@ -207,6 +207,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <div class="note" id="uploadStatus" aria-live="polite">Chỉ ghi vào node riêng của Mobile, không thay đổi danh sách Sales/ERP. Cần quyền ghi Firebase hợp lệ.</div>
     </div>
     <div class="row"><button class="ghost" id="dLoadP" style="margin-top:8px">⟳ Sản phẩm</button><button class="ghost" id="dLoadC" style="margin-top:8px">⟳ Khách hàng</button></div>
+    <div class="note" id="dLoadInfo" role="status" aria-live="polite">Bấm ⟳ để đồng bộ danh sách từ Firebase. Nếu không tải được, kiểm tra nguồn URL và quyền đọc dữ liệu.</div>
     <input class="in" id="dFind" placeholder="Tra nhanh: tên / mã SP, tên KH, SĐT…" style="margin-top:10px" autocomplete="off">
     <div class="dres" id="dRes"></div>
     <div class="note">Hai danh sách Excel đã đồng bộ thành dữ liệu trên Firebase được tải <b>thẳng về điện thoại</b>, lưu bản đệm để tra cứu khi offline. ✨ Chuẩn hóa chữ/giọng nói ngay trên máy, <b>không gọi PC hoặc ERP</b>. Ảnh đơn hàng chưa hỗ trợ OCR ở chế độ này. Chỉ bước 📤 Nạp đơn lên ERP mới yêu cầu máy tính trạm.</div>
@@ -802,36 +803,84 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       status.textContent = '⚠ ' + e.message + ' — kiểm tra URL, quyền Firebase và định dạng Excel.';
     } finally { btn.disabled = false; }
   };
-  function catalogFetch(what) {
-    var root = catalogUrl(catalogSources()[what]);
-    return netFetch(root + '.json?print=silent&_=' + Date.now(), { cache: 'no-store' }, 22).then(function (r) {
-      if (r.status === 401 || r.status === 403) throw new Error('Firebase từ chối quyền đọc danh sách ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + '. Cần Rules hoặc Firebase Auth phù hợp.');
-      if (!r.ok) throw new Error('Firebase trả mã ' + r.status);
-      return r.json();
-    }).then(function (payload) {
-      if (payload && payload.error) throw new Error(String(payload.error).slice(0, 180));
-      var rows = HuyenMobileCatalog.extract(what, payload);
-      if (!rows.length) throw new Error('Không tìm thấy bảng Excel hợp lệ tại ' + root + '. Kiểm tra cột Mã và Tên trong dữ liệu Firebase.');
-      return { rows: rows, at: Date.now(), source: 'firebase', store: root };
-    });
+  // Firebase Realtime Database: GET KHÔNG dùng print=silent vì có thể nhận phản hồi rỗng.
+  // Theo dõi timeout đến khi đọc xong BODY; nếu chỉ chờ header, điện thoại 4G có thể treo lúc đọc JSON.
+  async function catalogReadJson(root, what) {
+    var label = what === 'customers' ? 'khách hàng' : 'sản phẩm';
+    var ctrl = typeof AbortController === 'function' ? new AbortController() : null;
+    var didTimeout = false, wait = 25000;
+    var timer = ctrl ? setTimeout(function () { didTimeout = true; ctrl.abort(); }, wait) : null;
+    try {
+      var r = await fetch(root + '.json?cb=' + Date.now(), {
+        cache: 'no-store', signal: ctrl ? ctrl.signal : undefined,
+        headers: { 'Accept': 'application/json' }
+      });
+      if (r.status === 401 || r.status === 403) throw new Error('Firebase từ chối quyền ĐỌC ' + label + ' (HTTP ' + r.status + '). Kiểm tra Firebase Rules hoặc đăng nhập phù hợp.');
+      if (r.status === 404) throw new Error('Không tìm thấy đường dẫn dữ liệu ' + label + ' trên Firebase (HTTP 404).');
+      if (!r.ok) throw new Error('Không tải được ' + label + ' từ Firebase (HTTP ' + r.status + ').');
+      // Không dùng r.json() mù quáng: Firebase 204/empty body và URL lỗi trả HTML phải có thông báo dễ hiểu.
+      var body = await r.text();
+      if (!body || !body.trim()) throw new Error('Firebase trả dữ liệu ' + label + ' rỗng (HTTP ' + r.status + '). Hãy kiểm tra đúng đường dẫn node và thử đồng bộ lại.');
+      if (/^\s*</.test(body)) throw new Error('Nguồn ' + label + ' trả trang HTML thay vì JSON. Kiểm tra lại đường dẫn Firebase Realtime Database.');
+      var payload;
+      try { payload = JSON.parse(body.replace(/^\uFEFF/, '')); }
+      catch (e) { throw new Error('Phản hồi ' + label + ' không phải JSON hợp lệ. Kiểm tra nguồn Firebase/đường truyền, không phải lỗi đọc file Excel.'); }
+      if (payload == null) throw new Error('Node Firebase ' + label + ' chưa có dữ liệu (trả về null). Nạp Excel lên đúng node rồi thử lại.');
+      if (payload && payload.error) throw new Error('Firebase ' + label + ': ' + String(payload.error).slice(0, 180));
+      return payload;
+    } catch (e) {
+      if (didTimeout || (e && e.name === 'AbortError')) throw new Error('Hết thời gian chờ tải ' + label + ' (25 giây). Kiểm tra 4G/Wi-Fi, thử lại khi mạng ổn định.');
+      if (e && (e.name === 'TypeError' || /Failed to fetch|NetworkError|Load failed/i.test(String(e.message || '')))) {
+        throw new Error('Không kết nối tới Firebase để tải ' + label + '. Kiểm tra mạng, domain và quyền truy cập.');
+      }
+      throw e;
+    } finally { if (timer) clearTimeout(timer); }
   }
+  function catalogFetch(what) {
+    // Trả Promise ngay cả khi URL cài đặt sai, tránh khóa nút tải ở trạng thái disabled.
+    return Promise.resolve().then(function () { return catalogUrl(catalogSources()[what]); })
+      .then(function (root) { return catalogReadJson(root, what).then(function (payload) {
+        var rows = HuyenMobileCatalog.extract(what, payload);
+        if (!rows.length) throw new Error('Nguồn Firebase có JSON nhưng không thấy dữ liệu Mã và Tên ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + '. Kiểm tra cấu trúc Excel/nguồn ' + root + '.');
+        return { rows: rows, at: Date.now(), source: 'firebase', store: root };
+      }); });
+  }
+  function setDataLoadInfo(txt) { var e = $('dLoadInfo'); if (e) e.textContent = txt; }
   function dataLoad(what, quiet) {
     if (dataLoading[what]) return dataLoading[what];
-    var btn = $(what === 'customers' ? 'dLoadC' : 'dLoadP'); if (btn) btn.disabled = true;
-    if (!quiet) toast('⏳ Đang đọc danh sách ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm') + ' từ Firebase (không cần PC)…');
+    var label = what === 'customers' ? 'khách hàng' : 'sản phẩm';
+    var btn = $(what === 'customers' ? 'dLoadC' : 'dLoadP');
+    if (btn) btn.disabled = true;
+    if (!quiet) {
+      setDataLoadInfo('⏳ Đang đồng bộ danh sách ' + label + ' từ Firebase, không cần kết nối PC…');
+      toast('⏳ Đang đồng bộ ' + label + '…');
+    }
     dataLoading[what] = catalogFetch(what).then(function (rec) {
+      // Chỉ cập nhật dữ liệu đang dùng khi đã nhận thành công danh sách hợp lệ.
       DATA[what] = prep(what, rec); dataStat();
-      return idbSet(dataKeyName(what), rec).then(function () {
-        if (!quiet) toast('✅ Đã đồng bộ ' + rec.rows.length.toLocaleString('vi-VN') + ' ' + (what === 'customers' ? 'khách hàng' : 'sản phẩm'));
+      return idbSet(dataKeyName(what), rec).then(function (saved) {
+        if (!quiet) {
+          setDataLoadInfo('✅ Đã tải ' + rec.rows.length.toLocaleString('vi-VN') + ' ' + label + ' từ Firebase' + (saved ? ' và lưu trên điện thoại.' : '. Không thể lưu bản đệm trên thiết bị này.'));
+          toast('✅ Đã đồng bộ ' + rec.rows.length.toLocaleString('vi-VN') + ' ' + label);
+        }
         return DATA[what];
       });
     }).catch(function (e) {
-      // Dùng bản đệm khi mất mạng; cảnh báo rõ không phải dữ liệu mới nhất.
-      if (DATA[what] && DATA[what].rows && DATA[what].rows.length) {
-        if (!quiet) toast('⚠ ' + e.message + ' — dùng bản lưu trên điện thoại.');
-        return DATA[what];
-      }
-      throw e;
+      // Giữ dữ liệu đã tải: không xóa danh sách tốt khi Firebase lỗi.
+      var fallback = DATA[what] && DATA[what].rows && DATA[what].rows.length ? Promise.resolve(DATA[what]) : idbGet(dataKeyName(what)).then(function (cached) {
+        if (cached && cached.rows && cached.rows.length && cached.store === catalogSources()[what]) {
+          DATA[what] = prep(what, cached); dataStat(); return DATA[what];
+        }
+        return null;
+      });
+      return fallback.then(function (found) {
+        if (!quiet) {
+          setDataLoadInfo('⚠ ' + e.message + (found ? ' — Đang sử dụng ' + found.rows.length.toLocaleString('vi-VN') + ' ' + label + ' đã lưu trên điện thoại (có thể chưa cập nhật).' : ' — Chưa có bản dữ liệu lưu trên điện thoại.'));
+          toast('⚠ ' + e.message);
+        }
+        if (found) return found;
+        throw e;
+      });
     }).finally(function () { dataLoading[what] = null; if (btn) btn.disabled = false; });
     return dataLoading[what];
   }

@@ -1,0 +1,39 @@
+HUYỀN MOBILE v2.47.1 — SỬA LỖI TẢI DANH SÁCH SẢN PHẨM / KHÁCH HÀNG
+
+1. LỖI ĐÃ XÁC ĐỊNH
+Bản v2.47 đọc Firebase Realtime Database bằng GET có thêm tham số print=silent
+nhưng sau đó vẫn dùng Response.json(). Nếu phản hồi rỗng sẽ báo:
+  Failed to execute 'json' on 'Response': Unexpected end of JSON input
+
+2. BẢN V2.47.1 ĐÃ SỬA
+- GET đọc Firebase không còn tham số print=silent.
+- Kiểm tra dữ liệu JSON, body rỗng, node trả null, HTML/403/404 và lỗi mạng.
+- Đặt timeout 25 giây bao gồm cả quá trình tải body.
+- Hiện thông báo tải thành công/thất bại ngay bên dưới nút tải dữ liệu.
+- Giữ danh sách sản phẩm/khách hàng đã lưu trên điện thoại nếu tải mới thất bại.
+- Đảm bảo nút tải có thể bấm lại nếu URL cài đặt sai hoặc Firebase trả lỗi.
+- KHÔNG thay đổi logic lập đơn, chuẩn hóa, gợi ý, kết nối trạm/ERP, API Chat hoặc định danh PWA.
+
+3. CẬP NHẬT GITHUB PAGES
+- Giải nén ZIP, đưa các file của gói vào ĐÚNG thư mục repo GitHub Pages
+  đang chứa ứng dụng HUYỀN MOBILE hiện tại, không lồng thêm thư mục con.
+- Quan trọng: thay index.html, sw.js, và các file đi kèm nếu có thay đổi.
+- Giữ nguyên đường dẫn /huyenchatbot/; ID/start_url/scope của manifest giống bản PWA hoạt động.
+- Đóng ứng dụng PWA, mở lại. Khi cập nhật GitHub Pages hoàn tất, tải mới trang
+  trong Chrome nếu thiết bị vẫn dùng tệp cũ.
+
+4. KIỂM TRA NGAY TRÊN MOBILE
+- Vào Tùy chọn > Danh sách Excel trên Firebase.
+- Xác nhận đường dẫn sản phẩm/khách hàng trỏ đến node Firebase Realtime Database
+  chứa dữ liệu đã nhập từ Excel.
+- Bấm '⟳ Sản phẩm' rồi '⟳ Khách hàng'.
+- Mỗi nút phải báo số dòng tải thành công. Sau đó gõ 'Hamifa' và một phần tên
+  khách hàng ở ô Tra nhanh để kiểm tra tên/mã được gợi ý.
+- Nếu báo node null: node Firebase chưa có dữ liệu; cần nạp Excel trước.
+- Nếu báo HTTP 401/403: cần xác thực/quyền đọc Firebase tương ứng (không mở Rules công khai).
+- Nếu báo 'không thấy cột Mã và Tên': kiểm tra định dạng bảng Excel và node đang chọn.
+
+5. GIỚI HẠN KIỂM THỬ
+Đã kiểm thử giả lập Chromium các trường hợp: đọc thành công dữ liệu JSON theo cấu trúc
+Sales, phản hồi rỗng, 403, HTML, node null; không có lỗi JS.
+Chưa kết nối thử trực tiếp Firebase của công ty hoặc xác minh dữ liệu thật.
