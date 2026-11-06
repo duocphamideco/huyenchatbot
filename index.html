@@ -106,6 +106,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .sel{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:11px;font:inherit;font-size:15.5px;background:var(--card);color:var(--ink)}
 .bad{border-color:#f0a39b!important;background:#fff6f5}.ok2{color:var(--ok);font-weight:700}.wr{color:var(--warn);font-weight:700}
 .dsum{font-size:14px;margin-top:10px;color:var(--dim)}
+/* 2.47: tra cứu gợi ý tức thời, đơn nhanh và trạm hàng đợi */
+.sugg{max-height:210px;overflow:auto;border:1px solid var(--line);border-radius:13px;background:var(--card);margin-top:4px;box-shadow:var(--shadow)}
+.sugg:empty{display:none}.sugg button{display:block;width:100%;text-align:left;border:0;border-bottom:1px solid var(--line);padding:10px 12px;background:transparent;font-size:14px;line-height:1.35}.sugg button:active,.sugg button:focus{background:var(--redSoft)}
+.sugg small{display:block;color:var(--dim);font-size:12px;margin-top:2px}
+.quick-state{white-space:pre-wrap;padding:10px;border:1px solid var(--line);border-radius:13px;margin-top:10px;font-size:13px;color:var(--dim);background:var(--bg)}
+.quick-line{padding:10px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;font-size:14px}
+.quick-line span{flex:1;min-width:0}.quick-line button{border:0;background:var(--chip);border-radius:9px;padding:7px}
+.quick-qty{width:90px}.ai-settings input{font-size:14px}.ai-settings select{font-size:14px}
+
 </style>
 </head>
 <body>
@@ -141,6 +150,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <div class="dock" id="comp" hidden>
     <div class="chips" id="chips">
       <button class="chip ai" id="normBtn" type="button">✨ Chuẩn hóa AI</button>
+      <button class="chip" id="quickOrder" type="button">🧾 Đơn nhanh</button>
       <button class="chip" data-t="Lên đơn cho khách ">🧾 Lên đơn</button>
       <button class="chip" data-t="Tra giá và chiết khấu sản phẩm ">💰 Tra giá</button>
       <button class="chip" data-t="Kiểm tra tồn kho sản phẩm ">📦 Tồn kho</button>
@@ -169,6 +179,16 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
   <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
   <button class="ghost" id="connectPc" type="button">🔗 Kết nối PC để nạp đơn lên ERP</button>
+  <div class="dset ai-settings"><h3>🤖 HUYỀN AI — trả lời ngay trên Mobile</h3>
+    <div class="note">Chat AI và chuẩn hóa trên Mobile <b>không chờ PC</b>. Cần Internet và khóa API của chính người dùng để trò chuyện AI tự do. Khóa chỉ lưu trên điện thoại; không gửi lên Firebase. Không dùng khóa dùng chung tại website công khai.</div>
+    <label for="aiProvider">Nhà cung cấp AI</label><select class="sel" id="aiProvider"><option value="google">Google Gemini</option><option value="kie">Kie.ai (OpenAI-compatible)</option></select>
+    <label for="aiModel">Model AI</label><input id="aiModel" class="in" value="gemini-2.5-flash" spellcheck="false" autocomplete="off">
+    <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập API Key cá nhân">
+    <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
+    <label class="rem"><input type="checkbox" id="aiRemember"> Ghi nhớ API Key trên máy này (chỉ nên dùng thiết bị riêng)</label>
+    <button class="ghost" id="aiSave" type="button">💾 Lưu cài đặt AI Mobile</button>
+    <div class="note" id="aiState" aria-live="polite"></div>
+  </div>
   <div class="dset"><h3>📚 Danh sách Excel trên Firebase · độc lập PC</h3>
     <div class="dstat" id="dStat">Chưa tải.</div>
     <label for="catalogP">Nguồn sản phẩm (Firebase Realtime URL)</label>
@@ -192,6 +212,22 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="note">Hai danh sách Excel đã đồng bộ thành dữ liệu trên Firebase được tải <b>thẳng về điện thoại</b>, lưu bản đệm để tra cứu khi offline. ✨ Chuẩn hóa chữ/giọng nói ngay trên máy, <b>không gọi PC hoặc ERP</b>. Ảnh đơn hàng chưa hỗ trợ OCR ở chế độ này. Chỉ bước 📤 Nạp đơn lên ERP mới yêu cầu máy tính trạm.</div>
   </div>
   <button class="pri" id="closeSheet">Đóng</button>
+</div></div>
+<div class="sheet" id="quickSheet"><div class="card tall">
+  <h2>🧾 Đơn nhanh · độc lập PC</h2>
+  <p>Gõ tên khách hoặc sản phẩm, chạm chọn từ danh sách Firebase đã tải. Chuẩn hóa tại điện thoại trước khi gửi ERP.</p>
+  <div id="quickState" class="quick-state">Đang đọc dữ liệu lưu trên điện thoại…</div>
+  <label for="quickCust">🏪 Tìm khách hàng (tên, mã hoặc SĐT)</label>
+  <input id="quickCust" class="in" autocomplete="off" placeholder="VD: Nhà thuốc Minh Châu">
+  <div id="quickCustS" class="sugg"></div>
+  <label for="quickProduct">💊 Tìm sản phẩm (tên, mã, quy cách)</label>
+  <input id="quickProduct" class="in" autocomplete="off" placeholder="VD: Dầu gội Hamifa Đen">
+  <div id="quickProductS" class="sugg"></div>
+  <div class="row" style="align-items:end"><div style="flex:1"><label for="quickQty">Số lượng</label><input id="quickQty" class="in" inputmode="decimal" value="1"></div><button class="ghost" id="quickAdd" style="flex:2">＋ Thêm sản phẩm</button></div>
+  <div id="quickLines"></div>
+  <label for="quickNote">Ghi chú</label><input id="quickNote" class="in" placeholder="Giao hàng, thanh toán…">
+  <button class="pri" id="quickReview">✅ Xem và kiểm tra đơn nháp</button>
+  <button class="ghost" id="quickClose">Đóng (giữ đơn đang chọn)</button>
 </div></div>
 <div class="sheet" id="draftSheet"><div class="card tall">
   <h2>✨ Đơn đã chuẩn hóa</h2>
@@ -300,7 +336,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (m.role === 'me') { d.className = 'msg me'; d.textContent = m.text || ''; if (m.imgs && m.imgs.length) { var g = document.createElement('div'); g.className = 'mimg'; m.imgs.forEach(function (u) { var im = new Image(); im.src = u; g.appendChild(im); }); d.appendChild(g); } else if (m.nImg) { var s2 = document.createElement('div'); s2.style.cssText = 'font-size:12.5px;opacity:.85;margin-top:4px'; s2.textContent = '📷 ' + m.nImg + ' ảnh'; d.appendChild(s2); } return d; }
     if (m.role === 'sys') { d.className = 'msg sys'; d.textContent = m.text; return d; }
     d.className = 'msg bot' + (m.status === 'error' ? ' err' : '');
-    var h = m.status === 'done' ? '<div class="md">' + md(m.text) + '</div>' : m.status === 'error' ? '<div>⚠ ' + esc(m.text) + '</div>' : '<div class="run"><span class="spin"></span><span>' + esc(m.text || 'Đang gửi tới máy tính trạm…') + '</span></div>';
+    var h = m.status === 'done' ? '<div class="md">' + md(m.text) + '</div>' : m.status === 'error' ? '<div>⚠ ' + esc(m.text) + '</div>' : '<div class="run"><span class="spin"></span><span>' + esc(m.text || 'Đang xử lý…') + '</span></div>';
     if (m.steps && m.steps.length && m.status !== 'done') h += '<ul class="steps">' + m.steps.slice(-4).map(function (s) { return '<li>' + esc(String(s).split('\n')[0].slice(0, 140)) + '</li>'; }).join('') + '</ul>';
     h += '<div class="meta"><span>' + fmtT(m.at) + (m.ms ? ' · ' + Math.round(m.ms / 1000) + ' giây' : '') + '</span>' + (m.status === 'done' ? '<button data-copy>📋 Chép</button>' : '') + (m.status === 'error' && m.q && !m.nImg ? '<button data-retry>↻ Gửi lại</button>' : '') + '</div>';
     d.innerHTML = h;
@@ -367,11 +403,105 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       .then(function () { track(bot); })
       .catch(function (e) { bot.status = 'error'; bot.text = 'Không gửi được (' + e.message + ').'; saveHist(); upsert(bot); });
   }
+  /* v2.47: Chatbot AI trên Mobile, chạy không cần trạm PC. */
+  function isOrderIntent(t) {
+    t = vn(t);
+    return /\b(len don|tao don|dat don|dat hang|lap don|nhap don|len don hang|gui don hang|nap don)\b/.test(t) && !/\b(cach|huong dan|tai sao|nguyen tac|la gi)\b/.test(t);
+  }
+  function needsErp(text, imgs) {
+    if (imgs && imgs.length) return true;
+    var t = vn(text);
+    if (isOrderIntent(text)) return true;
+    return /\b(erp|ton kho|cong no|doanh so|so lieu|don hang hom nay|don hang trong ngay|lich su don|truy xuat|xuat kho|nhap kho|hoa don|phieu xuat|doanh thu thang|bao cao tai chinh)\b/.test(t)
+      && !/\b(la gi|giai thich|cach lam|huong dan chung)\b/.test(t);
+  }
+  var AI_STORE = 'huyen_mobile_ai_v247';
+  function readAiConfig() {
+    try { return JSON.parse(sessionStorage.getItem(AI_STORE) || localStorage.getItem(AI_STORE) || '{}') || {}; }
+    catch (_) { return {}; }
+  }
+  function loadAiSettings() {
+    var a = readAiConfig();
+    $('aiProvider').value = a.provider === 'kie' ? 'kie' : 'google';
+    $('aiModel').value = a.model || (a.provider === 'kie' ? 'gemini-3-8-flash' : 'gemini-2.5-flash');
+    $('aiKey1').value = a.key1 || ''; $('aiKey2').value = a.key2 || '';
+    $('aiRemember').checked = !!a.remember;
+    $('aiState').textContent = a.key1 ? '✅ Đã cấu hình AI Mobile, không cần trạm PC.' : 'Chưa có API Key: chỉ tra danh mục cục bộ; chat AI tự do cần key cá nhân.';
+  }
+  $('aiProvider').onchange = function () { $('aiModel').value = this.value === 'kie' ? 'gemini-3-8-flash' : 'gemini-2.5-flash'; };
+  $('aiSave').onclick = function () {
+    var a = { provider: $('aiProvider').value, model: $('aiModel').value.trim(), key1: $('aiKey1').value.trim(), key2: $('aiKey2').value.trim(), remember: $('aiRemember').checked };
+    if (!/^[a-zA-Z0-9._-]{3,90}$/.test(a.model)) { toast('Model AI không hợp lệ'); return; }
+    try {
+      sessionStorage.setItem(AI_STORE, JSON.stringify(a));
+      if (a.remember) localStorage.setItem(AI_STORE, JSON.stringify(a)); else localStorage.removeItem(AI_STORE);
+      loadAiSettings(); toast('✅ Đã lưu AI Mobile trên điện thoại.');
+    } catch (e) { toast('Không lưu được AI: ' + e.message); }
+  };
+  function localCatalogReply(text) {
+    var t = vn(text);
+    if (/^(xin chao|chao|hello|hi|alo|huyen oi)/.test(t)) return 'Em chào anh/chị! Em có thể lập đơn nháp, tra sản phẩm đã lưu và trò chuyện AI khi có API Key. Chỉ dữ liệu và thao tác ERP mới cần kết nối PC.';
+    if (/\b(huong dan|cach|su dung)\b/.test(t) && /\b(don|san pham|khach hang|chuan hoa)\b/.test(t)) return 'Bấm **🧾 Đơn nhanh** → chọn khách trong gợi ý → chọn thuốc và số lượng → **Xem và kiểm tra đơn nháp**. Bước này chạy trên điện thoại, không cần PC. Chỉ khi bấm **Nạp đơn lên ERP** mới cần PC.';
+    if (/\b(tim|tra|gia|san pham|thuoc|hamifa|uvs)\b/.test(t) && DATA.products && DATA.products.ix.length) {
+      var q = text.replace(/^(tra gia|tim|san pham|thuoc|cho toi biet|gia ban|gia)\s*/i, '').trim();
+      var hits = fastSuggest('products', q, 5);
+      if (hits.length) return 'Dữ liệu đã lưu trên Mobile (giá tham khảo, **chưa kiểm tra chiết khấu/khuyến mại ERP**):\n' + hits.map(function (x) { return '• ' + x.it.code + ' · ' + x.it.name + ' · ' + (x.it.unit || '') + ' · ' + money(x.it.price); }).join('\n');
+    }
+    if (/\b(khach hang|nha thuoc|so dien thoai)\b/.test(t) && DATA.customers && DATA.customers.ix.length) {
+      var cs = fastSuggest('customers', text.replace(/^(tim|tra cuu|khach hang|nha thuoc)\s*/i, '').trim(), 5);
+      if (cs.length) return 'Khách trong danh mục đã tải:\n' + cs.map(function (x) { return '• ' + x.it.code + ' · ' + x.it.name; }).join('\n');
+    }
+    return 'Em hiện hỗ trợ cục bộ: gợi ý khách hàng/sản phẩm, chuẩn hóa đơn và tra cứu danh mục đã lưu. Để **trò chuyện AI thông thường** mà không cần máy tính, mở **Tùy chọn → HUYỀN AI** và cài API Key Gemini hoặc Kie.ai của mình (cần Internet).';
+  }
+  function fetchAi(config, key, messages) {
+    var ct = new AbortController(), timer = setTimeout(function () { ct.abort(); }, 22000);
+    var u = config.provider === 'kie' ? 'https://api.kie.ai/gemini-3-8-flash-openai/v1/chat/completions' : 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(config.model || 'gemini-2.5-flash') + ':generateContent';
+    var system = 'Bạn là HUYỀN AI, trợ lý kinh doanh IDECO. Trả lời nhanh, rõ, tiếng Việt; không bịa số liệu ERP, không tự đặt giá/chiết khấu/chính sách khuyến mại. Không tuyên bố đã tạo đơn hay truy cập ERP. Nếu người dùng yêu cầu thao tác/số liệu thời gian thực ERP, hãy nói cần kết nối trạm PC. Giữ bí mật dữ liệu khách hàng.';
+    var body, headers;
+    if (config.provider === 'kie') {
+      headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key };
+      body = { model: config.model, stream: false, temperature: 0.35, messages: [{ role: 'system', content: system }].concat(messages.map(function (m) { return { role: m.role === 'bot' ? 'assistant' : 'user', content: m.text }; })) };
+    } else {
+      headers = { 'Content-Type': 'application/json', 'x-goog-api-key': key };
+      body = { systemInstruction: { parts: [{ text: system }] }, contents: messages.map(function (m) { return { role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: m.text }] }; }), generationConfig: { temperature: 0.35, maxOutputTokens: 1100 } };
+    }
+    return fetch(u, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: ct.signal }).then(async function (r) {
+      var d = await r.json().catch(function () { return {}; });
+      if (!r.ok) { var err = new Error('AI HTTP ' + r.status + ': ' + String(d && d.error && d.error.message || 'Không nhận phản hồi').slice(0, 120)); err.httpStatus = r.status; throw err; }
+      var ans = config.provider === 'kie' ? d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content : d && d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('');
+      if (!String(ans || '').trim()) throw new Error('AI trả về nội dung rỗng.');
+      return String(ans).slice(0, 10000);
+    }).catch(function (e) { if (e.name === 'AbortError') throw new Error('AI quá 22 giây chưa phản hồi. Kiểm tra 4G/Wi-Fi hoặc Key dự phòng.'); throw e; })
+      .finally(function () { clearTimeout(timer); });
+  }
+  async function mobileAiAnswer(text) {
+    var a = readAiConfig(), keys = [a.key1, a.key2].filter(Boolean);
+    if (!navigator.onLine) return localCatalogReply(text) + '\n\n⚠ Điện thoại không có Internet; AI trực tuyến không chạy.';
+    if (!keys.length) return localCatalogReply(text);
+    var recent = hist.filter(function (x) { return (x.mobileAiUser || x.mobileAi) && x.status !== 'error' && x.text; }).slice(-8).map(function (x) { return { role: x.role, text: x.text.slice(0, 1200) }; });
+    if (!recent.length || recent[recent.length - 1].text !== text) recent.push({ role: 'me', text: text });
+    var error;
+    for (var i = 0; i < keys.length; i++) {
+      try { return await fetchAi(a, keys[i], recent); }
+      catch (e) { error = e; if (e.httpStatus && ![408, 429, 500, 502, 503, 504].includes(e.httpStatus)) break; }
+    }
+    throw error || new Error('Không gọi được AI.');
+  }
+  function sendMobileChat(t) {
+    if (!t) return;
+    var at = Date.now(); hist.push({ role: 'me', text: t, mobileAiUser: true, at: at });
+    var bot = { role: 'bot', id: newId(), mobileAi: true, status: 'sending', text: 'Huyền AI đang trả lời trên điện thoại…', at: at };
+    hist.push(bot); saveHist(); renderAll();
+    mobileAiAnswer(t).then(function (ans) { bot.text = ans; bot.status = 'done'; })
+      .catch(function (e) { bot.text = 'AI Mobile: ' + e.message + '\n\n' + localCatalogReply(t); bot.status = 'done'; })
+      .finally(function () { saveHist(); upsert(bot); });
+  }
+  loadAiSettings();
   /* 2.40.1: THEO DÕI KẾT QUẢ CHẮC CHẮN — realtime (EventSource) + đọc dự phòng 4 giây/lần (iPhone/Android ở chế độ
      app màn hình chính hay ngắt realtime khi khóa máy). Mở lại app / có mạng lại → tự nối lại mọi lệnh đang chờ. */
   function applyRes(bot, r) {
     if (!r || bot.status === 'done' || bot.status === 'error') return;
-    if (r.status === 'queued') bot.text = 'Đã tới máy tính · xếp hàng thứ ' + (r.pos || 1) + '…';
+    if (r.status === 'queued' && bot.status !== 'running') { bot.text = '⏳ Đã xếp hàng · lượt xử lý số ' + (r.pos || 1) + '. Vui lòng không gửi lại đơn.'; }
     else if (r.status === 'running') { bot.status = 'running'; bot.text = 'Huyền đang xử lý trên ERP…'; if (r.steps) bot.steps = r.steps; }
     else if (r.status === 'done') { bot.status = 'done'; bot.text = r.answer || '(Không có nội dung)'; bot.ms = r.ms; bot.steps = r.steps; }
     else if (r.status === 'error' || (r.status === 'auth' && !r.ok)) { bot.status = 'error'; bot.text = r.error || 'Lỗi không rõ'; if (r.status === 'auth') setTimeout(function () { logout('Mật khẩu ERP đã đổi — đăng nhập lại.'); }, 0); }
@@ -388,13 +518,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function track(bot) {
     if (st.pend[bot.id] || !st.dkey) return;
     var left = 12 * 60000 - (Date.now() - (bot.at || Date.now()));
-    if (left <= 0) { bot.status = 'error'; bot.text = 'Quá 12 phút chưa có kết quả từ máy tính trạm.'; saveHist(); upsert(bot); return; }
+    if (left <= 0) { bot.status = 'error'; bot.text = 'Quá thời gian chờ. Chưa xác minh đơn ERP đã lưu hay chưa — kiểm tra ERP trước khi thử lại để tránh trùng.'; saveHist(); upsert(bot); return; }
     var t = st.pend[bot.id] = {};
     t.es = listen('res/' + bot.id, function (box) { if (box) decAny(box).then(function (r) { applyRes(bot, r); }, function () {}); });
     t.poll = setInterval(function () { if (!document.hidden && !t.polling && (!t.es || t.es.readyState !== 1 || Date.now() - (t.es.__lastData || 0) > 12000)) {
       t.polling = true; pollOnce(bot).finally(function () { t.polling = false; });
     } }, 4500); // SSE ưu tiên; chỉ GET dự phòng nếu SSE gián đoạn/im lặng
-    t.timer = setTimeout(function () { if (bot.status !== 'done' && bot.status !== 'error') { bot.status = 'error'; bot.text = 'Quá 12 phút chưa có kết quả từ máy tính trạm.'; saveHist(); upsert(bot); untrack(bot, true); } }, left);
+    t.timer = setTimeout(function () { if (bot.status !== 'done' && bot.status !== 'error') { bot.status = 'error'; bot.text = 'Hết thời gian chờ PC. Chưa xác minh đơn ERP đã lưu hay chưa — kiểm tra ERP trước khi gửi lại.'; saveHist(); upsert(bot); untrack(bot, false); } }, left);
   }
   function retrackAll() {
     Object.keys(st.pend).forEach(function (id) { var t = st.pend[id]; try { t.es && t.es.close(); } catch (e) {} clearInterval(t.poll); clearTimeout(t.timer); delete st.pend[id]; });
@@ -580,7 +710,16 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   /* ---------- soạn tin ---------- */
   $('ta').addEventListener('input', grow);
   $('ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); $('send').click(); } });
-  $('send').onclick = function () { if (!st.dkey) { toast('Chưa kết nối PC. Lệnh đã chuẩn hóa vẫn nằm trong ô soạn; vào Tùy chọn → Kết nối PC để gửi ERP.'); return; } var t = $('ta').value, im = shots.slice(); if (micOn) micStop(); $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); send(t, im); };
+  $('send').onclick = function () {
+    var t = $('ta').value.trim(), im = shots.slice(); if (!t && !im.length) return;
+    if (micOn) micStop();
+    if (isOrderIntent(t) && !im.length) { $('normBtn').click(); return; }
+    if (needsErp(t, im)) {
+      if (!st.dkey) { toast('Lệnh ERP cần kết nối PC. Hãy kết nối trong Tùy chọn; nội dung vẫn được giữ.'); return; }
+      $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); send(t, im); return;
+    }
+    $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); sendMobileChat(t);
+  };
   $('mic').onclick = micToggle;
   $('grow').onclick = function () { var b = $('box'), on = b.classList.toggle('big'); this.textContent = on ? '⤡' : '⤢'; $('chips').hidden = on; grow(); $('ta').focus(); };
   Array.prototype.forEach.call(document.querySelectorAll('.chip[data-t]'), function (b) { b.onclick = function () { var ta = $('ta'); ta.value = b.dataset.t + ta.value; grow(); ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {} }; });
@@ -752,6 +891,92 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var core = qv.replace(/^(cong ty tnhh|cong ty co phan|cong ty|cty|nha thuoc|nt|quay thuoc|qt|dai ly|dl|hieu thuoc|phong kham|pk|benh vien|bv|tiem thuoc)\s+/, '');
     return d.ix.map(function (it) { var s = score(core, it); (it.al || []).forEach(function (a) { s = Math.max(s, score(core, { c: a, k: '', full: a })); }); if (qv.length >= 4 && it.full.indexOf(qv) >= 0) s = Math.max(s, 0.9); return { it: it, s: s }; }).filter(function (x) { return x.s >= 0.5; }).sort(function (a, b) { return b.s - a.s; }).slice(0, n || 6);
   }
+  /* Chỉ mục tìm kiếm gợi ý tiền tố: không quét toàn bảng mỗi lần gõ. */
+  function buildSuggestIndex(w) {
+    var d = DATA[w]; if (!d || d.quickIndex) return;
+    var ix = Object.create(null), limit = 140;
+    d.ix.forEach(function (it, i) {
+      var chunks = [it.name, it.code].concat(w === 'customers' ? [it.tel, it.addr] : []), keys = new Set();
+      chunks.forEach(function (v) {
+        var normed = vn(v).replace(/[^a-z0-9]+/g, ' '), words = normed.split(/\s+/).filter(Boolean);
+        words.forEach(function (t) { for (var z = 2; z <= Math.min(5, t.length); z++) keys.add(t.slice(0, z)); });
+        if (normed.length >= 2) keys.add(normed.slice(0, Math.min(5, normed.length)));
+      });
+      keys.forEach(function (k) { var a = ix[k] || (ix[k] = []); if (a.length < limit) a.push(i); });
+    });
+    d.quickIndex = ix;
+  }
+  function fastSuggest(w, query, max) {
+    var d = DATA[w], q = vn(query), n = max || 8;
+    if (!d || !q || q.length < 2) return [];
+    buildSuggestIndex(w);
+    var terms = q.split(/\s+/).filter(function (x) { return x.length >= 2; });
+    var key = terms.length ? terms[terms.length - 1].slice(0, 5) : q.slice(0, 5), ids = d.quickIndex[key] || [];
+    if (!ids.length && terms.length > 1) ids = d.quickIndex[terms[0].slice(0, 5)] || [];
+    var rated = ids.map(function (i) {
+      var it = d.ix[i], base = vn(it.name), c = vn(it.code), score = c === q ? 20 : base === q ? 18 : base.indexOf(q) === 0 ? 16 : base.indexOf(q) >= 0 ? 12 : 0;
+      terms.forEach(function (part) { if (base.indexOf(part) >= 0) score += 2; });
+      return { it: it, s: score };
+    });
+    rated.sort(function (a,b) { return b.s - a.s || a.it.name.length - b.it.name.length; });
+    return rated.slice(0, n);
+  }
+  var quickDraft = { customer: null, product: null, lines: [] };
+  function showQuickList(w, input, target, pick) {
+    var q = input.value.trim(), box = $(target), hits = fastSuggest(w, q, 8);
+    box.innerHTML = '';
+    if (q.length < 2) return;
+    if (!hits.length) { box.textContent = 'Không tìm thấy trong danh mục đã tải'; return; }
+    hits.forEach(function (x) {
+      var b = document.createElement('button'); b.type = 'button';
+      b.appendChild(document.createTextNode(x.it.name));
+      var info = document.createElement('small');
+      info.textContent = x.it.code + (w === 'products' ? ' · ' + (x.it.unit || '') + ' · ' + money(x.it.price) : ' · ' + (x.it.tel || x.it.addr || ''));
+      b.appendChild(info); b.onclick = function () { pick(x.it); box.innerHTML = ''; };
+      box.appendChild(b);
+    });
+  }
+  function quickSummary() {
+    var text = quickDraft.customer ? '✅ Khách: ' + quickDraft.customer.name + ' · ' + quickDraft.customer.code : '⚠ Chưa chọn khách hàng';
+    if (quickDraft.product) text += '\n✅ Đã chọn hàng: ' + quickDraft.product.name + ' · ' + quickDraft.product.code;
+    $('quickState').textContent = text;
+    var b = $('quickLines'); b.innerHTML = '';
+    quickDraft.lines.forEach(function (l, i) {
+      var d = document.createElement('div'); d.className = 'quick-line';
+      var name = document.createElement('span'); name.textContent = (i+1)+'. '+l.product.name + ' · ' + l.qty + ' ' + (l.product.unit || '');
+      var del = document.createElement('button'); del.type = 'button'; del.textContent = '✕'; del.setAttribute('aria-label','Xóa mặt hàng'); del.onclick = function () { quickDraft.lines.splice(i, 1); quickSummary(); };
+      d.appendChild(name); d.appendChild(del); b.appendChild(d);
+    });
+  }
+  $('quickOrder').onclick = function () {
+    $('quickSheet').classList.add('open'); quickSummary();
+    needData().then(function () { quickSummary(); }).catch(function (e) { $('quickState').textContent = '⚠ ' + e.message + ' — vào Tùy chọn tải danh sách Firebase.'; });
+  };
+  $('quickCust').addEventListener('input', function () { quickDraft.customer = null; showQuickList('customers', this, 'quickCustS', function (it) { quickDraft.customer = it; $('quickCust').value = it.name; quickSummary(); }); });
+  $('quickProduct').addEventListener('input', function () { quickDraft.product = null; showQuickList('products', this, 'quickProductS', function (it) { quickDraft.product = it; $('quickProduct').value = it.name; quickSummary(); }); });
+  $('quickAdd').onclick = function () {
+    var p = quickDraft.product, q = Number(String($('quickQty').value).replace(',', '.'));
+    if (!p) { toast('Chạm chọn sản phẩm từ danh sách gợi ý.'); return; }
+    if (!Number.isFinite(q) || q <= 0 || q > 1e6) { toast('Số lượng không hợp lệ.'); return; }
+    var row = quickDraft.lines.find(function (l) { return l.product.code === p.code; });
+    if (row) row.qty += q; else quickDraft.lines.push({ product: p, qty: q });
+    quickDraft.product = null; $('quickProduct').value = ''; $('quickQty').value = '1'; quickSummary(); $('quickProduct').focus();
+  };
+  $('quickReview').onclick = function () {
+    if (!quickDraft.customer) { toast('Chọn đúng khách trong gợi ý.'); return; }
+    if (!quickDraft.lines.length) { toast('Thêm ít nhất một mặt hàng.'); return; }
+    draft = { src: { customer: quickDraft.customer.name }, nImg: 0, text: 'Đơn nhanh (Firebase)',
+      cust: [{it:quickDraft.customer,s:1.5}], custSel:0, custPicked:true,
+      lines:quickDraft.lines.map(function(l){return {raw:l.product.name,product:l.product.name,qty:l.qty,unit:l.product.unit || '',cands:[{it:l.product,s:1.5}],sel:0,picked:true};}),
+      note:$('quickNote').value.trim(),cash:false };
+    $('quickSheet').classList.remove('open'); renderDraft(); $('draftSheet').classList.add('open');
+  };
+  $('quickClose').onclick = function () { $('quickSheet').classList.remove('open'); };
+  function draftSuggest(w, v, out, choose) {
+    var hits = fastSuggest(w,v,6); out.innerHTML='';
+    if (v.trim().length < 2) return;
+    hits.forEach(function(x){var b=document.createElement('button');b.type='button';b.textContent=x.it.code+' · '+x.it.name;b.onclick=function(){choose(x);out.innerHTML='';};out.appendChild(b);});
+  }
   function money(v) { return Number(v || 0).toLocaleString('vi-VN') + 'đ'; }
   /* ---- tra nhanh trong Tùy chọn ---- */
   $('dLoadP').onclick = function () { dataLoad('products').catch(function (e) { toast('⚠ ' + e.message); }); };
@@ -824,13 +1049,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
         '<div class="ln"><input class="in q" inputmode="decimal" data-q="' + i + '" value="' + esc(l.qty || '') + '" placeholder="SL"><span class="u">' +
         (l.sel >= 0 ? esc(l.cands[l.sel].it.unit || '') + ' · giá ' + money(l.cands[l.sel].it.price) + (l.unit && vn(l.unit) !== vn(l.cands[l.sel].it.unit) ? ' · <span class="wr">khách ghi “' + esc(l.unit) + '”</span>' : '') : '') +
         '</span><button class="x" data-x="' + i + '" aria-label="Bỏ dòng">✕</button></div>' +
-        '<input class="in" data-f="' + i + '" placeholder="Tìm SP khác: tên / mã…" style="margin-top:8px;padding:10px;font-size:15px" autocomplete="off">';
+        '<input class="in" data-f="' + i + '" placeholder="Tìm SP khác: tên / mã…" style="margin-top:8px;padding:10px;font-size:15px" autocomplete="off"><div class="sugg" data-s="' + i + '"></div>';
       box.appendChild(d);
     });
     box.querySelectorAll('select').forEach(function (e) { e.onchange = function () { var l = draft.lines[+e.dataset.i]; l.sel = +e.value; l.picked = true; renderDraft(); }; });
     box.querySelectorAll('[data-q]').forEach(function (e) { e.oninput = function () { draft.lines[+e.dataset.q].qty = Number(String(e.value).replace(',', '.')) || 0; sumDraft(); }; });
     box.querySelectorAll('[data-x]').forEach(function (e) { e.onclick = function () { draft.lines.splice(+e.dataset.x, 1); renderDraft(); }; });
-    box.querySelectorAll('[data-f]').forEach(function (e) { e.onchange = function () { var i = +e.dataset.f, c = findProducts(e.value, 6); if (!c.length) { toast('Không thấy SP “' + e.value + '”'); return; } draft.lines[i].cands = c; draft.lines[i].sel = 0; draft.lines[i].picked = c.length === 1; renderDraft(); }; });
+    box.querySelectorAll('[data-f]').forEach(function (e) {
+      e.oninput = function () { var i = +e.dataset.f, d = box.querySelector('[data-s="' + i + '"]'); draftSuggest('products', e.value, d, function (x) { draft.lines[i].cands = [{ it:x.it, s:1.5 }]; draft.lines[i].sel = 0; draft.lines[i].picked = true; renderDraft(); }); };
+    });
     $('dfNote').value = draft.note; $('dfCash').checked = draft.cash; sumDraft();
   }
   function sumDraft() {
@@ -839,7 +1066,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     $('dfSum').innerHTML = ok.length + ' dòng hợp lệ · tạm tính theo giá niêm yết ' + money(t) + ' (chưa trừ CK — Huyền áp CK/KM khi lên đơn)' + (weak ? '<br><span class="wr">⚠ ' + weak + ' dòng chưa chắc / thiếu SL — kiểm tra trước khi nạp.</span>' : '<br><span class="ok2">✔ Đủ thông tin.</span>');
   }
   $('dfCust').onchange = function () { draft.custSel = +this.value; draft.custPicked = true; renderDraft(); };
-  $('dfCustQ').onchange = function () { var c = findCustomers(this.value, 6); if (!c.length) { toast('Không thấy khách “' + this.value + '”'); return; } draft.cust = c; draft.custSel = 0; draft.custPicked = c.length === 1; this.value = ''; renderDraft(); };
+  $('dfCustQ').insertAdjacentHTML('afterend', '<div id="dfCustSug" class="sugg"></div>');
+  $('dfCustQ').oninput = function () { draftSuggest('customers', this.value, $('dfCustSug'), function (x) { draft.cust = [{it:x.it,s:1.5}]; draft.custSel=0; draft.custPicked=true; $('dfCustQ').value=''; renderDraft(); }); };
   $('dfNote').oninput = function () { draft.note = this.value; };
   $('dfCash').onchange = function () { draft.cash = this.checked; };
   $('dfAdd').onclick = function () { draft.lines.push({ raw: '(thêm tay)', qty: 1, cands: [], sel: -1 }); renderDraft(); var f = $('dfLines').querySelectorAll('[data-f]'); if (f.length) f[f.length - 1].focus(); };

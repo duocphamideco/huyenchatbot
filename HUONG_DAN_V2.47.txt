@@ -1,0 +1,31 @@
+HUYỀN MOBILE v2.47 — CHAT AI ĐỘC LẬP, ĐƠN NHANH VÀ GỢI Ý TỨC THỜI
+
+1) TRIỂN KHAI PWA
+- Dùng toàn bộ file trong ZIP Mobile v2.47. Đưa lên đúng repo GitHub Pages /huyenchatbot/ đang chạy.
+- Giữ nguyên manifest.json (id=/huyenchatbot/, start_url=./) và bộ logo v2.45.1 đã cài thành công.
+- Khởi động lại ứng dụng bằng cách đóng mở; nếu giao diện vẫn cũ, xóa cache website và mở lại.
+
+2) LÀM ĐƠN KHÔNG CẦN MÁY TÍNH
+- Chọn "Chuẩn hóa đơn hàng không cần PC" ở màn hình đầu.
+- Vào Tùy chọn, bấm tải danh sách sản phẩm và khách hàng trực tiếp từ Firebase.
+- Bấm "🧾 Đơn nhanh", gõ 2 ký tự trở lên; chạm vào một khách hàng và một sản phẩm được gợi ý.
+- Nhập số lượng, thêm mặt hàng, xem đơn nháp. Khách hàng và sản phẩm được chọn theo MÃ từ danh mục, không chỉ dựa vào văn bản gõ tự do.
+- Hoặc viết "Lên đơn ..." trong chat, bấm Gửi để vào cửa sổ chuẩn hóa trên điện thoại.
+- Các bước trên dùng dữ liệu Firebase/IndexedDB ở điện thoại, không gọi PC.
+
+3) CHAT HUYỀN AI KHÔNG CẦN PC
+- Tùy chọn > HUYỀN AI: chọn Google Gemini hoặc Kie.ai (API compatible), nhập model và API Key cá nhân, bấm Lưu.
+- Mặc định API Key chỉ lưu trong sessionStorage, mất khi đóng hẳn PWA; có nút chọn ghi nhớ (localStorage) nếu thiết bị riêng.
+- Không điền API Key chung công ty vào mã nguồn GitHub Pages. Client-side API key không an toàn tuyệt đối. Khi vận hành quy mô lớn, nên dùng backend/proxy có xác thực và giới hạn quota.
+- Chat AI cần 4G/Wi-Fi. Khi mất Internet hoặc chưa có API Key, trợ lý chỉ tra cứu danh mục đã lưu và giải thích các thao tác cơ bản, không thể thực hiện suy luận AI trực tuyến.
+
+4) NHIỀU ĐIỆN THOẠI GỬI ĐƠN ERP
+- Cần cài đồng thời IDECO_SUITE v1.0.11 mới trên PC để có xử lý nhận lệnh bằng Firebase ETag.
+- Khi nhiều Mobile gửi đồng thời, trạm PC chỉ xử lý lần lượt từng yêu cầu ERP, trả trạng thái xếp hàng cho từng điện thoại.
+- Nếu không nhận được phản hồi, KHÔNG gửi lại ngay: trước hết kiểm tra đơn đã lưu trong ERP hay chưa. Hệ thống không thể tự bảo đảm tính duy nhất của chứng từ ERP nếu ERP không hỗ trợ idempotency.
+- Mỗi Mobile cần ghép cặp PC theo mã/mật khẩu đúng và quyền Firebase Rules phù hợp.
+
+5) BẢO ĐẢM AN TOÀN ĐƠN HÀNG
+- Mobile chuẩn hóa mã KH/SP, số lượng; TUYỆT ĐỐI không tự tính CK/chính sách nếu không có dữ liệu quy tắc được xác thực.
+- Giá trong danh mục Mobile chỉ tham khảo. PC HUYỀN SALES sẽ kiểm tra giá, CK, chương trình khuyến mãi và chặn đơn thiếu chứng cứ khi lưu ERP.
+- Ảnh chụp đơn chưa OCR trên Mobile độc lập; nếu gửi ảnh sẽ cần PC để đọc và ghi ERP.
