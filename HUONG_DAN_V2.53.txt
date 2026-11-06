@@ -1,0 +1,13 @@
+HUYỀN MOBILE v2.53.0 — LƯU TẤT CẢ FIREBASE REALTIME
+
+1. Giải nén toàn bộ thư mục, upload tất cả tệp vào cùng thư mục GitHub Pages HUYỀN MOBILE (không đổi đường dẫn PWA).
+2. Đăng nhập HUYỀN MOBILE bằng mật khẩu của nhân viên. Mở Tùy chọn bằng mật khẩu quản trị.
+3. Nhập API Key chính / dự phòng, cấu hình lịch AI.
+4. Chọn Excel KHÁCH HÀNG và SẢN PHẨM nếu cập nhật dữ liệu mới; nếu không, ứng dụng đọc danh sách đã tải hoặc nguồn Firebase đã khai báo.
+5. Cuộn cuối trang Cài đặt, bấm "LƯU TẤT CẢ LÊN FIREBASE".
+6. Đợi dòng "ĐÃ LƯU VÀ ĐỌC LẠI THÀNH CÔNG" cùng số khách hàng, sản phẩm. Nếu lỗi, chưa tính là đã lưu.
+7. Mở máy khác, đăng nhập và bấm "Đồng bộ tất cả từ Firebase" nếu dữ liệu chưa tự tải.
+
+Dữ liệu lưu trong Firebase Realtime Database minhtriet-bb978 tại node ideco_huyen_mobile_ai_vault/v1, gồm cấu hình mã hóa và cả hai danh mục. Bản cũ được thay thế nguyên node khi lưu. Hãy sao lưu dữ liệu trước khi thay thế bộ dữ liệu lớn. ERP mặc định tắt; tính năng chat AI trên Mobile không yêu cầu PC.
+
+BẢO MẬT: GitHub Pages và mật khẩu dùng chung không thể bảo vệ API Key và dữ liệu khách hàng như máy chủ xác thực. Không mở Rules Firebase đọc/ghi công khai. Nên dùng Firebase Authentication và máy chủ giữ API Key để triển khai nhiều người; nếu Firebase từ chối, ứng dụng hiển thị lỗi quyền chứ không báo lưu thành công. Tính năng chưa được kiểm thử với Firebase thật / API Key thật.

@@ -135,6 +135,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 #chatAiStatus{font-size:12px;color:var(--dim);padding:0 5px 5px;line-height:1.35}
 #sharedAccessBtn{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:12px;padding:8px 12px;margin:0 0 6px;max-width:100%;font-weight:700;text-align:left}
 
+#saveEverything{background:#e73926;color:#fff;border:none;box-shadow:0 8px 22px #dc342c30;min-height:62px;font-weight:800}
+#saveEverything:disabled{opacity:.65}
+#everythingStatus{white-space:pre-wrap;line-height:1.5;margin-top:12px;font-size:13px}
+#everythingCounts{font-size:13px;font-weight:650;margin-top:8px}
 #sharedVaultStatus{font-size:13px;margin-top:10px;line-height:1.5;color:var(--dim)}
 .shared-strong{font-size:13px;color:var(--dim);line-height:1.5}
 
@@ -237,8 +241,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="note">Chatbot hoạt động khi đăng nhập Mobile, không cần bật ERP hay PC. Cần Internet, khóa API hợp lệ và lịch AI đang cho phép. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
     <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
-    <div class="note">Chỉ quản trị nhập khóa một lần. Bấm <b>Lưu API Key lên Firebase</b>; nhân viên đăng nhập HUYỀN MOBILE sẽ tự nhận cấu hình, không phải nhập API Key trên từng điện thoại.</div>
-    <div class="row"><button class="pri" id="sharedSave" type="button">💾 Lưu API Key lên Firebase</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
+    <div class="note">Chỉ quản trị nhập khóa một lần. Sau khi chọn Excel, bấm <b>LƯU TẤT CẢ LÊN FIREBASE</b> ở cuối Cài đặt. Điện thoại khác tự tải khóa, lịch AI, danh sách khách hàng và sản phẩm.</div>
+    <div class="row"><button class="pri" id="sharedSave" type="button" hidden>💾 Lưu API Key lên Firebase</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
     <div class="note" id="aiState" aria-live="polite"></div>
     <div id="sharedVaultStatus" role="status" aria-live="polite"></div>
     <div class="note">Nguồn Firebase: <code id="sharedVaultPath"></code></div>
@@ -256,7 +260,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       </div>
       <label for="aiMaxDaily">Giới hạn lượt yêu cầu mỗi ngày trên điện thoại</label>
       <input class="in" type="number" inputmode="numeric" id="aiMaxDaily" min="1" max="1000" value="20">
-      <button class="ghost" id="aiPolicySave" type="button">💾 Lưu lịch &amp; giới hạn AI</button>
+      <button class="ghost" id="aiPolicySave" type="button" hidden>💾 Lưu lịch &amp; giới hạn AI</button>
       <div class="ai-plan-hint" id="aiPolicyState" role="status" aria-live="polite"></div>
       <div class="note">Khi không nhắn tin hoặc AI đã tắt, ứng dụng không tự gọi API. Một lần gọi khóa dự phòng hoặc kiểm tra kết nối cũng tính một lượt. Giới hạn áp dụng theo thiết bị, theo ngày giờ trên máy; không phải hạn mức credit toàn tài khoản.</div>
     </div>
@@ -268,7 +272,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <input class="in" id="catalogP" type="url" inputmode="url" autocomplete="url" spellcheck="false" style="font-size:12px;padding:10px" />
     <label for="catalogC">Nguồn khách hàng (Firebase Realtime URL)</label>
     <input class="in" id="catalogC" type="url" inputmode="url" autocomplete="url" spellcheck="false" style="font-size:12px;padding:10px" />
-    <button class="ghost" id="saveCatalog" type="button">💾 Lưu nguồn Firebase</button>
+    <button class="ghost" id="saveCatalog" type="button" hidden>💾 Lưu nguồn Firebase</button>
     <div class="upload-area">
       <label for="catalogUploadBase">Lưu danh sách Excel vào node riêng của HUYỀN MOBILE</label>
       <input class="in" id="catalogUploadBase" type="url" inputmode="url" autocomplete="off" spellcheck="false" style="font-size:12px;padding:10px" />
@@ -276,7 +280,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <input id="excelP" type="file" accept=".xlsx,.csv,.tsv,.txt" class="in" style="font-size:13px;padding:8px">
       <label for="excelC">Chọn Excel danh sách khách hàng (.xlsx / .csv)</label>
       <input id="excelC" type="file" accept=".xlsx,.csv,.tsv,.txt" class="in" style="font-size:13px;padding:8px">
-      <button class="ghost" id="uploadExcel" type="button">☁️ Đọc Excel &amp; lưu lên Firebase Mobile</button>
+      <button class="ghost" id="uploadExcel" type="button" hidden>☁️ Đọc Excel &amp; lưu lên Firebase Mobile</button>
       <div class="note" id="uploadStatus" aria-live="polite">Chỉ ghi vào node riêng của Mobile, không thay đổi danh sách Sales/ERP. Cần quyền ghi Firebase hợp lệ.</div>
     </div>
     <div class="row"><button class="ghost" id="dLoadP" style="margin-top:8px">⟳ Sản phẩm</button><button class="ghost" id="dLoadC" style="margin-top:8px">⟳ Khách hàng</button></div>
@@ -284,6 +288,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <input class="in" id="dFind" placeholder="Tra nhanh: tên / mã SP, tên KH, SĐT…" style="margin-top:10px" autocomplete="off">
     <div class="dres" id="dRes"></div>
     <div class="note">Hai danh sách Excel đã đồng bộ thành dữ liệu trên Firebase được tải <b>thẳng về điện thoại</b>, lưu bản đệm để tra cứu khi offline. ✨ Chuẩn hóa chữ/giọng nói ngay trên máy, <b>không gọi PC hoặc ERP</b>. Ảnh đơn hàng chưa hỗ trợ OCR ở chế độ này. Chỉ bước 📤 Nạp đơn lên ERP mới yêu cầu máy tính trạm.</div>
+  </div>
+  <div class="dset ideco-sync-panel" id="sharedSyncPanel">
+    <h3>☁️ LƯU TẤT CẢ LÊN FIREBASE REALTIME</h3>
+    <div class="note">Một nút lưu đồng thời: <b>API Key chính/dự phòng (đã mã hóa), lịch AI, danh sách khách hàng và sản phẩm</b>. Nếu không chọn Excel mới, app dùng danh sách đang tải hoặc đọc từ nguồn Firebase đã khai báo. Không lưu danh sách rỗng.</div>
+    <button class="pri" id="saveEverything" type="button" style="width:100%;margin-top:12px">💾 LƯU TẤT CẢ LÊN FIREBASE</button>
+    <div class="note" id="everythingStatus" role="status" aria-live="polite">Chưa thực hiện lưu chung. Sau khi lưu thành công, mọi điện thoại đăng nhập sẽ tự tải cùng cấu hình và hai danh sách.</div>
+    <div class="note" id="everythingCounts"></div>
+    <button class="ghost" id="syncEverything" type="button">⟳ Đồng bộ tất cả từ Firebase về máy này</button>
   </div>
   <button class="pri" id="closeSheet">Đóng</button>
 </div></div>
@@ -335,6 +347,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <button class="pri" id="settingsUnlock" type="button">Mở Cài đặt</button>
   <button class="ghost" id="settingsCancel" type="button">Hủy</button>
 </div></div>
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+<script src="./catalog_normalizer.js"></script>
 <script>
 (function () {
   'use strict';
@@ -370,7 +384,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     // Tắt kết nối không xóa thông tin ghép cặp hay các đơn đã ghi ở ERP.
     erpUi(); stationText();
   }
-  function toast(t) { var e = $('toast'); e.textContent = t; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { e.classList.remove('show'); }, 2800); }
+  function toast(t) { var e = $('toast'); if (!e) { console.warn('HUYEN:',t); return; } e.textContent = t; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { e.classList.remove('show'); }, 2800); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   try { var th = localStorage.getItem('huyen_mobile_theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}
 
@@ -640,21 +654,36 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if(!cloudLoginKey)throw new Error('Hãy đăng nhập ứng dụng trước.');
     if(cloudFetchRunning)return cloudFetchRunning;
     cloudFetchRunning=(async function(){
-      var blob=await sharedFetch(AI_SHARED_DB+'.json');
+      var blob=await sharedFetch(AI_SHARED_DB+'/config.json');
+      if (!blob || !blob.kind) blob=await sharedFetch(AI_SHARED_DB+'.json');
       var config=await cloudOpen(blob);
       if(!appUnlocked) return false;
       sharedAiConfig={key1:config.key1||'',key2:config.key2||'',remember:false};
       cloudApplyPolicy(config.policy);
       $('sharedAccessBtn').style.display='none';
       await rememberDeviceAi();
-      sharedSetUi('Đã đồng bộ API Key dùng chung từ Firebase.');
+      sharedSetUi('Đã đồng bộ cấu hình AI từ Firebase. Đang kiểm tra danh mục dùng chung…');
       loadAiSettings();
+      Promise.resolve().then(async function(){
+        var m=await firebaseWorkspaceGet(AI_SHARED_DB+'/syncMeta',18000).catch(function(){return null;});
+        if (!m || m.schema!==1 || !m.products || !m.customers) return;
+        var remote={products:AI_SHARED_DB+'/catalogs/products',customers:AI_SHARED_DB+'/catalogs/customers',uploadBase:catalogSources().uploadBase};
+        localStorage.setItem(CAT_SETTINGS_KEY,JSON.stringify(remote));
+        initCatalogInputs();
+        var results=await Promise.allSettled([dataLoad('products',true),dataLoad('customers',true)]);
+        if(results.some(function(x){return x.status==='rejected';})) {
+          sharedSetUi('Đã đồng bộ API; còn lỗi tải danh mục. Bấm Đồng bộ tất cả để xem chi tiết.',true);
+          return;
+        }
+        sharedSetUi('Đã đồng bộ API, lịch AI, '+DATA.customers.rows.length+' khách hàng, '+DATA.products.rows.length+' sản phẩm từ Firebase.');
+        showWorkspaceCounts();
+      }).catch(function(e){sharedSetUi('Đã tải API; chưa tải đủ danh mục: '+e.message,true);});
       if(showMessage)toast('✅ Đã đồng bộ AI từ Firebase.');
       return true;
     })().finally(function(){cloudFetchRunning=null;});
     return cloudFetchRunning;
   }
-  $('sharedVaultPath').textContent=AI_SHARED_DB;
+  if($('sharedVaultPath')) $('sharedVaultPath').textContent=AI_SHARED_DB;
   $('sharedSave').onclick=async function(){
     var key1=$('aiKey1').value.trim(),key2=$('aiKey2').value.trim();
     if(!key1&&!key2){sharedSetUi('Hãy nhập API Key chính hoặc dự phòng trước khi lưu.',true);return;}
@@ -746,7 +775,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       $('aiKey1').placeholder = a.key1 ? 'Đã có API Key chính trên Firebase (nhập để thay)' : 'Nhập API Key chính';
       $('aiKey2').placeholder = a.key2 ? 'Đã có khóa dự phòng (nhập để thay)' : 'API Key dự phòng (tùy chọn)';
     }
-    $('aiState').textContent = sharedAiConfig ? '✅ AI đang dùng cấu hình Firebase chung.' : (a.key1 || a.key2 ? '✅ AI sử dụng cấu hình đã lưu trên thiết bị.' : 'Chưa có cấu hình AI. Quản trị nhập API Key rồi bấm Lưu Firebase.');
+    if($('aiState')) $('aiState').textContent = sharedAiConfig ? '✅ AI đang dùng cấu hình Firebase chung.' : (a.key1 || a.key2 ? '✅ AI sử dụng cấu hình đã lưu trên thiết bị.' : 'Chưa có cấu hình AI. Quản trị nhập API Key rồi bấm Lưu Firebase.');
   }
   $('aiTest').onclick = async function () {
     var existing=readAiConfig();
@@ -1688,6 +1717,164 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('installApp').addEventListener('click', installPwa);
   $('installFromLogin').addEventListener('click', installPwa);
   $('installFromAppLogin').addEventListener('click', installPwa);
+  /* v2.53 — ONE-SAVE FIREBASE WORKSPACE.
+   * Data lives under the existing /ideco_huyen_mobile_ai_vault/v1 node.
+   * One PUT replaces its configuration+both catalog datasets atomically; after
+   * successful response, read back the encrypted config and both datasets.
+   * No confirmation before validation. Never upload an empty catalog.
+   */
+  function workspaceUi(message,error){
+    var n=$('everythingStatus');
+    if(n){n.textContent=(error?'⚠️ ':'')+message;n.style.color=error?'var(--err)':'var(--ink)';}
+  }
+  function showWorkspaceCounts(){
+    var node=$('everythingCounts');
+    if(node) node.textContent='Khách hàng: '+(DATA.customers&&DATA.customers.rows?DATA.customers.rows.length.toLocaleString('vi-VN'):'chưa tải')+
+      ' · Sản phẩm: '+(DATA.products&&DATA.products.rows?DATA.products.rows.length.toLocaleString('vi-VN'):'chưa tải');
+  }
+  async function firebaseWorkspaceGet(node,maxMs){
+    var ctrl=new AbortController();var tm=setTimeout(function(){ctrl.abort();},maxMs||45000);
+    try{
+      var r=await fetch(node+'.json?cb='+Date.now(),{cache:'no-store',signal:ctrl.signal,headers:{Accept:'application/json'}});
+      var txt=await r.text();
+      if(!r.ok)throw new Error('Firebase từ chối đọc '+node.split('/').pop()+' (HTTP '+r.status+'). Kiểm tra Database Rules.');
+      if(!txt||!txt.trim())throw new Error('Firebase phản hồi rỗng khi đọc '+node.split('/').pop());
+      try{return JSON.parse(txt.replace(/^\uFEFF/,''));}
+      catch(_){throw new Error('Firebase trả về nội dung không phải JSON.');}
+    }catch(e){if(e.name==='AbortError')throw new Error('Firebase quá thời gian chờ khi đọc dữ liệu.');throw e;}
+    finally{clearTimeout(tm);}
+  }
+  async function firebaseWorkspacePut(node,object){
+    var ctrl=new AbortController();var tm=setTimeout(function(){ctrl.abort();},90000);
+    try{
+      var r=await fetch(node+'.json?print=silent',{method:'PUT',cache:'no-store',signal:ctrl.signal,
+        headers:{'Content-Type':'application/json'},body:JSON.stringify(object)});
+      if(!r.ok){var msg=(await r.text()).slice(0,170);throw new Error('Firebase không cho ghi (HTTP '+r.status+'). Kiểm tra Database Rules và dung lượng. '+msg);}
+      // 204 on silent PUT is success, but data MUST be read back before showing success.
+    }catch(e){if(e.name==='AbortError')throw new Error('Hết thời gian ghi Firebase (90 giây); chưa xác nhận thành công. Hãy đồng bộ trước khi thử ghi lại.');throw e;}
+    finally{clearTimeout(tm);}
+  }
+  function workspacePolicyFromForm(){
+    var p={enabled:$('aiGate').checked,fromDate:$('aiStartDate').value||'',toDate:$('aiEndDate').value||'',
+      fromTime:$('aiStartTime').value||'08:00',toTime:$('aiEndTime').value||'18:00',dailyMax:Number($('aiMaxDaily').value)};
+    if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime)
+      throw new Error('Giờ kết thúc phải sau giờ bắt đầu.');
+    if(p.fromDate&&p.toDate&&p.fromDate>p.toDate)throw new Error('Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.');
+    if(!Number.isInteger(p.dailyMax)||p.dailyMax<1||p.dailyMax>1000)throw new Error('Hạn mức AI phải từ 1–1000 lượt/ngày.');
+    return p;
+  }
+  async function workspaceRows(what){
+    var file=$(what==='products'?'excelP':'excelC').files[0];
+    var rows;
+    if(file){
+      workspaceUi('📄 Đang đọc Excel '+file.name+'…');
+      rows=await HuyenMobileCatalog.readExcel(file,what);
+    }else if(DATA[what]&&DATA[what].rows&&DATA[what].rows.length){
+      rows=DATA[what].rows;
+    }else{
+      var url=catalogUrl($(what==='products'?'catalogP':'catalogC').value);
+      workspaceUi('☁️ Đang tải danh sách '+(what==='products'?'sản phẩm':'khách hàng')+' từ '+new URL(url).host+'…');
+      var payload=await catalogReadJson(url,what);
+      rows=HuyenMobileCatalog.extract(what,payload);
+    }
+    if(!Array.isArray(rows)||!rows.length)throw new Error('Danh sách '+(what==='products'?'sản phẩm':'khách hàng')+' đang trống. Vui lòng chọn Excel hoặc bấm tải danh sách trước khi Lưu tất cả.');
+    if(rows.length>50000)throw new Error('Danh sách '+what+' có trên 50.000 dòng. Hãy chia nguồn Excel.');
+    // normalize every form (Excel, raw Firebase, local IndexedDB) into canonical 5-column rows
+    rows=HuyenMobileCatalog.extract(what,{rows:rows});
+    if(!rows.length)throw new Error('Danh sách '+what+' không có mã và tên hợp lệ.');
+    return rows;
+  }
+  async function syncWorkspaceCatalogs(retry){
+    var meta=await firebaseWorkspaceGet(AI_SHARED_DB+'/syncMeta',18000);
+    if(!meta||meta.schema!==1||!(meta.products>0)||!(meta.customers>0))
+      throw new Error('Chưa có bộ dữ liệu dùng chung. Quản trị phải chọn Excel và bấm LƯU TẤT CẢ.');
+    var sources={products:AI_SHARED_DB+'/catalogs/products',customers:AI_SHARED_DB+'/catalogs/customers',uploadBase:catalogSources().uploadBase};
+    // Do NOT change active sources until both catalogs are validated.
+    var all=await Promise.all(['products','customers'].map(async function(k){
+      var d=await firebaseWorkspaceGet(sources[k],60000);
+      var rows=HuyenMobileCatalog.extract(k,d);
+      if(!rows.length||rows.length!==meta[k])throw new Error('Danh sách '+k+' trên Firebase thiếu dữ liệu ('+rows.length+'/'+meta[k]+').');
+      return {what:k,rows:rows};
+    }));
+    for(var i=0;i<all.length;i++){
+      var k=all[i].what, rec={rows:all[i].rows,at:Date.now(),source:'firebase-workspace',store:sources[k]};
+      DATA[k]=prep(k,rec);await idbSet(dataKeyName(k),rec);
+    }
+    localStorage.setItem(CAT_SETTINGS_KEY,JSON.stringify(sources));initCatalogInputs();dataStat();showWorkspaceCounts();
+    return all;
+  }
+  async function performSaveEverything(){
+    if(!appUnlocked||!cloudLoginKey)throw new Error('Cần đăng nhập HUYỀN MOBILE trước.');
+    if(!navigator.onLine)throw new Error('Không có kết nối Internet. Cài đặt cũ vẫn được giữ nguyên.');
+    var old=readAiConfig();
+    var keys={key1:($('aiKey1').value||'').trim()||old.key1||'',key2:($('aiKey2').value||'').trim()||old.key2||''};
+    if(!keys.key1&&!keys.key2)throw new Error('Hãy nhập ít nhất một API Key trong phần HUYỀN AI.');
+    var policy=workspacePolicyFromForm();
+    var products=await workspaceRows('products');
+    var customers=await workspaceRows('customers');
+    workspaceUi('🔎 Đã kiểm tra '+products.length+' sản phẩm, '+customers.length+' khách hàng. Đang mã hóa API Key…');
+    var env=await cloudSeal({key1:keys.key1,key2:keys.key2,policy:policy});
+    var version=Date.now();
+    var payload=Object.assign({},env,{
+      config:env,
+      syncMeta:{schema:1,version:version,products:products.length,customers:customers.length,updatedAt:Date.now()},
+      catalogs:{products:{rows:products,meta:{count:products.length,updatedAt:version}},customers:{rows:customers,meta:{count:customers.length,updatedAt:version}}}
+    });
+    var bytes=new Blob([JSON.stringify(payload)]).size;
+    if(bytes>14*1024*1024)throw new Error('Dữ liệu tổng '+(bytes/1048576).toFixed(1)+' MB quá lớn cho một lần ghi. Hãy chia danh mục hoặc rút gọn cột Excel.');
+    if(!confirm('Lưu đồng thời toàn bộ cấu hình AI và '+customers.length+' khách hàng, '+products.length+' sản phẩm lên Firebase?\nDữ liệu dùng chung trước đó sẽ được thay thế.'))
+      throw new Error('Đã hủy lưu. Dữ liệu cũ được giữ nguyên.');
+    workspaceUi('☁️ Đang ghi toàn bộ ('+(bytes/1048576).toFixed(1)+' MB) lên Firebase…');
+    await firebaseWorkspacePut(AI_SHARED_DB,payload);
+    workspaceUi('🔎 Firebase đã phản hồi; đang đọc lại để kiểm tra dữ liệu thực tế…');
+    var [remoteConfig,remoteMeta,remoteProducts,remoteCustomers]=await Promise.all([
+      firebaseWorkspaceGet(AI_SHARED_DB+'/config',45000),firebaseWorkspaceGet(AI_SHARED_DB+'/syncMeta',45000),
+      firebaseWorkspaceGet(AI_SHARED_DB+'/catalogs/products',90000),firebaseWorkspaceGet(AI_SHARED_DB+'/catalogs/customers',90000)
+    ]);
+    var check=await cloudOpen(remoteConfig);
+    var rp=HuyenMobileCatalog.extract('products',remoteProducts),rc=HuyenMobileCatalog.extract('customers',remoteCustomers);
+    if(check.key1!==keys.key1||check.key2!==keys.key2||!remoteMeta||remoteMeta.version!==version||
+      rp.length!==products.length||rc.length!==customers.length||
+      JSON.stringify(rp)!==JSON.stringify(products)||JSON.stringify(rc)!==JSON.stringify(customers)||
+      JSON.stringify(check.policy)!==JSON.stringify(policy))
+      throw new Error('Dữ liệu Firebase đọc lại chưa khớp. Không thể xác nhận lưu thành công.');
+    // Only mutate application state after successful remote read-back.
+    sharedAiConfig={key1:check.key1,key2:check.key2,remember:false};
+    cloudApplyPolicy(check.policy);
+    var sources={products:AI_SHARED_DB+'/catalogs/products',customers:AI_SHARED_DB+'/catalogs/customers',uploadBase:catalogSources().uploadBase};
+    localStorage.setItem(CAT_SETTINGS_KEY,JSON.stringify(sources));initCatalogInputs();
+    for(var entry of [{w:'products',rows:rp},{w:'customers',rows:rc}]){
+      var rec={rows:entry.rows,at:Date.now(),store:sources[entry.w],source:'firebase-workspace'};
+      DATA[entry.w]=prep(entry.w,rec);await idbSet(dataKeyName(entry.w),rec);
+    }
+    await rememberDeviceAi().catch(function(){});
+    $('aiKey1').value='';$('aiKey2').value='';
+    loadAiSettings();updateAiPolicyUi();dataStat();showWorkspaceCounts();
+    if($('sharedAccessBtn'))$('sharedAccessBtn').style.display='none';
+    sharedSetUi('Đã lưu đồng thời API Key, lịch AI và hai danh sách Excel lên Firebase.');
+    workspaceUi('✅ ĐÃ LƯU VÀ ĐỌC LẠI THÀNH CÔNG! '+rc.length+' khách hàng, '+rp.length+' sản phẩm, API Key mã hóa và lịch AI. Máy khác chỉ cần đăng nhập rồi đồng bộ.');
+    toast('✅ Đã lưu tất cả trên Firebase.');
+  }
+  $('saveEverything').onclick=async function(){
+    var b=this;b.disabled=true;b.textContent='⏳ Đang lưu và xác minh…';
+    try{await performSaveEverything();}
+    catch(e){workspaceUi('CHƯA HOÀN TẤT LƯU: '+e.message,true);sharedSetUi('Chưa xác nhận lưu toàn bộ dữ liệu. '+e.message,true);}
+    finally{b.disabled=false;b.textContent='💾 LƯU TẤT CẢ LÊN FIREBASE';}
+  };
+  $('syncEverything').onclick=async function(){
+    var b=this;b.disabled=true;b.textContent='⏳ Đang tải cấu hình và 2 danh sách…';
+    try{
+      await autoLoadSharedAi(true); // async catalog load also launched
+      await syncWorkspaceCatalogs();
+      workspaceUi('✅ ĐÃ ĐỒNG BỘ đầy đủ AI, lịch AI và '+DATA.customers.rows.length+' khách hàng, '+DATA.products.rows.length+' sản phẩm.');
+    }catch(e){workspaceUi('Chưa đồng bộ đủ: '+e.message,true);}
+    finally{b.disabled=false;b.textContent='⟳ Đồng bộ tất cả từ Firebase về máy này';}
+  };
+  // Do not allow the obsolete local-only save buttons to mislead users.
+  ['sharedSave','saveCatalog','uploadExcel','aiPolicySave'].forEach(function(id){
+    var btn=$(id);if(btn){btn.hidden=true;btn.style.display='none';btn.onclick=function(){$('saveEverything').click();};}
+  });
+  showWorkspaceCounts();
   loadCfg(); grow(); saveErpChoice(false); erpUi(); st.pairDb = hp.db || '';
   // Đăng nhập Mobile độc lập. KHÔNG kết nối Firebase bridge/PC khi chưa bật ERP.
   showAppLogin();
@@ -1695,6 +1882,9 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   if (hp.n && !($('appLoginName').value||'').trim()) $('appLoginName').value=hp.n;
 })();
 </script>
-<script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>
+<script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+
+
+</script>
 </body>
 </html>
