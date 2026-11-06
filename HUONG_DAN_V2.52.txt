@@ -1,0 +1,29 @@
+HUYỀN MOBILE v2.52.1 — LƯU API KEY FIREBASE ĐƠN GIẢN
+
+MẬT KHẨU:
+• Vào HUYỀN MOBILE: congtyideco@2026
+• Vào Cài đặt: minhtriet1973
+• Ghép ERP chỉ khi bật công tắc, mật khẩu ERP độc lập.
+
+THIẾT LẬP MỘT LẦN (quản trị):
+1. Đăng nhập Mobile, mở Cài đặt.
+2. Nhập API Key AI chính hoặc dự phòng.
+3. Chỉnh lịch AI, bấm Lưu lịch và hạn mức.
+4. Bấm 'Lưu API Key lên Firebase' và đợi thông báo thành công.
+5. Các điện thoại khác chỉ cần đăng nhập ứng dụng; sẽ tự nhận khóa và lịch qua Firebase, không có mã mở khóa nhóm.
+
+Node Firebase: ideco_huyen_mobile_ai_vault/v1 trên database minhtriet-bb978.
+Nếu database từ chối ghi/đọc (401/403), cần quản trị cấu hình xác thực và Database Rules cho node; KHÔNG được mở quyền ghi chung trên toàn database.
+Khóa được AES-GCM mã hóa theo mật khẩu đăng nhập Mobile, không lưu dạng chữ rõ. Tuy vậy đây là website tĩnh dùng mật khẩu chia sẻ, không đảm bảo bảo vệ bí mật khóa API trước người biết mật khẩu, người có quyền đọc mã nguồn hoặc tấn công dò khóa offline. Để sử dụng thật ở nhiều nhân viên phải dùng backend proxy/Firebase Cloud Functions có xác thực và quota trung tâm.
+Chưa kiểm tra được mạng Firebase/API thật.
+
+Cập nhật GitHub Pages: thay toàn bộ file ở root repo, giữ nguyên cấu hình PWA (manifest/logo). Tải lại ứng dụng trên máy để lấy service worker mới.
+
+ĐƠN HÀNG ĐƠN GIẢN:
+• "Nhà thuốc Bạch Liên đặt 12 hộp Wamlox" → 1 sản phẩm, 12 hộp.
+• "Nhà thuốc Bạch Liên đặt 1 sản phẩm Wamlox số lượng 12" → 1 sản phẩm, SL 12.
+• Đơn nhanh: chọn khách, chọn thuốc và SL, bấm Kiểm tra đơn. Không cần bấm Thêm loại hàng khác khi chỉ mua một loại.
+• Chỉ yêu cầu xác nhận mã khi tên hàng/khách hàng còn nhầm lẫn; không tạo đơn thứ hai.
+• ERP chỉ được gửi khi bật kết nối và dữ liệu đã đối chiếu.
+
+LƯU Ý: Nếu Firebase Database Rules không cho đọc/ghi node này, ứng dụng sẽ thông báo lỗi và không thể đồng bộ. Không mở quyền ghi công khai cho toàn database.

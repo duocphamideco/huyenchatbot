@@ -109,6 +109,9 @@
     s = s.replace(/^(?:(?:len|tao|lap) don(?: hang)?(?: cho)?\s+|(?:don hang cho|cho|cua|khach hang|khach|nha thuoc|quay thuoc|dai ly|tiem thuoc|san pham|mat hang|thuoc|loai|sp|la|gom|mua|dat|lay|can|ban|so luong|sl)\s+)+/, '');
     s = s.replace(/\b(?:cho nha thuoc|cho khach hang|cho dai ly)\b/g, ' ');
     s = s.replace(/^(?:(?:khach hang|khach|nha thuoc|quay thuoc|dai ly|tiem thuoc|san pham|mat hang|thuoc|loai|sp|la|gom|mua|dat|lay|can|ban|so luong|sl)\s+)+/, '');
+    // "1 sản phẩm Wamlox 12 hộp" = một LOẠI sản phẩm, không phải tên thuốc "1 sản phẩm".
+    s = s.replace(/^(?:1\s+(?:san pham|loai|mat hang|sp)\s+)+/, '');
+    s = s.replace(/\b(?:so luong|sl|qty)\s*$/, '');
     return s.replace(/\s+/g, ' ').trim();
   }
   function productHint(fragment, rows) {
@@ -147,7 +150,7 @@
       var count = /(\d+(?:[.,]\d+)?)\s*(?:s[aả]n\s*ph[aẩ]m|s[ảa]n\s*ph[ẩa]m|m[aặ]t\s*h[aà]ng|sp|thu[oố]c|lo[aạ]i|[dđ][oơ]n\s*v[iị])\b/gi;
       while ((m = count.exec(chunk))) addMatch(m.index, count.lastIndex, Number(m[1].replace(',', '.')), '', 'count');
       // 3. "số lượng 12", "SL:12", "lấy 12" (unit optional).
-      var labelled = /(?:s[oố]\s*l[uượ]ng|\bsl\b|\bqty\b|l[aấ]y|mua|c[aầ]n)\s*[:=\-]?\s*(\d+(?:[.,]\d+)?)/gi;
+      var labelled = /(?:s[oố]\s*l(?:[uượ]ng|ượng|uong)|\bsl\b|\bqty\b|l[aấ]y|mua|c[aầ]n)\s*[:=\-]?\s*(\d+(?:[.,]\d+)?)/gi;
       while ((m = labelled.exec(chunk))) {
         var at = m.index + m[0].lastIndexOf(m[1]);
         addMatch(at, m.index + m[0].length, Number(m[1].replace(',', '.')), '', 'label');
@@ -165,6 +168,11 @@
         }
         // Avoid guessing where multiple numbers remain plausible.
         if (candidate.length === 1) addMatch(candidate[0].index, candidate[0].end, candidate[0].qty, '', 'bare');
+      }
+      // "đặt 1 sản phẩm Wamlox 12 hộp" nghĩa là MỘT LOẠI HÀNG, số lượng 12 hộp.
+      // Không biến "1 sản phẩm" thành dòng hàng thứ hai khi đã có SL cụ thể.
+      if (all.some(function(x){return x.kind==='unit'||x.kind==='label';})) {
+        all = all.filter(function(x){return !(x.kind==='count' && x.qty===1);});
       }
       all.sort(function (a, b) { return a.index - b.index; });
       all.forEach(function (x, i) {

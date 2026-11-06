@@ -134,7 +134,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .doc-chips{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0 8px}.doc-chip{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:10px;background:var(--chip);border:1px solid var(--line);font-size:12px;max-width:100%;}.doc-chip span{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.doc-chip button{border:0;border-radius:8px;background:transparent;font-weight:700;padding:3px;}
 #chatAiStatus{font-size:12px;color:var(--dim);padding:0 5px 5px;line-height:1.35}
 #sharedAccessBtn{border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--ink);font-size:12px;padding:8px 12px;margin:0 0 6px;max-width:100%;font-weight:700;text-align:left}
-#sharedUnlockSheet{z-index:20}#sharedUnlockSheet .card{max-width:500px;max-height:90dvh;overflow:auto}
+
 #sharedVaultStatus{font-size:13px;margin-top:10px;line-height:1.5;color:var(--dim)}
 .shared-strong{font-size:13px;color:var(--dim);line-height:1.5}
 
@@ -166,7 +166,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <div class="note" id="appLoginError" role="alert" aria-live="polite"></div>
       <button class="pri" id="appLoginBtn" type="button">Vào HUYỀN AI</button>
       <button class="ghost" id="installFromAppLogin" type="button">📲 Cài ứng dụng lên màn hình</button>
-      <div class="note">Chat AI, gợi ý sản phẩm, đọc file và chuẩn hóa đơn không yêu cầu ERP. Nếu điện thoại chưa kích hoạt khóa AI dùng chung, chỉ cần nhập mã nhóm một lần trong mục AI.</div>
+      <div class="note">Chat AI, gợi ý sản phẩm, đọc file và chuẩn hóa đơn không yêu cầu ERP. Sau khi đăng nhập, ứng dụng tự đồng bộ AI dùng chung từ Firebase. Không cần ghép PC hay nhập thêm mã khác.</div>
     </div>
   </section>
   <section class="pairv" id="pairView" hidden>
@@ -205,7 +205,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     </div>
     <div id="normStatus" aria-live="polite" class="norm-status"></div>
     <div id="chatAiStatus" role="status" aria-live="polite"></div>
-    <button id="sharedAccessBtn" type="button">🔓 Kích hoạt AI dùng chung từ Firebase</button>
+    <button id="sharedAccessBtn" type="button">⟳ Tải lại AI dùng chung từ Firebase</button>
     <div class="thumbs" id="thumbs"></div>
     <div class="doc-chips" id="docsPreview"></div>
     <div class="box" id="box">
@@ -237,22 +237,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="note">Chatbot hoạt động khi đăng nhập Mobile, không cần bật ERP hay PC. Cần Internet, khóa API hợp lệ và lịch AI đang cho phép. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
     <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
-    <label class="rem"><input type="checkbox" id="aiRemember"> Ghi nhớ API Key trên máy này (chỉ nên dùng thiết bị riêng)</label>
-    <div class="row"><button class="ghost" id="aiSave" type="button">💾 Lưu tạm máy này</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
+    <div class="note">Chỉ quản trị nhập khóa một lần. Bấm <b>Lưu API Key lên Firebase</b>; nhân viên đăng nhập HUYỀN MOBILE sẽ tự nhận cấu hình, không phải nhập API Key trên từng điện thoại.</div>
+    <div class="row"><button class="pri" id="sharedSave" type="button">💾 Lưu API Key lên Firebase</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
     <div class="note" id="aiState" aria-live="polite"></div>
-    <div class="dset" id="sharedVaultSettings">
-      <h3>☁️ Dùng chung API Key qua Firebase Realtime</h3>
-      <div class="note">Quản trị viên nhập API Key ở trên, bật lịch AI phù hợp, rồi mã hóa lưu một lần lên Firebase. Nhân viên chỉ nhập <b>mã mở khóa nhóm</b> trên điện thoại để dùng AI, <b>không cần biết API Key</b>.</div>
-      <div class="note">Nguồn cấu hình: <code id="sharedVaultPath"></code></div>
-      <label for="sharedAdminPass">Mã mở khóa nhóm (quản trị tự đặt, tối thiểu 12 ký tự)</label>
-      <input id="sharedAdminPass" type="password" class="in" autocomplete="new-password" placeholder="Nhập mã bảo vệ nhóm để mã hóa khóa AI">
-      <label for="sharedFirebaseAuth">Token Firebase của quản trị (chỉ khi Database Rules yêu cầu)</label>
-      <input id="sharedFirebaseAuth" type="password" class="in" autocomplete="off" placeholder="Tùy chọn; không lưu trên máy">
-      <button class="pri" id="sharedSave" type="button">☁️ Mã hóa &amp; lưu API Key dùng chung lên Firebase</button>
-      <button class="ghost" id="sharedUnlockInSettings" type="button">🔓 Tải khóa dùng chung về điện thoại này</button>
-      <div id="sharedVaultStatus" role="status" aria-live="polite"></div>
-      <div class="note">API Key không lưu dưới dạng chữ rõ trên Firebase. Đừng dùng mật khẩu Cài đặt làm mã nhóm; hãy tạo mã riêng khó đoán và chỉ chia sẻ nội bộ. Firebase cần Rules phù hợp, không mở quyền ghi công khai.</div>
-    </div>
+    <div id="sharedVaultStatus" role="status" aria-live="polite"></div>
+    <div class="note">Nguồn Firebase: <code id="sharedVaultPath"></code></div>
+    <button class="ghost" id="sharedUnlockInSettings" type="button">⟳ Đồng bộ cấu hình AI từ Firebase</button>
+    <div class="note">Khóa được mã hóa trên Firebase dựa trên mật khẩu đăng nhập Mobile; không có bước mở khóa bổ sung. <b>Lưu ý:</b> website tĩnh và mật khẩu chia sẻ không bảo vệ API Key như máy chủ xác thực. Cần giới hạn quyền Firebase và hạn mức API trước khi dùng đại trà.</div>
     <div class="dset" style="margin-top:10px">
       <h3>⏱ Lịch sử dụng AI &amp; hạn mức credit</h3>
       <label class="rem" for="aiGate"><input type="checkbox" id="aiGate"> Cho phép AI trực tuyến (mặc định tắt)</label>
@@ -298,7 +289,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 </div></div>
 <div class="sheet" id="quickSheet"><div class="card tall">
   <h2>🧾 Đơn nhanh · độc lập PC</h2>
-  <p>Gõ tên khách hoặc sản phẩm, chạm chọn từ danh sách Firebase đã tải. Chuẩn hóa tại điện thoại trước khi gửi ERP.</p>
+  <p>Chỉ cần chọn khách, chọn <b>một sản phẩm</b>, nhập số lượng rồi bấm <b>Kiểm tra đơn</b>. Nếu mua nhiều loại mới bấm “Thêm loại hàng khác”.</p>
   <div id="quickState" class="quick-state">Đang đọc dữ liệu lưu trên điện thoại…</div>
   <label for="quickCust">🏪 Tìm khách hàng (tên, mã hoặc SĐT)</label>
   <input id="quickCust" class="in" autocomplete="off" placeholder="VD: Nhà thuốc Minh Châu">
@@ -306,19 +297,19 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <label for="quickProduct">💊 Tìm sản phẩm (tên, mã, quy cách)</label>
   <input id="quickProduct" class="in" autocomplete="off" placeholder="VD: Dầu gội Hamifa Đen">
   <div id="quickProductS" class="sugg"></div>
-  <div class="row" style="align-items:end"><div style="flex:1"><label for="quickQty">Số lượng</label><input id="quickQty" class="in" inputmode="decimal" value="1"></div><button class="ghost" id="quickAdd" style="flex:2">＋ Thêm sản phẩm</button></div>
+  <div class="row" style="align-items:end"><div style="flex:1"><label for="quickQty">Số lượng</label><input id="quickQty" class="in" inputmode="decimal" value="1"></div><button class="ghost" id="quickAdd" style="flex:2">＋ Thêm loại hàng khác (không bắt buộc)</button></div>
   <div id="quickLines"></div>
   <label for="quickNote">Ghi chú</label><input id="quickNote" class="in" placeholder="Giao hàng, thanh toán…">
-  <button class="pri" id="quickReview">✅ Xem và kiểm tra đơn nháp</button>
+  <button class="pri" id="quickReview">✅ Kiểm tra đơn (1 sản phẩm cũng được)</button>
   <button class="ghost" id="quickClose">Đóng (giữ đơn đang chọn)</button>
 </div></div>
 <div class="sheet" id="draftSheet"><div class="card tall">
   <h2>✨ Đơn đã chuẩn hóa</h2>
-  <p id="dfInfo">Kiểm tra khách hàng, sản phẩm, số lượng rồi bấm Nạp đơn hàng.</p>
+  <p id="dfInfo">Một sản phẩm là đủ để xác nhận đơn; chỉ cần đúng khách hàng, mã sản phẩm và số lượng.</p>
   <label>Khách hàng</label><select class="sel" id="dfCust"></select>
   <input class="in" id="dfCustQ" placeholder="Tìm khách khác: tên / mã / SĐT…" style="margin-top:8px;padding:11px" autocomplete="off">
   <div id="dfLines"></div>
-  <button class="ghost" id="dfAdd">＋ Thêm dòng hàng</button>
+  <button class="ghost" id="dfAdd">＋ Thêm loại hàng khác (nếu khách đặt nhiều loại)</button>
   <label>Ghi chú đơn</label><input class="in" id="dfNote" placeholder="Giao hàng, thanh toán…" style="padding:11px">
   <label class="rem"><input type="checkbox" id="dfCash"> 💵 Khách trả tiền mặt (tự bật nút Tiền mặt)</label>
   <div class="dsum" id="dfSum"></div>
@@ -344,18 +335,6 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <button class="pri" id="settingsUnlock" type="button">Mở Cài đặt</button>
   <button class="ghost" id="settingsCancel" type="button">Hủy</button>
 </div></div>
-<div class="sheet" id="sharedUnlockSheet" role="dialog" aria-modal="true" aria-labelledby="sharedUnlockTitle"><div class="card">
-  <h2 id="sharedUnlockTitle">🔓 HUYỀN AI dùng chung</h2>
-  <p>Nhập mã mở khóa nhóm do quản trị viên cung cấp. Khóa API sẽ được giải mã tạm trên thiết bị; không phải nhập API Key.</p>
-  <label for="sharedEmployeePass">Mã mở khóa nhóm</label>
-  <input id="sharedEmployeePass" class="in" type="password" autocomplete="off" placeholder="Mã dùng chung IDECO">
-  <div class="shared-strong">Yêu cầu Internet lần đầu để tải dữ liệu mã hóa từ Firebase. Sau khi mở, AI vẫn sử dụng lịch và giới hạn lượt mỗi ngày đã cấu hình.</div>
-  <div id="sharedUnlockError" class="note" role="status" aria-live="polite"></div>
-  <button class="pri" id="sharedUnlockConfirm" type="button">Kết nối AI dùng chung</button>
-  <button class="ghost" id="sharedUnlockClose" type="button">Đóng</button>
-</div></div>
-<div class="toast" id="toast"></div>
-<script src="catalog_normalizer.js"></script>
 <script>
 (function () {
   'use strict';
@@ -538,10 +517,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       && !/\b(la gi|giai thich|cach lam|huong dan chung)\b/.test(t);
   }
   var AI_STORE = 'huyen_mobile_ai_v247', AI_MODEL = 'deepseek-v4-1-flash';
-  // Key material is stored on Firebase as AES-256-GCM ciphertext, never plaintext.
-  // Shared unlock phrase is not stored in localStorage / Firebase / application code.
+  // API config is encrypted on Firebase with a key derived from the Mobile login password.
+  // No additional group unlock code; do not confuse this with server-side access control.
   var AI_SHARED_DB = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_ai_vault/v1';
-  var sharedAiConfig = null;
+  var sharedAiConfig = null, cloudLoginKey = null, cloudFetchRunning = null;
   var LOCAL_AI_VAULT = 'huyen_mobile_ai_device_v251', LOCAL_AI_SALT = 'huyen_mobile_ai_device_salt_v251';
   var appUnlocked = false, appDeviceVaultKey = null, appLoginFails = 0, appLoginBlockedUntil = 0;
   async function getDeviceVaultKey(password) {
@@ -575,6 +554,30 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       return true;
     } catch (_) { return false; }
   }
+  // Nếu trước đây v2.51 dùng mật khẩu quản trị để đăng nhập, khóa đệm AI
+  // còn mã hóa theo mật khẩu cũ. Chỉ chuyển khóa khi quản trị nhập đúng mật khẩu Cài đặt.
+  // KHÔNG hardcode mật khẩu quản trị và KHÔNG gửi khóa AI ra ngoài.
+  async function migrateLegacyDeviceAi(adminPassword) {
+    if (!appDeviceVaultKey || sharedAiConfig) return false;
+    var record;
+    try { record = JSON.parse(localStorage.getItem(LOCAL_AI_VAULT) || 'null'); } catch (_) { return false; }
+    if (!record || record.v !== 1 || !record.iv || !record.payload) return false;
+    try {
+      var legacyKey = await getDeviceVaultKey(adminPassword);
+      if (!legacyKey) return false;
+      var bytes = await crypto.subtle.decrypt({name:'AES-GCM', iv:sharedUnb64(record.iv)}, legacyKey, sharedUnb64(record.payload));
+      var conf = JSON.parse(new TextDecoder().decode(bytes));
+      if (!conf || Date.now() >= conf.expiry || (!conf.key1 && !conf.key2)) return false;
+      sharedAiConfig = {key1:conf.key1 || '', key2:conf.key2 || '', remember:false};
+      if (conf.policy && typeof conf.policy === 'object') {
+        try { localStorage.setItem(AI_POLICY_STORE, JSON.stringify(conf.policy)); } catch (_) {}
+      }
+      await rememberDeviceAi(); // Mã hóa lại bằng mật khẩu đăng nhập Mobile mới.
+      $('sharedAccessBtn').style.display = 'none';
+      updateAiPolicyUi(); loadAiSettings();
+      return true;
+    } catch (_) { return false; }
+  }
   function readAiConfig() {
     if (sharedAiConfig && (sharedAiConfig.key1 || sharedAiConfig.key2)) return sharedAiConfig;
     try { return JSON.parse(sessionStorage.getItem(AI_STORE) || localStorage.getItem(AI_STORE) || '{}') || {}; }
@@ -587,25 +590,29 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var base=await crypto.subtle.importKey('raw',new TextEncoder().encode(pass),'PBKDF2',false,['deriveKey']);
     return crypto.subtle.deriveKey({name:'PBKDF2',salt:salt,iterations:iterations,hash:'SHA-256'},base,{name:'AES-GCM',length:256},false,['encrypt','decrypt']);
   }
-  async function sharedEncrypt(secret,pass){
-    var salt=crypto.getRandomValues(new Uint8Array(16));
-    var iv=crypto.getRandomValues(new Uint8Array(12));
-    var iter=310000;
-    var k=await sharedDerive(pass,salt,iter);
-    var sealed=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},k,new TextEncoder().encode(JSON.stringify(secret)));
-    return {version:1,kind:'ideco-huyen-ai-shared-v1',cipher:'AES-256-GCM',kdf:'PBKDF2-SHA256',iterations:iter,salt:sharedB64(salt),iv:sharedB64(iv),payload:sharedB64(new Uint8Array(sealed)),updatedAt:Date.now()};
+  async function cloudKeyFromLogin(password){
+    // Static salt identifies the encryption purpose, not a separate password.
+    // WebCrypto keeps the derived key non-extractable in memory.
+    return sharedDerive(password,new TextEncoder().encode('ideco-huyen-mobile-firebase-ai-v252'),260000);
   }
-  async function sharedDecrypt(blob,pass){
-    if(!blob||blob.kind!=='ideco-huyen-ai-shared-v1'||blob.version!==1||blob.cipher!=='AES-256-GCM'||!blob.payload)throw new Error('Firebase chưa có cấu hình AI dùng chung đúng định dạng.');
-    var iterations=Number(blob.iterations);
-    if(!Number.isInteger(iterations)||iterations<100000||iterations>500000)throw new Error('Số vòng mã hóa không hợp lệ.');
+  async function cloudSeal(config){
+    if(!cloudLoginKey)throw new Error('Vui lòng đăng nhập Mobile trước khi lưu.');
+    var iv=crypto.getRandomValues(new Uint8Array(12));
+    var ciphertext=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},cloudLoginKey,new TextEncoder().encode(JSON.stringify(config)));
+    return {kind:'ideco-huyen-ai-login-v2',version:2,cipher:'AES-256-GCM',iv:sharedB64(iv),payload:sharedB64(new Uint8Array(ciphertext)),updatedAt:Date.now()};
+  }
+  async function cloudOpen(blob){
+    if(!blob)throw new Error('Chưa có API Key dùng chung trên Firebase. Quản trị cần nhập khóa và bấm Lưu.');
+    if(blob.kind!=='ideco-huyen-ai-login-v2'||blob.version!==2||!blob.iv||!blob.payload){
+      throw new Error('Firebase đang có cấu hình phiên bản cũ. Quản trị mở Cài đặt, nhập lại API Key và bấm Lưu một lần để nâng cấp.');
+    }
+    if(!cloudLoginKey)throw new Error('Chưa đăng nhập Mobile.');
     try{
-      var k=await sharedDerive(pass,sharedUnb64(blob.salt),iterations);
-      var plain=await crypto.subtle.decrypt({name:'AES-GCM',iv:sharedUnb64(blob.iv)},k,sharedUnb64(blob.payload));
-      var obj=JSON.parse(new TextDecoder().decode(plain));
-      if(!obj||(!obj.key1&&!obj.key2))throw new Error('Cấu hình AI dùng chung trống.');
+      var bytes=await crypto.subtle.decrypt({name:'AES-GCM',iv:sharedUnb64(blob.iv)},cloudLoginKey,sharedUnb64(blob.payload));
+      var obj=JSON.parse(new TextDecoder().decode(bytes));
+      if(!obj||(!obj.key1&&!obj.key2))throw new Error('Cấu hình trống.');
       return obj;
-    }catch(e){throw new Error('Mã mở khóa nhóm không đúng hoặc dữ liệu Firebase đã thay đổi.');}
+    }catch(e){throw new Error('Không mở được cấu hình AI. Kiểm tra mật khẩu Mobile hoặc yêu cầu quản trị Lưu lại API Key.');}
   }
   async function sharedFetch(url,options){
     var ctrl=new AbortController(), t=setTimeout(function(){ctrl.abort();},18000);
@@ -622,62 +629,68 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function sharedSetUi(text,isError){
     var node=$('sharedVaultStatus');if(node){node.textContent=(isError?'⚠ ':'✅ ')+text;node.style.color=isError?'var(--err)':'var(--ok)';}
   }
-  async function sharedUnlock(pass){
-    var blob=await sharedFetch(AI_SHARED_DB+'.json');
-    var config=await sharedDecrypt(blob,pass);
-    sharedAiConfig={key1:config.key1||'',key2:config.key2||'',remember:false};
-    // Central policy overrides local settings at unlock so staff get admin's schedule.
-    if(config.policy&&typeof config.policy==='object'){
-      var p=config.policy;
-      var policy={enabled:!!p.enabled,fromDate:String(p.fromDate||''),toDate:String(p.toDate||''),fromTime:String(p.fromTime||'08:00'),toTime:String(p.toTime||'18:00'),dailyMax:Math.max(1,Math.min(1000,Number(p.dailyMax)||20))};
-      try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(policy));}catch(_){}
-    }
+  function cloudApplyPolicy(policy){
+    if(!policy||typeof policy!=='object')return;
+    var p=policy;
+    var normalized={enabled:!!p.enabled,fromDate:String(p.fromDate||''),toDate:String(p.toDate||''),fromTime:String(p.fromTime||'08:00'),toTime:String(p.toTime||'18:00'),dailyMax:Math.max(1,Math.min(1000,Number(p.dailyMax)||20))};
+    try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(normalized));}catch(_){}
     updateAiPolicyUi();
-    $('sharedAccessBtn').textContent='✅ HUYỀN AI dùng chung đã sẵn sàng';
-    $('sharedAccessBtn').style.display='none';
-    await rememberDeviceAi();
-    return config;
+  }
+  async function autoLoadSharedAi(showMessage){
+    if(!cloudLoginKey)throw new Error('Hãy đăng nhập ứng dụng trước.');
+    if(cloudFetchRunning)return cloudFetchRunning;
+    cloudFetchRunning=(async function(){
+      var blob=await sharedFetch(AI_SHARED_DB+'.json');
+      var config=await cloudOpen(blob);
+      if(!appUnlocked) return false;
+      sharedAiConfig={key1:config.key1||'',key2:config.key2||'',remember:false};
+      cloudApplyPolicy(config.policy);
+      $('sharedAccessBtn').style.display='none';
+      await rememberDeviceAi();
+      sharedSetUi('Đã đồng bộ API Key dùng chung từ Firebase.');
+      loadAiSettings();
+      if(showMessage)toast('✅ Đã đồng bộ AI từ Firebase.');
+      return true;
+    })().finally(function(){cloudFetchRunning=null;});
+    return cloudFetchRunning;
   }
   $('sharedVaultPath').textContent=AI_SHARED_DB;
   $('sharedSave').onclick=async function(){
     var key1=$('aiKey1').value.trim(),key2=$('aiKey2').value.trim();
-    var pass=$('sharedAdminPass').value,token=$('sharedFirebaseAuth').value.trim();
-    if(!key1&&!key2){sharedSetUi('Cần nhập API Key chính hoặc dự phòng phía trên trước khi lưu Firebase.',true);return;}
-    if(pass.length<12){sharedSetUi('Mã mở khóa nhóm phải dài ít nhất 12 ký tự, khác mật khẩu Cài đặt.',true);return;}
-    if(!navigator.onLine){sharedSetUi('Không có mạng để ghi Firebase.',true);return;}
-    var b=this;b.disabled=true;b.textContent='⏳ Đang mã hóa và ghi Firebase…';
+    if(!key1&&!key2){sharedSetUi('Hãy nhập API Key chính hoặc dự phòng trước khi lưu.',true);return;}
+    if(!navigator.onLine){sharedSetUi('Chưa có Internet để lưu Firebase.',true);return;}
+    if(!cloudLoginKey){sharedSetUi('Hãy đăng nhập Mobile trước khi lưu.',true);return;}
+    var b=this;b.disabled=true;b.textContent='⏳ Đang lưu Firebase…';
     try{
       var config={key1:key1,key2:key2,policy:aiPolicy()};
-      var encrypted=await sharedEncrypt(config,pass);
-      var putUrl=AI_SHARED_DB+'.json'+(token?'?auth='+encodeURIComponent(token):'');
-      await sharedFetch(putUrl,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(encrypted)});
-      // Only declare success after an actual GET confirms the ciphertext is readable.
-      var checked=await sharedFetch(AI_SHARED_DB+'.json'+(token?'?auth='+encodeURIComponent(token):''));
-      var verified=await sharedDecrypt(checked,pass);
+      var encrypted=await cloudSeal(config);
+      await sharedFetch(AI_SHARED_DB+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(encrypted)});
+      // Verify an actual GET and successful decryption before announcing success.
+      var verified=await cloudOpen(await sharedFetch(AI_SHARED_DB+'.json'));
       sharedAiConfig={key1:verified.key1||'',key2:verified.key2||'',remember:false};
+      cloudApplyPolicy(verified.policy);
       await rememberDeviceAi();
-      $('sharedAdminPass').value='';$('sharedFirebaseAuth').value='';
-      sharedSetUi('Đã lưu MÃ HÓA lên Firebase và đọc lại xác nhận. Các máy khác dùng nút “Kích hoạt AI dùng chung” để nhập mã nhóm.');
+      try{localStorage.removeItem(AI_STORE);sessionStorage.removeItem(AI_STORE);}catch(_){}
+      sharedSetUi('Đã lưu và xác nhận API Key trên Firebase. Điện thoại khác chỉ cần đăng nhập Mobile để tự nhận khóa.');
+      $('aiState').textContent='✅ Đã lưu cấu hình AI cho các thiết bị.';
       $('sharedAccessBtn').style.display='none';
-      updateAiPolicyUi();
-    }catch(e){sharedSetUi('Chưa thể lưu cấu hình dùng chung: '+e.message,true);}
-    finally{b.disabled=false;b.textContent='☁️ Mã hóa & lưu API Key dùng chung lên Firebase';}
+      loadAiSettings();
+      toast('✅ Lưu API dùng chung thành công.');
+    }catch(e){sharedSetUi('Chưa lưu được Firebase: '+e.message,true);}
+    finally{b.disabled=false;b.textContent='💾 Lưu API Key lên Firebase';}
   };
-  function openSharedUnlock(){
-    $('sharedUnlockError').textContent='';$('sharedEmployeePass').value='';
-    $('sharedUnlockSheet').classList.add('open');$('sharedEmployeePass').focus();
+  async function reloadSharedAi(){
+    var b=$('sharedUnlockInSettings');b.disabled=true;b.textContent='⏳ Đang đồng bộ…';
+    try{await autoLoadSharedAi(true);}
+    catch(e){sharedSetUi('Đồng bộ thất bại: '+e.message,true);$('sharedAccessBtn').style.display='';}
+    finally{b.disabled=false;b.textContent='⟳ Đồng bộ cấu hình AI từ Firebase';}
   }
-  $('sharedAccessBtn').onclick=openSharedUnlock;
-  $('sharedUnlockInSettings').onclick=openSharedUnlock;
-  $('sharedUnlockClose').onclick=function(){$('sharedUnlockSheet').classList.remove('open');$('sharedEmployeePass').value='';};
-  $('sharedUnlockConfirm').onclick=async function(){
-    var pass=$('sharedEmployeePass').value;if(!pass){$('sharedUnlockError').textContent='Hãy nhập mã nhóm do quản trị cung cấp.';return;}
-    var b=this;b.disabled=true;b.textContent='⏳ Đang xác thực khóa…';
-    try{await sharedUnlock(pass);$('sharedEmployeePass').value='';$('sharedUnlockSheet').classList.remove('open');toast('✅ HUYỀN AI dùng chung đã sẵn sàng.');loadAiSettings();}
-    catch(e){$('sharedUnlockError').textContent='⚠ '+e.message;}
-    finally{b.disabled=false;b.textContent='Kết nối AI dùng chung';}
+  $('sharedUnlockInSettings').onclick=reloadSharedAi;
+  $('sharedAccessBtn').onclick=async function(){
+    this.disabled=true;this.textContent='⏳ Đang tải AI…';
+    try{await autoLoadSharedAi(true);}catch(e){toast('⚠ '+e.message);}
+    finally{this.disabled=false;this.textContent='⟳ Tải lại AI dùng chung từ Firebase';}
   };
-  $('sharedEmployeePass').addEventListener('keydown',function(e){if(e.key==='Enter')$('sharedUnlockConfirm').click();});
 
   /* HUYỀN MOBILE: lịch gọi AI riêng biệt với ERP; không tạo lượt gọi nền. */
   var AI_POLICY_STORE = 'huyen_mobile_ai_credit_policy_v249';
@@ -728,35 +741,27 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function loadAiSettings() {
     var a = readAiConfig();
-    var localKeys = {};try{localKeys=JSON.parse(sessionStorage.getItem(AI_STORE)||localStorage.getItem(AI_STORE)||'{}')||{};}catch(_){}
-    $('aiKey1').value = localKeys.key1 || ''; $('aiKey2').value = localKeys.key2 || '';
-    $('aiRemember').checked = !!a.remember;
-    $('aiState').textContent = sharedAiConfig ? '✅ Đã kết nối cấu hình AI dùng chung Firebase (không hiển thị khóa).' : (a.key1 || a.key2 ? '✅ Đã thiết lập khóa AI trên máy này.' : 'Chưa có khóa AI. Có thể kích hoạt cấu hình dùng chung Firebase từ màn hình chat.');
+    // Do not reveal a shared key in Settings unless the admin explicitly typed one.
+    if (!$('aiKey1').value && !$('aiKey2').value) {
+      $('aiKey1').placeholder = a.key1 ? 'Đã có API Key chính trên Firebase (nhập để thay)' : 'Nhập API Key chính';
+      $('aiKey2').placeholder = a.key2 ? 'Đã có khóa dự phòng (nhập để thay)' : 'API Key dự phòng (tùy chọn)';
+    }
+    $('aiState').textContent = sharedAiConfig ? '✅ AI đang dùng cấu hình Firebase chung.' : (a.key1 || a.key2 ? '✅ AI sử dụng cấu hình đã lưu trên thiết bị.' : 'Chưa có cấu hình AI. Quản trị nhập API Key rồi bấm Lưu Firebase.');
   }
-  function saveAiConfig() {
-    var a = { key1: $('aiKey1').value.trim(), key2: $('aiKey2').value.trim(), remember: $('aiRemember').checked };
-    if (!a.key1 && !a.key2) { $('aiState').textContent = '⚠ Hãy nhập ít nhất một khóa API.'; return null; }
-    try {
-      sessionStorage.setItem(AI_STORE, JSON.stringify(a));
-      if (a.remember) localStorage.setItem(AI_STORE, JSON.stringify(a));
-      else localStorage.removeItem(AI_STORE);
-      $('aiState').textContent = '✅ Đã lưu. Có thể trò chuyện ngay trên điện thoại.';
-      return a;
-    } catch (e) { $('aiState').textContent = '⚠ Không lưu được khóa: ' + e.message; return null; }
-  }
-  $('aiSave').onclick = function () { if (saveAiConfig()) toast('Đã lưu thiết lập HUYỀN AI.'); };
   $('aiTest').onclick = async function () {
-    var a = saveAiConfig(); if (!a) return;
-    var b = this, original = b.textContent; b.disabled = true; b.textContent = '⏳ Đang thử…';
-    $('aiState').textContent = 'Đang kiểm tra kết nối AI…';
-    var keys = [a.key1,a.key2].filter(Boolean), result=null, error=null;
-    try {
-      for (var i=0;i<keys.length;i++) {
-        try { result = await callAiWithLimit(a,keys[i],[{role:'me',text:'Chào Huyền, chỉ trả lời OK.'}]); break; }
-        catch (e) { error = e; if(e.aiBlocked)break; }
+    var existing=readAiConfig();
+    var a={key1:$('aiKey1').value.trim()||existing.key1||'',key2:$('aiKey2').value.trim()||existing.key2||''};
+    if(!a.key1&&!a.key2){$('aiState').textContent='⚠ Chưa có API Key để kiểm tra.';return;}
+    var b=this,original=b.textContent;b.disabled=true;b.textContent='⏳ Đang thử…';
+    $('aiState').textContent='Đang kiểm tra kết nối AI…';
+    var keys=[a.key1,a.key2].filter(Boolean),result=null,error=null;
+    try{
+      for(var i=0;i<keys.length;i++){
+        try{result=await callAiWithLimit(a,keys[i],[{role:'me',text:'Chào Huyền, chỉ trả lời OK.'}]);break;}
+        catch(e){error=e;if(e.aiBlocked)break;}
       }
-      $('aiState').textContent = result ? ('✅ Kết nối thành công: ' + result.slice(0,100)) : ('⚠ Không kết nối được: ' + (error ? error.message : 'Chưa có phản hồi'));
-    } finally { b.disabled=false; b.textContent=original; }
+      $('aiState').textContent=result?('✅ Kết nối thành công: '+result.slice(0,100)):('⚠ Không kết nối được: '+(error?error.message:'Chưa có phản hồi'));
+    }finally{b.disabled=false;b.textContent=original;}
   };
   function localCatalogReply(text) {
     var t = vn(text);
@@ -771,7 +776,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       var cs = fastSuggest('customers', text.replace(/^(tim|tra cuu|khach hang|nha thuoc)\s*/i, '').trim(), 5);
       if (cs.length) return 'Khách trong danh mục đã tải:\n' + cs.map(function (x) { return '• ' + x.it.code + ' · ' + x.it.name; }).join('\n');
     }
-    return 'Em hiện hỗ trợ cục bộ: gợi ý khách hàng/sản phẩm, chuẩn hóa đơn và tra cứu danh mục đã lưu. Để trò chuyện HUYỀN AI, bấm **🔓 Kích hoạt AI dùng chung từ Firebase**, nhập mã nhóm do quản trị cung cấp (cần Internet, không cần PC).';
+    return 'Em đang hỗ trợ tra cứu danh mục và chuẩn hóa đơn trên Mobile. Nếu AI chưa phản hồi, hãy kiểm tra Internet và yêu cầu quản trị lưu API Key vào Firebase trong Cài đặt. Không cần máy trạm PC.';
   }
   function extractAiText(d) {
     if (!d) return '';
@@ -841,7 +846,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if(!gate.ok) return gate.why+'\n\n'+(images.length||files.length ? 'Tệp/ảnh chưa được gửi tới AI. Bật và thiết lập lịch AI trong Cài đặt để phân tích đính kèm.' : localCatalogReply(text));
     var a = readAiConfig(), keys = [a.key1, a.key2].filter(Boolean);
     if (!navigator.onLine) return localCatalogReply(text) + '\n\n⚠ Điện thoại không có Internet; AI trực tuyến không chạy.';
-    if (!keys.length) return '🔓 Chưa kích hoạt AI dùng chung. Bấm nút “Kích hoạt AI dùng chung từ Firebase” bên trên khung chat và nhập mã nhóm.\n\n' + localCatalogReply(text);
+    if (!keys.length) return 'Chưa tải được API Key từ Firebase. Bấm “⟳ Tải lại AI dùng chung từ Firebase” hoặc nhờ quản trị kiểm tra Cài đặt.\n\n' + localCatalogReply(text);
     var recent = hist.filter(function (x) { return (x.mobileAiUser || (x.mobileAi && x.status === 'done')) && x.status !== 'error' && x.text; }).slice(-8).map(function (x) { return { role: x.role, text: x.text.slice(0, 1200) }; });
     if (!recent.length || recent[recent.length - 1].text !== text) recent.push({ role: 'me', text: text });
     var error;
@@ -923,7 +928,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     try {
       if (!password) { $('appLoginError').textContent='Nhập mật khẩu để vào HUYỀN MOBILE.';return; }
       var digest=await sha(password);
-      if(hex(digest)!==SETTINGS_PASS_HASH){
+      if(hex(digest)!==APP_PASS_HASH){
         appLoginFails++;$('appLoginPassword').value='';
         if(appLoginFails>=5){appLoginBlockedUntil=Date.now()+60000;appLoginFails=0;$('appLoginError').textContent='Đã sai 5 lần. Thử lại sau 60 giây.';}
         else $('appLoginError').textContent='Mật khẩu không đúng (còn '+(5-appLoginFails)+' lần thử).';
@@ -935,10 +940,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       saveCfg(!!st.cfg.h);
       $('appLoginPassword').value='';
       appDeviceVaultKey=await getDeviceVaultKey(password).catch(function(){return null;});
+      cloudLoginKey=await cloudKeyFromLogin(password);
       enterChat();
-      restoreDeviceAi().then(function(restored){
-        if(restored) toast('✅ Đã mở AI đã kích hoạt trên điện thoại.');
-        else if(!readAiConfig().key1&&!readAiConfig().key2) toast('Đăng nhập thành công. Hãy kích hoạt khóa AI dùng chung lần đầu để trò chuyện.');
+      restoreDeviceAi().then(function(){
+        if(!navigator.onLine){if(!readAiConfig().key1&&!readAiConfig().key2)toast('Chưa có Internet để đồng bộ API Key Firebase.');return;}
+        autoLoadSharedAi(false).catch(function(e){
+          if(!readAiConfig().key1&&!readAiConfig().key2)toast('⚠ Không tải được AI Firebase: '+e.message);
+          $('sharedAccessBtn').style.display='';
+          sharedSetUi('Đồng bộ chưa thành công: '+e.message,true);
+        });
       }).catch(function(){});
     } finally { btn.disabled=false; }
   }
@@ -1145,6 +1155,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function grow() { var ta = $('ta'); ta.style.height = 'auto'; if (!$('box').classList.contains('big')) ta.style.height = Math.min(Math.round(innerHeight * 0.42), Math.max(64, ta.scrollHeight)) + 'px'; $('send').disabled = !ta.value.trim() && !shots.length && !docs.length; }
 
   /* ---------- tùy chọn ---------- */
+  // Mật khẩu vào ứng dụng KHÁC mật khẩu quản trị Cài đặt. Chỉ lưu mã SHA-256 trong bản web.
+  var APP_PASS_HASH = 'fd4d10d29037a5761c46d6fa6edc0fb2a52dcd1f9f391a1f61983711d5c3f4c4';
   var SETTINGS_PASS_HASH = 'b8a57977041c2b2ba8baab472c1f0240a30b671a9fb027f9e4d73b52818b0b29';
   var settingFails = 0, settingBlockedUntil = 0;
   function openProtectedSettings() {
@@ -1163,6 +1175,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       return;
     }
     settingFails=0; $('settingsPassword').value=''; $('authSheet').classList.remove('open'); showSettings();
+    // Sau khi quản trị xác thực mới cho phép đổi khóa đệm AI từ phiên bản cũ.
+    migrateLegacyDeviceAi(value).then(function(migrated) {
+      if (migrated) toast('✅ Đã bảo toàn cấu hình AI của phiên bản cũ trên thiết bị.');
+    }).catch(function() {});
   }
   $('settingsUnlock').onclick = verifySettingsPassword;
   $('settingsPassword').addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();verifySettingsPassword();} });
@@ -1180,10 +1196,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('lockNow').onclick = function () { $('sheet').classList.remove('open'); erpDisconnect(); if (st.cfg) { delete st.cfg.h; saveCfg(false); } toast('Đã ngắt ERP; tiếp tục sử dụng HUYỀN AI trên điện thoại.'); };
   $('appLogout').onclick = function () {
     $('sheet').classList.remove('open');
-    erpDisconnect(); appUnlocked=false; appDeviceVaultKey=null; sharedAiConfig=null;
+    erpDisconnect(); appUnlocked=false; appDeviceVaultKey=null; cloudLoginKey=null; sharedAiConfig=null;
     try {sessionStorage.removeItem(AI_STORE);}catch(_){}
     $('sharedAccessBtn').style.display='';
-    $('sharedAccessBtn').textContent='🔓 Kích hoạt AI dùng chung từ Firebase';
+    $('sharedAccessBtn').textContent='⟳ Tải lại AI dùng chung từ Firebase';
     showAppLogin('Đã khóa ứng dụng. Nhập mật khẩu Mobile để sử dụng tiếp.');
   };
   $('clearChat').onclick = function () { if (!confirm('Xóa lịch sử trò chuyện trên điện thoại này?')) return; hist = []; saveHist(); renderAll(); $('sheet').classList.remove('open'); };
@@ -1493,17 +1509,25 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   };
   $('quickCust').addEventListener('input', function () { quickDraft.customer = null; showQuickList('customers', this, 'quickCustS', function (it) { quickDraft.customer = it; $('quickCust').value = it.name; quickSummary(); }); });
   $('quickProduct').addEventListener('input', function () { quickDraft.product = null; showQuickList('products', this, 'quickProductS', function (it) { quickDraft.product = it; $('quickProduct').value = it.name; quickSummary(); }); });
-  $('quickAdd').onclick = function () {
+  function quickCommitCurrentProduct() {
     var p = quickDraft.product, q = Number(String($('quickQty').value).replace(',', '.'));
-    if (!p) { toast('Chạm chọn sản phẩm từ danh sách gợi ý.'); return; }
-    if (!Number.isFinite(q) || q <= 0 || q > 1e6) { toast('Số lượng không hợp lệ.'); return; }
+    if (!p) return false;
+    if (!Number.isFinite(q) || q <= 0 || q > 1e6) { toast('Số lượng không hợp lệ, hãy nhập lại.'); return null; }
     var row = quickDraft.lines.find(function (l) { return l.product.code === p.code; });
     if (row) row.qty += q; else quickDraft.lines.push({ product: p, qty: q });
-    quickDraft.product = null; $('quickProduct').value = ''; $('quickQty').value = '1'; quickSummary(); $('quickProduct').focus();
+    quickDraft.product = null; $('quickProduct').value = ''; $('quickQty').value = '1'; quickSummary();
+    return true;
+  }
+  // Thêm loại hàng khác là TÙY CHỌN, không phải bước bắt buộc để lập đơn 1 sản phẩm.
+  $('quickAdd').onclick = function () {
+    if (!quickDraft.product) { toast('Hãy chọn sản phẩm từ danh sách gợi ý trước.'); return; }
+    if (quickCommitCurrentProduct()) $('quickProduct').focus();
   };
   $('quickReview').onclick = function () {
-    if (!quickDraft.customer) { toast('Chọn đúng khách trong gợi ý.'); return; }
-    if (!quickDraft.lines.length) { toast('Thêm ít nhất một mặt hàng.'); return; }
+    if (!quickDraft.customer) { toast('Chạm chọn tên khách hàng từ danh sách gợi ý.'); return; }
+    // Nhấn Kiểm tra đơn sẽ tự nhận sản phẩm đang chọn, không cần bấm Thêm.
+    if (quickDraft.product && quickCommitCurrentProduct() === null) return;
+    if (!quickDraft.lines.length) { toast('Chọn một sản phẩm và nhập số lượng là đủ; không cần thêm sản phẩm thứ hai.'); return; }
     draft = { src: { customer: quickDraft.customer.name }, nImg: 0, text: 'Đơn nhanh (Firebase)',
       cust: [{it:quickDraft.customer,s:1.5}], custSel:0, custPicked:true,
       lines:quickDraft.lines.map(function(l){return {raw:l.product.name,product:l.product.name,qty:l.qty,unit:l.product.unit || '',cands:[{it:l.product,s:1.5}],sel:0,picked:true};}),
@@ -1563,8 +1587,16 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (o.code) cands = findCustomers(o.code, 3);
     if (!cands.length && o.phone) cands = findCustomers(o.phone, 3);
     if (!cands.length && o.customer) cands = findCustomers(o.customer, 6);
+    // Nếu chỉ đặt một hàng, chỉ dựng đúng MỘT dòng; không tự thêm dòng hàng trống.
+    var seenOrderLines = Object.create(null);
+    var parsedLines = (o.lines || []).filter(function(l){
+      var k=vn(l.product||l.raw)+'|'+Number(l.qty||0)+'|'+vn(l.unit||'');
+      if(!k.replace(/[|0]/g,''))return false;
+      if(seenOrderLines[k])return false;
+      seenOrderLines[k]=true;return true;
+    });
     draft = { src: o, nImg: nImg, text: text, cust: cands, custSel: cands.length ? 0 : -1, note: o.note || '', cash: !!o.cash,
-      lines: (o.lines || []).map(function (l) { var dose = (String(l.raw || '').match(/\d+(?:[.,]\d+)?\s*(mg|g|gr|ml|mcg|iu|ui|%)\b/gi) || []).filter(function (x) { return vn(l.product || '').indexOf(vn(x)) < 0; }).join(' '); var c = findProducts(((l.product || l.raw) + ' ' + dose).trim(), 6); /* giữ hàm lượng/quy cách ghi trong chữ gốc (10g, 500mg…) */ if (l.raw && l.raw !== l.product) findProducts(l.raw, 4).forEach(function (x) { if (!c.some(function (y) { return y.it.code === x.it.code; })) c.push(x); }); c.sort(function (a, b) { return b.s - a.s; }); return { raw: l.raw || l.product, product: l.product, qty: l.qty || 0, unit: l.unit || '', note: l.note || '', cands: c.slice(0, 6), sel: c.length ? 0 : -1 }; }) };
+      lines: parsedLines.map(function (l) { var dose = (String(l.raw || '').match(/\d+(?:[.,]\d+)?\s*(mg|g|gr|ml|mcg|iu|ui|%)\b/gi) || []).filter(function (x) { return vn(l.product || '').indexOf(vn(x)) < 0; }).join(' '); var c = findProducts(((l.product || l.raw) + ' ' + dose).trim(), 6); if (l.raw && l.raw !== l.product) findProducts(l.raw, 4).forEach(function (x) { if (!c.some(function (y) { return y.it.code === x.it.code; })) c.push(x); }); c.sort(function (a, b) { return b.s - a.s; }); return { raw: l.raw || l.product, product: l.product, qty: l.qty || 0, unit: l.unit || '', note: l.note || '', cands: c.slice(0, 6), sel: c.length ? 0 : -1 }; }) };
     renderDraft(); try { $('toast').classList.remove('show'); } catch (e) {} $('draftSheet').classList.add('open'); $('draftSheet').querySelector('.card').scrollTop = 0;
   }
   function confTag(s, amb) { return amb ? '⚠ trùng/gần giống — chọn đúng' : s >= 1.2 ? '✔ trùng mã' : s >= 0.75 ? '✔ ' + Math.round(s * 100) + '%' : '⚠ ' + Math.round(s * 100) + '%'; }
@@ -1577,7 +1609,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     cs.innerHTML = (draft.custSel < 0 ? '<option value="-1">⚠ Chưa khớp khách “' + esc(draft.src.customer || '') + '” — tìm bên dưới</option>' : '') +
       draft.cust.map(function (x, i) { return '<option value="' + i + '"' + (i === draft.custSel ? ' selected' : '') + '>' + esc(x.it.code + ' · ' + x.it.name + (x.it.addr ? ' · ' + x.it.addr.slice(0, 40) : '') + (x.it.tel ? ' · ' + x.it.tel : '') + ' (' + confTag(x.s, i === draft.custSel && amb(draft.cust, i, draft.custPicked)) + ')') + '</option>'; }).join('');
     cs.classList.toggle('bad', weakOf(draft.cust, draft.custSel, draft.custPicked));
-    $('dfInfo').textContent = 'Đọc từ ' + (draft.nImg ? draft.nImg + ' ảnh' + (draft.text ? ' + chữ' : '') : 'chữ') + ' — khách “' + (draft.src.customer || '?') + '”. Dòng ⚠ là chưa chắc: chọn lại cho đúng.';
+    $('dfInfo').textContent = 'Đã nhận ' + draft.lines.length + ' sản phẩm từ ' + (draft.nImg ? draft.nImg + ' ảnh' + (draft.text ? ' + chữ' : '') : 'chữ') + ' — khách “' + (draft.src.customer || '?') + '”. Chỉ cần xác nhận dòng đang có, không cần thêm sản phẩm khác.';
     var box = $('dfLines'); box.innerHTML = '';
     draft.lines.forEach(function (l, i) {
       var d = document.createElement('div'), weak = weakOf(l.cands, l.sel, l.picked); d.className = 'dl';
@@ -1619,7 +1651,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var skipped = draft.lines.length - L.length;
     if (skipped && !confirm(skipped + ' dòng chưa chọn SP / thiếu SL sẽ bị BỎ. Vẫn nạp đơn?')) return;
     var unsure = (weakOf(draft.cust, draft.custSel, draft.custPicked) ? ['khách hàng'] : []).concat(L.filter(function (l) { return weakOf(l.cands, l.sel, l.picked); }).map(function (l) { return '“' + (l.raw || '') + '”'; }));
-    if (unsure.length) { toast('⚠ Cần chọn và xác nhận thủ công ' + unsure.length + ' mục chưa chắc: ' + unsure.slice(0, 2).join(', ')); return; }
+    if (unsure.length) { toast('⚠ Hãy chọn đúng mã khách hàng / thuốc ngay trong dòng có cảnh báo, không cần thêm sản phẩm khác: ' + unsure.slice(0, 2).join(', ')); return; }
     var wrongUnit = L.filter(function (l) { return l.unit && l.cands[l.sel].it.unit && vn(l.unit) !== vn(l.cands[l.sel].it.unit); });
     if (wrongUnit.length) { toast('⚠ Đơn vị Excel và đơn khách khác nhau. Hãy chỉnh quy đổi/SL đúng trong Excel trước khi gửi ERP; không tự quy đổi.'); return; }
     var cmd = 'Lên đơn hàng cho khách MÃ KH ' + c.it.code + ' (' + c.it.name + '):\n' +
