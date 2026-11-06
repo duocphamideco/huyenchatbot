@@ -1,0 +1,28 @@
+HUYỀN MOBILE v2.50 - CHIA SẺ KHÓA AI QUA FIREBASE REALTIME (MÃ HÓA)
+
+A. QUẢN TRỊ VIÊN
+1. Cập nhật toàn bộ thư mục này lên GitHub Pages đúng vị trí cũ (không đổi manifest và logo).
+2. Vào ⋯ Cài đặt, nhập mật khẩu quản trị hiện có.
+3. Nhập API Key chính và dự phòng; trong phần lịch AI chọn "Cho phép AI trực tuyến", thiết lập giờ/ngày/hạn mức, bấm "Lưu lịch".
+4. Trong mục "Dùng chung API Key qua Firebase", TỰ ĐẶT mã mở khóa nhóm dài tối thiểu 12 ký tự, KHÔNG dùng lại mật khẩu Cài đặt.
+5. Bấm "Mã hóa & lưu API Key dùng chung lên Firebase". Ứng dụng chỉ xác nhận thành công khi Firebase cho phép ghi và đọc lại xác thực.
+6. Chia sẻ mã mở khóa nhóm riêng với nhân viên qua kênh nội bộ.
+
+B. NHÂN VIÊN
+1. Mở HUYỀN MOBILE trên điện thoại, bấm "🔓 Kích hoạt AI dùng chung từ Firebase".
+2. Nhập mã mở khóa nhóm. Khóa API được tải ở dạng mã hóa và giải mã tạm trên điện thoại.
+3. Không cần nhập API Key cá nhân, không cần kết nối PC để chat. Sau khi mở lại ứng dụng cần nhập mã nhóm lại.
+4. Nếu AI đang tắt theo lịch được chia sẻ, không gọi API, chuẩn hóa cục bộ vẫn hoạt động.
+
+C. BẢO MẬT / LƯU Ý
+- Firebase node mặc định: https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_ai_vault/v1
+- Chỉ mã hóa AES-256-GCM (PBKDF2-SHA256 với salt/IV ngẫu nhiên) được lưu Firebase; KHÔNG có API Key rõ chữ trong Firebase.
+- KHÔNG mở quyền ghi công khai ở Database Rules. Nếu Rules yêu cầu xác thực, cần Firebase Auth ID token quản trị để ghi. Token không lưu.
+- Mật khẩu Cài đặt trong HTML tĩnh KHÔNG PHẢI biện pháp phân quyền mạnh. Không dùng lại làm mã nhóm.
+- Các điện thoại có mã nhóm đều có khả năng sử dụng credit từ cùng khóa, kiểm soát lượt/ngày đang áp dụng TRÊN TỪNG THIẾT BỊ, không khóa tổng mức chi toàn công ty.
+- Khóa API vẫn phải giải mã trên thiết bị để gọi trực tiếp nhà cung cấp. Bảo vệ tốt nhất là triển khai proxy server có xác thực và hạn mức chung.
+- Mạng phải cho phép đọc node Firebase, nếu bị Rules chặn sẽ báo HTTP 401/403. Không mở đọc/ghi toàn bộ database.
+- Không nhập API Key thật vào website giả mạo. Khóa API/nhóm không được đưa vào mã nguồn hoặc gửi trong URL.
+
+D. KIỂM THỬ
+- Vui lòng kiểm tra lại trên Firebase và API thật. Bản build chỉ được thử bằng dữ liệu mô phỏng.
