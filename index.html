@@ -87,9 +87,18 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .pri{width:100%;margin-top:18px;border:0;border-radius:16px;padding:15px;background:var(--red);color:#fff;font-weight:750;font-size:17.5px;box-shadow:0 8px 18px rgba(232,55,42,.28)}
 .pri:disabled{opacity:.6}
 .note{font-size:13.5px;color:var(--dim);margin-top:14px;line-height:1.55}#loginMsg{color:var(--err);font-weight:600}#loginMsg:empty{display:none}
+/* ERP connection switch */
+.erp-control{padding:12px;margin-top:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}
+.erp-switch{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:0;color:var(--ink);font-size:16px;cursor:pointer}
+.erp-switch span:first-child{flex:1}.erp-switch b{display:block}.erp-switch small{display:block;font-size:12.5px;font-weight:450;color:var(--dim);margin-top:3px}
+.erp-switch input{width:1px;height:1px;opacity:0;position:absolute}.switch-track{position:relative;display:block;width:52px;height:30px;border-radius:20px;background:#c9c1be;flex:none;transition:background .15s}
+.switch-track:before{content:"";position:absolute;left:4px;top:4px;width:22px;height:22px;background:#fff;border-radius:50%;box-shadow:0 1px 4px #0003;transition:transform .15s}
+.erp-switch input:checked + .switch-track{background:var(--ok)}.erp-switch input:checked + .switch-track:before{transform:translateX(22px)}
+.erp-switch input:focus-visible + .switch-track{outline:3px solid var(--red);outline-offset:3px}
 /* sheets */
 .sheet{position:fixed;inset:0;background:rgba(20,8,6,.45);display:none;align-items:flex-end;justify-content:center;z-index:9}.sheet.open{display:flex}
 .sheet .card{width:min(820px,100%);border-radius:22px 22px 0 0;padding-bottom:calc(var(--safeB) + 18px)}
+#sheet .card{max-height:94dvh;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
 .row{display:flex;gap:8px}.row button{flex:1}.ghost{width:100%;margin-top:10px;border:1px solid var(--line);border-radius:14px;padding:13px;background:transparent;font-weight:650}
 .pick{display:flex;gap:8px;margin-top:4px}.pick button{flex:1;margin:0}
 .toast{position:fixed;left:50%;bottom:calc(var(--safeB) + 150px);transform:translateX(-50%);background:#1c1413;color:#fff;padding:10px 15px;border-radius:12px;font-size:14.5px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;z-index:10}.toast.show{opacity:.95}
@@ -114,6 +123,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .quick-line{padding:10px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:8px;font-size:14px}
 .quick-line span{flex:1;min-width:0}.quick-line button{border:0;background:var(--chip);border-radius:9px;padding:7px}
 .quick-qty{width:90px}.ai-settings input{font-size:14px}.ai-settings select{font-size:14px}
+.ai-limit-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ai-limit-grid label{margin-top:8px}.ai-limit-grid .in{padding:10px;font-size:14px}
+.ai-plan-hint{padding:9px 11px;margin-top:10px;border-radius:12px;background:var(--card);border:1px solid var(--line);font-size:13px;line-height:1.45;color:var(--dim)}
+#authSheet{z-index:18}#authSheet .card{max-width:460px}#authError{min-height:18px;color:var(--err);font-size:13px}
+.doc-chips{display:flex;gap:6px;flex-wrap:wrap;margin:5px 0 8px}.doc-chip{display:flex;align-items:center;gap:5px;padding:6px 8px;border-radius:10px;background:var(--chip);border:1px solid var(--line);font-size:12px;max-width:100%;}.doc-chip span{max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.doc-chip button{border:0;border-radius:8px;background:transparent;font-weight:700;padding:3px;}
+#chatAiStatus{font-size:12px;color:var(--dim);padding:0 5px 5px;line-height:1.35}
+@media(max-width:350px){.ai-limit-grid{grid-template-columns:1fr}}
+
 
 </style>
 </head>
@@ -127,8 +144,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <section class="pairv" id="pairView" hidden>
     <div class="hero">
       <img src="icon-192.png" alt="IDECO">
-      <h1>Huyền · Trợ lý ERP</h1>
-      <p>Lên đơn, tra giá, xem số liệu ERP ngay trên điện thoại</p>
+      <h1>HUYỀN AI · Trợ lý IDECO</h1>
+      <p>Trò chuyện và chuẩn hóa tại Mobile; kết nối ERP chỉ khi cần</p>
       <div class="quote">“IDECO luôn không thỏa hiệp với việc áp dụng công nghệ mới — giúp mình tốt hơn, công ty phát triển hơn.”</div>
     </div>
     <div class="card">
@@ -159,11 +176,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <button class="chip" data-t="Doanh số tháng này theo nhân viên">📈 Doanh số</button>
     </div>
     <div id="normStatus" aria-live="polite" class="norm-status"></div>
+    <div id="chatAiStatus" role="status" aria-live="polite"></div>
     <div class="thumbs" id="thumbs"></div>
+    <div class="doc-chips" id="docsPreview"></div>
     <div class="box" id="box">
       <textarea id="ta" rows="2" placeholder="Nhắn Huyền… (dán đơn của khách cũng được)" enterkeyhint="send"></textarea>
       <div class="bar">
-        <button class="rb cam" id="cam" aria-label="Chụp ảnh đơn hàng">📷</button>
+        <button class="rb cam" id="cam" aria-label="Chụp ảnh hoặc chọn từ thư viện">📷</button>
+        <button class="rb" id="attach" aria-label="Đính kèm file đơn hàng hoặc hình ảnh" title="Đính kèm file">📎</button>
         <button class="rb mic" id="mic" aria-label="Nói">🎙</button>
         <button class="rb" id="grow" aria-label="Mở rộng ô soạn">⤢</button>
         <span class="sp"></span>
@@ -175,19 +195,38 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <div class="sheet" id="sheet"><div class="card">
   <h2>Tùy chọn</h2>
   <p id="sheetInfo"></p>
-  <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🚪 Đăng xuất</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
+  <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
   <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
-  <button class="ghost" id="connectPc" type="button">🔗 Kết nối PC để nạp đơn lên ERP</button>
+  <div class="erp-control" role="group" aria-label="Kết nối ERP">
+    <label class="erp-switch" for="erpToggle"><span><b>🔗 Kết nối ERP</b><small>Bật khi lên đơn thật, truy vấn và phân tích ERP</small></span><input id="erpToggle" type="checkbox" role="switch" aria-label="Bật hoặc tắt kết nối ERP"><span class="switch-track" aria-hidden="true"></span></label>
+    <div id="erpToggleInfo" class="note" role="status" aria-live="polite">ERP đang tắt · trò chuyện và chuẩn hóa trên điện thoại.</div>
+    <button class="ghost" id="connectPc" type="button" hidden>Thiết lập kết nối ERP</button>
+  </div>
   <div class="dset ai-settings"><h3>🤖 HUYỀN AI — trả lời ngay trên Mobile</h3>
-    <div class="note">Chat AI và chuẩn hóa trên Mobile <b>không chờ PC</b>. Cần Internet và khóa API của chính người dùng để trò chuyện AI tự do. Khóa chỉ lưu trên điện thoại; không gửi lên Firebase. Không dùng khóa dùng chung tại website công khai.</div>
-    <label for="aiProvider">Nhà cung cấp AI</label><select class="sel" id="aiProvider"><option value="google">Google Gemini</option><option value="kie">Kie.ai (OpenAI-compatible)</option></select>
-    <label for="aiModel">Model AI</label><input id="aiModel" class="in" value="gemini-2.5-flash" spellcheck="false" autocomplete="off">
-    <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập API Key cá nhân">
+    <div class="note">Hỏi đáp thông thường trực tiếp trên điện thoại, không cần kết nối PC. Chỉ cần Internet và khóa API hợp lệ. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
+    <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
     <label class="rem"><input type="checkbox" id="aiRemember"> Ghi nhớ API Key trên máy này (chỉ nên dùng thiết bị riêng)</label>
-    <button class="ghost" id="aiSave" type="button">💾 Lưu cài đặt AI Mobile</button>
+    <div class="row"><button class="ghost" id="aiSave" type="button">💾 Lưu khóa AI</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
     <div class="note" id="aiState" aria-live="polite"></div>
+    <div class="dset" style="margin-top:10px">
+      <h3>⏱ Lịch sử dụng AI &amp; hạn mức credit</h3>
+      <label class="rem" for="aiGate"><input type="checkbox" id="aiGate"> Cho phép AI trực tuyến (mặc định tắt)</label>
+      <div class="note">Khi tắt, HUYỀN chỉ tra danh mục và chuẩn hóa trên máy; không gọi API. Công tắc này độc lập với ERP.</div>
+      <div class="ai-limit-grid">
+        <div><label for="aiStartDate">Từ ngày (để trống = không giới hạn)</label><input class="in" type="date" id="aiStartDate"></div>
+        <div><label for="aiEndDate">Đến ngày</label><input class="in" type="date" id="aiEndDate"></div>
+        <div><label for="aiStartTime">Giờ bắt đầu hàng ngày</label><input class="in" type="time" id="aiStartTime" value="08:00"></div>
+        <div><label for="aiEndTime">Giờ kết thúc hàng ngày</label><input class="in" type="time" id="aiEndTime" value="18:00"></div>
+      </div>
+      <label for="aiMaxDaily">Giới hạn lượt yêu cầu mỗi ngày trên điện thoại</label>
+      <input class="in" type="number" inputmode="numeric" id="aiMaxDaily" min="1" max="1000" value="20">
+      <button class="ghost" id="aiPolicySave" type="button">💾 Lưu lịch &amp; giới hạn AI</button>
+      <div class="ai-plan-hint" id="aiPolicyState" role="status" aria-live="polite"></div>
+      <div class="note">Khi không nhắn tin hoặc AI đã tắt, ứng dụng không tự gọi API. Một lần gọi khóa dự phòng hoặc kiểm tra kết nối cũng tính một lượt. Giới hạn áp dụng theo thiết bị, theo ngày giờ trên máy; không phải hạn mức credit toàn tài khoản.</div>
+    </div>
+    <div class="note">Bảo mật: trên website tĩnh, khóa API lưu trên thiết bị và được trình duyệt dùng trực tiếp. Chỉ nhập khóa trên thiết bị tin cậy; khi triển khai rộng nên sử dụng máy chủ bảo vệ khóa và giới hạn mức sử dụng.</div>
   </div>
   <div class="dset"><h3>📚 Danh sách Excel trên Firebase · độc lập PC</h3>
     <div class="dstat" id="dStat">Chưa tải.</div>
@@ -240,17 +279,28 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   <label>Ghi chú đơn</label><input class="in" id="dfNote" placeholder="Giao hàng, thanh toán…" style="padding:11px">
   <label class="rem"><input type="checkbox" id="dfCash"> 💵 Khách trả tiền mặt (tự bật nút Tiền mặt)</label>
   <div class="dsum" id="dfSum"></div>
-  <button class="pri" id="dfSend">📤 Nạp đơn lên ERP (cần kết nối PC)</button>
+  <button class="pri" id="dfSend">📤 Xác nhận đơn / Nạp ERP khi bật kết nối</button>
   <button class="ghost" id="dfClose">Đóng (giữ nháp)</button>
 </div></div>
 <div class="sheet" id="camSheet"><div class="card">
   <h2>📷 Ảnh đơn hàng</h2>
-  <p>Chụp thẳng, đủ sáng, thấy rõ tên khách và từng dòng mặt hàng. Máy tính trạm sẽ đọc ảnh rồi lên đơn như trên PC. Tối đa 4 ảnh.</p>
+  <p>Chụp ảnh hoặc tải ảnh từ thư viện để hỏi HUYỀN AI. Ảnh không tự gửi tới ERP. Có thể đính kèm tối đa 4 ảnh. Khi AI trực tuyến bật và anh bấm Gửi, ảnh và văn bản trích xuất từ file sẽ được gửi tới dịch vụ AI.</p>
   <div class="pick"><button class="pri" id="camShot">📸 Chụp ảnh</button><button class="ghost" id="camLib">🖼 Thư viện</button></div>
+  <button class="ghost" id="camFile">📎 Chọn file đơn hàng (Excel, PDF, Word, CSV, TXT)</button>
   <button class="ghost" id="camClose">Đóng</button>
 </div></div>
 <input type="file" id="fShot" accept="image/*" capture="environment" hidden>
 <input type="file" id="fLib" accept="image/*" multiple hidden>
+<input type="file" id="fDocs" accept=".xlsx,.csv,.tsv,.txt,.md,.json,.docx,.pdf,image/jpeg,image/png,image/webp" multiple hidden>
+<div class="sheet" id="authSheet"><div class="card">
+  <h2>🔐 Mật khẩu quản trị HUYỀN MOBILE</h2>
+  <p>Nhập mật khẩu trước khi mở phần Cài đặt.</p>
+  <label for="settingsPassword">Mật khẩu</label>
+  <div class="pw"><input class="in" type="password" id="settingsPassword" autocomplete="off" placeholder="Nhập mật khẩu quản trị"><button type="button" class="eye" id="settingsEye" aria-label="Hiện mật khẩu">👁</button></div>
+  <div id="authError" role="alert"></div>
+  <button class="pri" id="settingsUnlock" type="button">Mở Cài đặt</button>
+  <button class="ghost" id="settingsCancel" type="button">Hủy</button>
+</div></div>
 <div class="toast" id="toast"></div>
 <script src="catalog_normalizer.js"></script>
 <script>
@@ -266,10 +316,28 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   var CAT_SETTINGS_KEY = 'huyen_mobile_firebase_excel_v1';
   var CAT_UPLOAD_DEFAULT = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_catalogs';
   var SLOGAN = 'IDECO luôn không thỏa hiệp với việc áp dụng công nghệ mới — giúp mình tốt hơn, công ty phát triển hơn.';
-  var LS = 'huyen_mobile_v2', LS_HIST = 'huyen_mobile_hist_v1';
+  var LS = 'huyen_mobile_v2', LS_HIST = 'huyen_mobile_hist_v1', ERP_PREF = 'huyen_mobile_erp_switch_v248';
   var $ = function (id) { return document.getElementById(id); };
   var st = { cfg: null, sid: '', key: null, dkey: null, stES: null, station: null, pend: {} };
-  var hist = [], shots = [];
+  var hist = [], shots = [], docs = [];
+  // ERP opt-in: lệnh và truy vấn ERP không bao giờ chuyển qua PC khi công tắc tắt.
+  var erpOn = false;
+  try { erpOn = localStorage.getItem(ERP_PREF) === '1'; } catch (_) {}
+  function saveErpChoice(on) { erpOn = !!on; try { localStorage.setItem(ERP_PREF, erpOn ? '1':'0'); } catch (_) {} }
+  function erpReady() { return !!(erpOn && st.dkey); }
+  function erpUi() {
+    var toggle = $('erpToggle'); if (toggle) toggle.checked = erpOn;
+    var info = $('erpToggleInfo'); if (info) info.textContent = !erpOn ? 'Đang TẮT · không kết nối hoặc gửi lệnh ERP.' : (erpReady() ? 'Đã BẬT · sẵn sàng gửi lệnh đến trạm ERP.' : 'Đã BẬT · cần ghép cặp hoặc chờ máy trạm.');
+  }
+  function erpDisconnect() {
+    saveErpChoice(false);
+    if (st.stES) { try { st.stES.close(); } catch (_) {} st.stES = null; }
+    clearInterval(watchStation.t);
+    Object.keys(st.pend).forEach(function (id) { var job=st.pend[id]; try { if (job.es) job.es.close(); } catch (_) {} clearInterval(job.poll); clearTimeout(job.timer); delete st.pend[id]; });
+    st.dkey = null; st.key = null; st.station = null; st.sid = '';
+    // Tắt kết nối không xóa thông tin ghép cặp hay các đơn đã ghi ở ERP.
+    erpUi(); stationText();
+  }
   function toast(t) { var e = $('toast'); e.textContent = t; e.classList.add('show'); clearTimeout(toast.t); toast.t = setTimeout(function () { e.classList.remove('show'); }, 2800); }
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
   try { var th = localStorage.getItem('huyen_mobile_theme'); if (th) document.documentElement.setAttribute('data-theme', th); } catch (e) {}
@@ -334,7 +402,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function fmtT(t) { try { return new Date(t).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }); } catch (e) { return ''; } }
   function renderMsg(m) {
     var d = document.createElement('div'); d.dataset.id = m.id || '';
-    if (m.role === 'me') { d.className = 'msg me'; d.textContent = m.text || ''; if (m.imgs && m.imgs.length) { var g = document.createElement('div'); g.className = 'mimg'; m.imgs.forEach(function (u) { var im = new Image(); im.src = u; g.appendChild(im); }); d.appendChild(g); } else if (m.nImg) { var s2 = document.createElement('div'); s2.style.cssText = 'font-size:12.5px;opacity:.85;margin-top:4px'; s2.textContent = '📷 ' + m.nImg + ' ảnh'; d.appendChild(s2); } return d; }
+    if (m.role === 'me') { d.className = 'msg me'; d.textContent = m.text || ''; if (m.docNames && m.docNames.length) { var ds=document.createElement('div');ds.style.cssText='font-size:12px;opacity:.9;white-space:pre-wrap;margin-top:4px';ds.textContent='📎 '+m.docNames.join(', ');d.appendChild(ds); } if (m.imgs && m.imgs.length) { var g = document.createElement('div'); g.className = 'mimg'; m.imgs.forEach(function (u) { var im = new Image(); im.src = u; g.appendChild(im); }); d.appendChild(g); } else if (m.nImg) { var s2 = document.createElement('div'); s2.style.cssText = 'font-size:12.5px;opacity:.85;margin-top:4px'; s2.textContent = '📷 ' + m.nImg + ' ảnh'; d.appendChild(s2); } return d; }
     if (m.role === 'sys') { d.className = 'msg sys'; d.textContent = m.text; return d; }
     d.className = 'msg bot' + (m.status === 'error' ? ' err' : '');
     var h = m.status === 'done' ? '<div class="md">' + md(m.text) + '</div>' : m.status === 'error' ? '<div>⚠ ' + esc(m.text) + '</div>' : '<div class="run"><span class="spin"></span><span>' + esc(m.text || 'Đang xử lý…') + '</span></div>';
@@ -347,7 +415,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function renderAll() {
     var list = $('list'); list.innerHTML = '';
-    if (!hist.length) { list.innerHTML = '<div class="empty"><img src="' + document.querySelector('.top img').src + '" alt=""><b>Chào ' + esc(st.cfg && st.cfg.name || 'anh/chị') + ' 👋</b>Gõ, nói 🎙 hoặc chụp 📷 đơn của khách — Huyền làm trên ERP như ở máy tính. Ví dụ:<br>“Lên đơn nhà thuốc Bạch Liên 14 hộp Wamlox 5mg”<br>“Doanh số tháng này theo nhân viên”<div class="slogan">'+SLOGAN+'</div></div>'; return; }
+    if (!hist.length) { list.innerHTML = '<div class="empty"><img src="' + document.querySelector('.top img').src + '" alt=""><b>Chào ' + esc(st.cfg && st.cfg.name || 'anh/chị') + ' 👋</b>Hỏi Huyền, tìm sản phẩm, lập đơn nháp ngay trên điện thoại. Khi cần xử lý dữ liệu ERP, bật kết nối trong Tùy chọn. Ví dụ:<br>“Lên đơn nhà thuốc Bạch Liên 14 hộp Wamlox 5mg”<br>“Doanh số tháng này theo nhân viên”<div class="slogan">'+SLOGAN+'</div></div>'; return; }
     hist.forEach(function (m) { list.appendChild(renderMsg(m)); });
     list.scrollTop = list.scrollHeight;
   }
@@ -363,7 +431,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function fresh() { var s = st.station; return !!(s && s.online && Date.now() - (s.at || 0) < 75000); }
   function stationText() {
     var s = st.station, dot = $('dot'), t = $('stt');
-    if (!st.key) { dot.className = 'dot'; t.textContent = 'Chuẩn hóa độc lập · không cần PC'; return false; }
+    if (!erpOn || !st.key) { dot.className = 'dot'; t.textContent = 'HUYỀN AI độc lập · ERP đang tắt'; return false; }
     if (!fresh()) { dot.className = 'dot off'; t.textContent = 'Máy tính trạm đang offline'; return false; }
     if (!s.erp) { dot.className = 'dot warn'; t.textContent = 'Trạm online · chưa kết nối ERP'; return true; }
     dot.className = 'dot ok'; t.textContent = 'ERP đã kết nối' + (s.user ? ' · ' + s.user : '') + (s.busy ? ' · đang xử lý' + (s.queue ? ' (' + s.queue + ' chờ)' : '') : ''); return true;
@@ -395,7 +463,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function send(text, imgs) {
     text = String(text || '').trim(); imgs = imgs || [];
     if ((!text && !imgs.length)) return;
-    if (!st.dkey) { toast('Chưa kết nối PC. Chọn 🔗 Kết nối PC trong Tùy chọn để nạp ERP; lệnh trong ô soạn vẫn được giữ lại.'); return; }
+    if (!erpReady()) { toast('Cần bật Kết nối ERP trong Tùy chọn và ghép trạm trước khi gửi lệnh.'); return; }
     var online = stationText(), id = newId(), now = Date.now();
     hist.push({ role: 'me', text: text, at: now, imgs: imgs, nImg: imgs.length });
     var bot = { role: 'bot', id: id, status: 'sending', text: online ? (imgs.length ? 'Đang gửi ' + imgs.length + ' ảnh tới máy tính trạm…' : 'Đang gửi tới máy tính trạm…') : 'Trạm đang offline — lệnh sẽ được xử lý khi máy tính mở lại (trong 10 phút).', at: now, q: text, nImg: imgs.length };
@@ -410,34 +478,94 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     return /\b(len don|tao don|dat don|dat hang|lap don|nhap don|len don hang|gui don hang|nap don)\b/.test(t) && !/\b(cach|huong dan|tai sao|nguyen tac|la gi)\b/.test(t);
   }
   function needsErp(text, imgs) {
-    if (imgs && imgs.length) return true;
+    // Ảnh không tự mặc định chuyển qua ERP; chỉ lệnh ERP rõ ràng mới chuyển trạm.
     var t = vn(text);
     if (isOrderIntent(text)) return true;
     return /\b(erp|ton kho|cong no|doanh so|so lieu|don hang hom nay|don hang trong ngay|lich su don|truy xuat|xuat kho|nhap kho|hoa don|phieu xuat|doanh thu thang|bao cao tai chinh)\b/.test(t)
       && !/\b(la gi|giai thich|cach lam|huong dan chung)\b/.test(t);
   }
-  var AI_STORE = 'huyen_mobile_ai_v247';
+  var AI_STORE = 'huyen_mobile_ai_v247', AI_MODEL = 'deepseek-v4-1-flash';
   function readAiConfig() {
     try { return JSON.parse(sessionStorage.getItem(AI_STORE) || localStorage.getItem(AI_STORE) || '{}') || {}; }
     catch (_) { return {}; }
   }
+  /* HUYỀN MOBILE: lịch gọi AI riêng biệt với ERP; không tạo lượt gọi nền. */
+  var AI_POLICY_STORE = 'huyen_mobile_ai_credit_policy_v249';
+  var AI_USAGE_STORE = 'huyen_mobile_ai_credit_usage_v249';
+  var AI_POLICY_DEFAULT = { enabled:false, fromDate:'', toDate:'', fromTime:'08:00', toTime:'18:00', dailyMax:20 };
+  function aiPolicy() {
+    var v={}; try {v=JSON.parse(localStorage.getItem(AI_POLICY_STORE)||'{}')||{};}catch(_){}
+    return Object.assign({},AI_POLICY_DEFAULT,v);
+  }
+  function localDay(n){ var d=n||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+  function aiUsage() {
+    var day=localDay(), d={};try{d=JSON.parse(localStorage.getItem(AI_USAGE_STORE)||'{}')||{};}catch(_){}
+    return d.day===day ? {day:day,count:Number(d.count)||0} : {day:day,count:0};
+  }
+  function aiAccessStatus(now) {
+    now=now||new Date(); var p=aiPolicy(), day=localDay(now), hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'), u=aiUsage();
+    if (!p.enabled) return {ok:false,why:'AI trực tuyến đang TẮT. Chỉ tra cứu/chuẩn hóa cục bộ.'};
+    if (p.fromDate && day<p.fromDate) return {ok:false,why:'Chưa đến ngày AI được phép sử dụng.'};
+    if (p.toDate && day>p.toDate) return {ok:false,why:'Đã hết ngày cho phép dùng AI.'};
+    if (hm < p.fromTime || hm >= p.toTime) return {ok:false,why:'Ngoài giờ AI được phép chạy ('+p.fromTime+'–'+p.toTime+').'};
+    if (u.count>=p.dailyMax) return {ok:false,why:'Đã đạt hạn mức '+p.dailyMax+' lượt/ngày trên máy này.'};
+    return {ok:true,why:'AI trực tuyến đang BẬT trong lịch.', left: p.dailyMax-u.count};
+  }
+  function updateAiPolicyUi() {
+    var st=aiAccessStatus(), u=aiUsage(), p=aiPolicy();
+    if($('aiPolicyState')) $('aiPolicyState').textContent= (st.ok?'✅ ':'⏸ ')+st.why+' Đã dùng '+u.count+'/'+p.dailyMax+' lượt hôm nay.';
+    if($('chatAiStatus')) $('chatAiStatus').textContent=(st.ok?'🟢 ':'⚪ ')+st.why+(st.ok?' Còn '+st.left+' lượt hôm nay.':'');
+  }
+  function loadAiBudgetSettings() {
+    var p=aiPolicy();
+    $('aiGate').checked=!!p.enabled; $('aiStartDate').value=p.fromDate; $('aiEndDate').value=p.toDate;
+    $('aiStartTime').value=p.fromTime; $('aiEndTime').value=p.toTime; $('aiMaxDaily').value=p.dailyMax;
+    updateAiPolicyUi();
+  }
+  $('aiPolicySave').onclick=function(){
+    var p={enabled:$('aiGate').checked,fromDate:$('aiStartDate').value,toDate:$('aiEndDate').value,fromTime:$('aiStartTime').value,toTime:$('aiEndTime').value,dailyMax:Number($('aiMaxDaily').value)};
+    if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime){ $('aiPolicyState').textContent='⚠ Giờ kết thúc phải sau giờ bắt đầu trong cùng ngày.';return; }
+    if(p.fromDate&&p.toDate&&p.fromDate>p.toDate){$('aiPolicyState').textContent='⚠ Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.';return;}
+    if(!Number.isInteger(p.dailyMax)||p.dailyMax<1||p.dailyMax>1000){$('aiPolicyState').textContent='⚠ Hạn mức phải từ 1 đến 1000 lượt mỗi ngày.';return;}
+    try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(p)); updateAiPolicyUi();toast('Đã lưu lịch và hạn mức AI.');}
+    catch(e){$('aiPolicyState').textContent='⚠ Không lưu được lịch: '+e.message;}
+  };
+  function reserveAiRequest() {
+    var access=aiAccessStatus(); if(!access.ok){var error=new Error(access.why);error.aiBlocked=true;throw error;}
+    var v=aiUsage();v.count++;
+    try{localStorage.setItem(AI_USAGE_STORE,JSON.stringify(v));}catch(e){ var err=new Error('Không lưu được số lượt AI. Đã chặn yêu cầu để tránh vượt hạn mức.');err.aiBlocked=true;throw err; }
+    updateAiPolicyUi();
+  }
   function loadAiSettings() {
     var a = readAiConfig();
-    $('aiProvider').value = a.provider === 'kie' ? 'kie' : 'google';
-    $('aiModel').value = a.model || (a.provider === 'kie' ? 'gemini-3-8-flash' : 'gemini-2.5-flash');
     $('aiKey1').value = a.key1 || ''; $('aiKey2').value = a.key2 || '';
     $('aiRemember').checked = !!a.remember;
-    $('aiState').textContent = a.key1 ? '✅ Đã cấu hình AI Mobile, không cần trạm PC.' : 'Chưa có API Key: chỉ tra danh mục cục bộ; chat AI tự do cần key cá nhân.';
+    $('aiState').textContent = a.key1 || a.key2 ? '✅ Đã thiết lập khóa AI. Chat không cần PC.' : 'Chưa có khóa AI. Tính năng tra cứu Excel/chuẩn hóa trên Mobile vẫn hoạt động.';
   }
-  $('aiProvider').onchange = function () { $('aiModel').value = this.value === 'kie' ? 'gemini-3-8-flash' : 'gemini-2.5-flash'; };
-  $('aiSave').onclick = function () {
-    var a = { provider: $('aiProvider').value, model: $('aiModel').value.trim(), key1: $('aiKey1').value.trim(), key2: $('aiKey2').value.trim(), remember: $('aiRemember').checked };
-    if (!/^[a-zA-Z0-9._-]{3,90}$/.test(a.model)) { toast('Model AI không hợp lệ'); return; }
+  function saveAiConfig() {
+    var a = { key1: $('aiKey1').value.trim(), key2: $('aiKey2').value.trim(), remember: $('aiRemember').checked };
+    if (!a.key1 && !a.key2) { $('aiState').textContent = '⚠ Hãy nhập ít nhất một khóa API.'; return null; }
     try {
       sessionStorage.setItem(AI_STORE, JSON.stringify(a));
-      if (a.remember) localStorage.setItem(AI_STORE, JSON.stringify(a)); else localStorage.removeItem(AI_STORE);
-      loadAiSettings(); toast('✅ Đã lưu AI Mobile trên điện thoại.');
-    } catch (e) { toast('Không lưu được AI: ' + e.message); }
+      if (a.remember) localStorage.setItem(AI_STORE, JSON.stringify(a));
+      else localStorage.removeItem(AI_STORE);
+      $('aiState').textContent = '✅ Đã lưu. Có thể trò chuyện ngay trên điện thoại.';
+      return a;
+    } catch (e) { $('aiState').textContent = '⚠ Không lưu được khóa: ' + e.message; return null; }
+  }
+  $('aiSave').onclick = function () { if (saveAiConfig()) toast('Đã lưu thiết lập HUYỀN AI.'); };
+  $('aiTest').onclick = async function () {
+    var a = saveAiConfig(); if (!a) return;
+    var b = this, original = b.textContent; b.disabled = true; b.textContent = '⏳ Đang thử…';
+    $('aiState').textContent = 'Đang kiểm tra kết nối AI…';
+    var keys = [a.key1,a.key2].filter(Boolean), result=null, error=null;
+    try {
+      for (var i=0;i<keys.length;i++) {
+        try { result = await callAiWithLimit(a,keys[i],[{role:'me',text:'Chào Huyền, chỉ trả lời OK.'}]); break; }
+        catch (e) { error = e; if(e.aiBlocked)break; }
+      }
+      $('aiState').textContent = result ? ('✅ Kết nối thành công: ' + result.slice(0,100)) : ('⚠ Không kết nối được: ' + (error ? error.message : 'Chưa có phản hồi'));
+    } finally { b.disabled=false; b.textContent=original; }
   };
   function localCatalogReply(text) {
     var t = vn(text);
@@ -452,52 +580,98 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       var cs = fastSuggest('customers', text.replace(/^(tim|tra cuu|khach hang|nha thuoc)\s*/i, '').trim(), 5);
       if (cs.length) return 'Khách trong danh mục đã tải:\n' + cs.map(function (x) { return '• ' + x.it.code + ' · ' + x.it.name; }).join('\n');
     }
-    return 'Em hiện hỗ trợ cục bộ: gợi ý khách hàng/sản phẩm, chuẩn hóa đơn và tra cứu danh mục đã lưu. Để **trò chuyện AI thông thường** mà không cần máy tính, mở **Tùy chọn → HUYỀN AI** và cài API Key Gemini hoặc Kie.ai của mình (cần Internet).';
+    return 'Em hiện hỗ trợ cục bộ: gợi ý khách hàng/sản phẩm, chuẩn hóa đơn và tra cứu danh mục đã lưu. Để **trò chuyện AI thông thường** mà không cần máy tính, mở **Tùy chọn → HUYỀN AI** và nhập khóa truy cập (cần Internet).';
   }
-  function fetchAi(config, key, messages) {
-    var ct = new AbortController(), timer = setTimeout(function () { ct.abort(); }, 22000);
-    var u = config.provider === 'kie' ? 'https://api.kie.ai/gemini-3-8-flash-openai/v1/chat/completions' : 'https://generativelanguage.googleapis.com/v1beta/models/' + encodeURIComponent(config.model || 'gemini-2.5-flash') + ':generateContent';
-    var system = 'Bạn là HUYỀN AI, trợ lý kinh doanh IDECO. Trả lời nhanh, rõ, tiếng Việt; không bịa số liệu ERP, không tự đặt giá/chiết khấu/chính sách khuyến mại. Không tuyên bố đã tạo đơn hay truy cập ERP. Nếu người dùng yêu cầu thao tác/số liệu thời gian thực ERP, hãy nói cần kết nối trạm PC. Giữ bí mật dữ liệu khách hàng.';
-    var body, headers;
-    if (config.provider === 'kie') {
-      headers = { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key };
-      body = { model: config.model, stream: false, temperature: 0.35, messages: [{ role: 'system', content: system }].concat(messages.map(function (m) { return { role: m.role === 'bot' ? 'assistant' : 'user', content: m.text }; })) };
-    } else {
-      headers = { 'Content-Type': 'application/json', 'x-goog-api-key': key };
-      body = { systemInstruction: { parts: [{ text: system }] }, contents: messages.map(function (m) { return { role: m.role === 'bot' ? 'model' : 'user', parts: [{ text: m.text }] }; }), generationConfig: { temperature: 0.35, maxOutputTokens: 1100 } };
+  function extractAiText(d) {
+    if (!d) return '';
+    if (d.response && d.response.output) d = d.response;
+    if (d.output_text) return String(d.output_text);
+    var output = Array.isArray(d.output) ? d.output : [];
+    return output.filter(function(item){return item && item.type==='message';}).map(function(item){
+      return (item.content || []).filter(function(c){return c && c.type === 'output_text' && c.text;}).map(function(c){return c.text;}).join('');
+    }).join('\n').trim();
+  }
+  function parseAiEnvelope(raw) {
+    var d;
+    try { d = JSON.parse(raw); } catch (_) {
+      // An endpoint may return a stream of response.completed events even for a non-stream request.
+      var ev = raw.split(/\r?\n/).filter(function (s) { return /^data:\s*/.test(s); });
+      for (var j = ev.length - 1; j >= 0; j--) {
+        var t = ev[j].replace(/^data:\s*/, '').trim();
+        if (!t || t === '[DONE]') continue;
+        try { var x = JSON.parse(t); if (x.response || x.output) { d = x; break; } } catch (_) {}
+      }
+      if (!d) throw new Error('Dịch vụ AI trả dữ liệu không đúng định dạng.');
     }
-    return fetch(u, { method: 'POST', headers: headers, body: JSON.stringify(body), signal: ct.signal }).then(async function (r) {
-      var d = await r.json().catch(function () { return {}; });
-      if (!r.ok) { var err = new Error('AI HTTP ' + r.status + ': ' + String(d && d.error && d.error.message || 'Không nhận phản hồi').slice(0, 120)); err.httpStatus = r.status; throw err; }
-      var ans = config.provider === 'kie' ? d && d.choices && d.choices[0] && d.choices[0].message && d.choices[0].message.content : d && d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts && d.candidates[0].content.parts.map(function (p) { return p.text || ''; }).join('');
-      if (!String(ans || '').trim()) throw new Error('AI trả về nội dung rỗng.');
-      return String(ans).slice(0, 10000);
-    }).catch(function (e) { if (e.name === 'AbortError') throw new Error('AI quá 22 giây chưa phản hồi. Kiểm tra 4G/Wi-Fi hoặc Key dự phòng.'); throw e; })
-      .finally(function () { clearTimeout(timer); });
+    var err = d.error || ((d.code && Number(d.code) !== 200) ? { message: d.msg || 'Máy chủ từ chối API', status: d.code } : null);
+    if (err) {
+      var ex = new Error(String(err.message || err.msg || 'API không sẵn sàng').slice(0, 180));
+      ex.httpStatus = Number(err.status || err.code || d.code || 400); throw ex;
+    }
+    return extractAiText(d);
   }
-  async function mobileAiAnswer(text) {
+  function callAiWithLimit(config,key,messages,images,files) {
+    reserveAiRequest();
+    return fetchAi(config,key,messages,images,files);
+  }
+  function fetchAi(config, key, messages, images, files) {
+    var ct = new AbortController(), timer = setTimeout(function(){ ct.abort(); }, 30000);
+    var system = 'Bạn là HUYỀN AI, trợ lý kinh doanh IDECO. Trả lời thân thiện, súc tích, chính xác bằng tiếng Việt. Hãy nhớ các câu trước trong hội thoại. Không bịa số liệu ERP, giá, chiết khấu hoặc khuyến mại; không khẳng định đã gửi đơn khi chưa xác minh. Nếu lệnh cần dữ liệu hoặc thao tác ERP, yêu cầu người dùng bật kết nối ERP trên Mobile. Không tiết lộ dữ liệu nội bộ.';
+    var recent = (messages || []).slice(-10).filter(function(m){return m && m.text;});
+    var prompt = recent.map(function(m){return (m.role==='bot'?'HUYỀN':'NGƯỜI DÙNG') + ': ' + String(m.text).slice(0,1800);}).join('\n\n') + '\n\nHUYỀN:';
+    var cleanFiles=(files||[]).slice(0,4), cleanImages=(images||[]).slice(0,4);
+    if(cleanFiles.length) prompt+='\n\nCÁC TỆP ĐÍNH KÈM (chỉ đọc và phân tích, KHÔNG tự ghi ERP):\n'+cleanFiles.map(function(f){return '--- '+f.name+' ---\n'+String(f.text||'').slice(0,15000);}).join('\n\n');
+    var content=[{ type:'input_text', text:prompt }];
+    cleanImages.forEach(function(url){ if(/^data:image\/(jpeg|png|webp);base64,/i.test(url)) content.push({type:'input_image',image_url:url,detail:'auto'}); });
+    var body = {
+      model: AI_MODEL, stream: false, reasoning: { effort: 'none' }, instructions: system,
+      input: [{ role: 'user', content: content }]
+    };
+    return fetch('https://api.kie.ai/openai/v1/responses', {
+      method: 'POST', headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
+      body: JSON.stringify(body), signal: ct.signal
+    }).then(async function(r){
+      var raw = await r.text();
+      if (!r.ok) {
+        var reason = 'HTTP ' + r.status;
+        try { var x=JSON.parse(raw); reason = String(x.error && x.error.message || x.msg || reason).slice(0,160); } catch(_) {}
+        var e = new Error(reason); e.httpStatus = r.status; throw e;
+      }
+      var ans = parseAiEnvelope(raw);
+      if (!ans) throw new Error('AI chưa trả về nội dung. Hãy thử lại.');
+      return ans.slice(0,12000);
+    }).catch(function(e){
+      if (e && e.name === 'AbortError') throw new Error('AI quá 30 giây chưa phản hồi; kiểm tra mạng hoặc thử khóa dự phòng.');
+      throw e;
+    }).finally(function(){ clearTimeout(timer); });
+  }
+  async function mobileAiAnswer(text,images,files) {
+    var gate=aiAccessStatus();
+    if(!gate.ok) return gate.why+'\n\n'+(images.length||files.length ? 'Tệp/ảnh chưa được gửi tới AI. Bật và thiết lập lịch AI trong Cài đặt để phân tích đính kèm.' : localCatalogReply(text));
     var a = readAiConfig(), keys = [a.key1, a.key2].filter(Boolean);
     if (!navigator.onLine) return localCatalogReply(text) + '\n\n⚠ Điện thoại không có Internet; AI trực tuyến không chạy.';
     if (!keys.length) return localCatalogReply(text);
-    var recent = hist.filter(function (x) { return (x.mobileAiUser || x.mobileAi) && x.status !== 'error' && x.text; }).slice(-8).map(function (x) { return { role: x.role, text: x.text.slice(0, 1200) }; });
+    var recent = hist.filter(function (x) { return (x.mobileAiUser || (x.mobileAi && x.status === 'done')) && x.status !== 'error' && x.text; }).slice(-8).map(function (x) { return { role: x.role, text: x.text.slice(0, 1200) }; });
     if (!recent.length || recent[recent.length - 1].text !== text) recent.push({ role: 'me', text: text });
     var error;
     for (var i = 0; i < keys.length; i++) {
-      try { return await fetchAi(a, keys[i], recent); }
-      catch (e) { error = e; if (e.httpStatus && ![408, 429, 500, 502, 503, 504].includes(e.httpStatus)) break; }
+      try { return await callAiWithLimit(a, keys[i], recent,images,files); }
+      catch (e) { error = e; if(e.aiBlocked)break; if (e.httpStatus && ![401, 402, 403, 408, 429, 500, 502, 503, 504].includes(e.httpStatus)) break; }
     }
     throw error || new Error('Không gọi được AI.');
   }
-  function sendMobileChat(t) {
-    if (!t) return;
-    var at = Date.now(); hist.push({ role: 'me', text: t, mobileAiUser: true, at: at });
+  function sendMobileChat(t,images,files) {
+    images=images||[]; files=files||[];
+    if (!t&&!images.length&&!files.length) return;
+    var at = Date.now(); hist.push({ role: 'me', text: t||(images.length?'Nhờ Huyền xem ảnh đính kèm.':'Nhờ Huyền đọc file đơn hàng đính kèm.'), mobileAiUser: true, at: at, imgs:images,nImg:images.length,docNames:files.map(function(f){return f.name;}) });
     var bot = { role: 'bot', id: newId(), mobileAi: true, status: 'sending', text: 'Huyền AI đang trả lời trên điện thoại…', at: at };
     hist.push(bot); saveHist(); renderAll();
-    mobileAiAnswer(t).then(function (ans) { bot.text = ans; bot.status = 'done'; })
+    mobileAiAnswer(t,images,files).then(function (ans) { bot.text = ans; bot.status = 'done'; })
       .catch(function (e) { bot.text = 'AI Mobile: ' + e.message + '\n\n' + localCatalogReply(t); bot.status = 'done'; })
       .finally(function () { saveHist(); upsert(bot); });
   }
   loadAiSettings();
+  loadAiBudgetSettings();
   /* 2.40.1: THEO DÕI KẾT QUẢ CHẮC CHẮN — realtime (EventSource) + đọc dự phòng 4 giây/lần (iPhone/Android ở chế độ
      app màn hình chính hay ngắt realtime khi khóa máy). Mở lại app / có mạng lại → tự nối lại mọi lệnh đang chờ. */
   function applyRes(bot, r) {
@@ -531,7 +705,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     Object.keys(st.pend).forEach(function (id) { var t = st.pend[id]; try { t.es && t.es.close(); } catch (e) {} clearInterval(t.poll); clearTimeout(t.timer); delete st.pend[id]; });
     hist.forEach(function (m) { if (m.role === 'bot' && m.id && (m.status === 'sending' || m.status === 'running') && m.q != null) { track(m); pollOnce(m); } });
   }
-  function resume() { if (!st.key) return; watchStation(); if (st.dkey) retrackAll(); }
+  function resume() { if (!erpOn || !st.key) return; watchStation(); if (erpReady()) retrackAll(); }
 
   /* ---------- đăng nhập: mã + tên + mật khẩu ERP ---------- */
   function view(v) { $('pairView').hidden = v !== 'login'; $('topBar').hidden = v === 'login'; var chat = v === 'chat'; $('list').hidden = !chat; $('comp').hidden = !chat; }
@@ -582,18 +756,19 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     }).then(function (h) {
       return verify(h).then(function () { st.cfg.h = h; });
     }).then(function () {
-      try { localStorage.removeItem('huyen_mobile_offline_mode'); } catch (_) {} saveCfg(rem); $('pPw').value = ''; enterChat(); toast('Đã vào ✓');
+      saveErpChoice(true); erpUi(); try { localStorage.removeItem('huyen_mobile_offline_mode'); } catch (_) {} saveCfg(rem); $('pPw').value = ''; enterChat(); toast('Đã kết nối ERP ✓');
     }).catch(function (e) { st.dkey = null; msg('⚠ ' + e.message); }).then(function () { btn.disabled = false; });
   }
   function enterChat() {
     dataBoot = dataInit().catch(function () {}); // Nạp dữ liệu cục bộ không chặn giao diện; chuẩn hóa sẽ đợi dữ liệu này.
     view('chat'); loadHist(); renderAll(); stationText();
-    if (st.dkey) retrackAll();
+    if (erpReady()) retrackAll();
   }
   /* vào nhanh: đã ghi nhớ → vào thẳng màn hình chat, kiểm tra lại với trạm ở nền */
   function quickStart() {
+    if (!erpOn) { enterChat(); return; }
     connect(st.cfg.code).then(function () { return dataKey(st.cfg.code, st.cfg.h); }).then(function (dk) {
-      st.dkey = dk; enterChat();
+      if (!erpOn) return; st.dkey = dk; erpUi(); enterChat();
       waitStation(9000).then(function (s) {
         if (!s) return; // trạm offline: vẫn cho soạn, lệnh xếp hàng khi trạm mở
         verify(st.cfg.h).catch(function (e) { if (/mật khẩu/i.test(e.message)) logout('Mật khẩu ERP trên máy tính đã đổi — nhập lại.'); });
@@ -602,12 +777,22 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   $('pairBtn').onclick = doLogin;
   $('offlineNorm').onclick = function () {
-    st.dkey = null; st.key = null; st.sid = '';
-    st.cfg = { name: $('pName').value.trim() || 'Người dùng IDECO', code: 'IDECO' };
+    erpDisconnect();
+    st.cfg = Object.assign({}, st.cfg || {}, { name: $('pName').value.trim() || (st.cfg && st.cfg.name) || 'Người dùng IDECO', code: (st.cfg && st.cfg.code) || 'IDECO' });
     try { localStorage.setItem('huyen_mobile_offline_mode','1'); } catch (_) {}
     enterChat(); toast('✨ Chế độ chuẩn hóa độc lập. Không cần mở PC.');
   };
-  $('connectPc').onclick = function () { try { localStorage.removeItem('huyen_mobile_offline_mode'); } catch (_) {} $('sheet').classList.remove('open'); showLogin('Nhập thông tin ghép cặp khi muốn nạp đơn lên ERP.'); };
+  $('connectPc').onclick = function () { $('sheet').classList.remove('open'); showLogin('Nhập thông tin ghép cặp để bật xử lý ERP.'); };
+  $('erpToggle').onchange = function () {
+    if (!this.checked) {
+      erpDisconnect(); toast('ERP đã tắt. Chat AI và chuẩn hóa vẫn hoạt động trên Mobile.'); return;
+    }
+    saveErpChoice(true); erpUi();
+    if (st.dkey) { stationText(); toast('Đã bật kết nối ERP.'); return; }
+    if (st.cfg && st.cfg.h && st.cfg.code) { quickStart(); toast('Đang khôi phục kết nối ERP…'); return; }
+    $('sheet').classList.remove('open');
+    showLogin('Bật ERP: cần ghép cặp máy trạm một lần. Để quay lại Chat, chọn chế độ không cần PC.');
+  };
   ['pCode', 'pName', 'pPw'].forEach(function (k) { $(k).addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); if (k === 'pPw') doLogin(); else $(k === 'pCode' ? 'pName' : 'pPw').focus(); } }); });
   $('eye').onclick = function () { var i = $('pPw'), show = i.type === 'password'; i.type = show ? 'text' : 'password'; this.textContent = show ? '🙈' : '👁'; this.setAttribute('aria-pressed', String(show)); this.setAttribute('aria-label', show ? 'Ẩn mật khẩu' : 'Hiện mật khẩu'); };
 
@@ -634,8 +819,32 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function renderShots() {
     var b = $('thumbs'); b.innerHTML = '';
     shots.forEach(function (u, i) { var d = document.createElement('div'); d.className = 'th'; d.innerHTML = '<img alt=""><button aria-label="Bỏ ảnh">✕</button>'; d.querySelector('img').src = u; d.querySelector('button').onclick = function () { shots.splice(i, 1); renderShots(); }; b.appendChild(d); });
+    var p=$('docsPreview');p.innerHTML='';
+    docs.forEach(function(f,i){
+      var d=document.createElement('div');d.className='doc-chip';
+      var n=document.createElement('span');n.textContent='📄 '+f.name+' ('+Math.ceil((f.text||'').length/1000)+'k ký tự)';
+      var x=document.createElement('button');x.textContent='✕';x.type='button';x.setAttribute('aria-label','Bỏ file '+f.name);x.onclick=function(){docs.splice(i,1);renderShots();};
+      d.appendChild(n);d.appendChild(x);p.appendChild(d);
+    });
     grow();
   }
+  async function addDocuments(files) {
+    var list=Array.from(files||[]), room=4-docs.length;
+    if(!room){toast('Tối đa 4 tệp đính kèm.');return;}
+    for(var f of list.slice(0,room)){
+      if(/^image\//.test(f.type)||/\.(png|jpe?g|webp)$/i.test(f.name)){addFiles([f]);continue;}
+      if(f.size>8*1024*1024){toast('File '+f.name+' vượt 8 MB, hãy chia nhỏ.');continue;}
+      try{
+        var content=await HuyenMobileCatalog.readChatFile(f);
+        if(!content.trim()) throw new Error('Tệp không có văn bản để phân tích. Nếu PDF là ảnh quét, hãy đính kèm ảnh trang cần đọc.');
+        docs.push({name:f.name.slice(0,100),text:content.slice(0,15000)});
+      }catch(e){toast('⚠ '+f.name+': '+e.message);}
+    }
+    renderShots();
+  }
+  $('attach').onclick=function(){$('fDocs').click();};
+  $('camFile').onclick=function(){$('camSheet').classList.remove('open');$('fDocs').click();};
+  $('fDocs').onchange=function(){addDocuments(this.files);this.value='';};
   $('cam').onclick = function () { $('camSheet').classList.add('open'); };
   $('camClose').onclick = function () { $('camSheet').classList.remove('open'); };
   $('camSheet').onclick = function (e) { if (e.target === this) this.classList.remove('open'); };
@@ -694,17 +903,42 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       try { r.start(); } catch (e) { micStop(); }
     })();
   }
-  function grow() { var ta = $('ta'); ta.style.height = 'auto'; if (!$('box').classList.contains('big')) ta.style.height = Math.min(Math.round(innerHeight * 0.42), Math.max(64, ta.scrollHeight)) + 'px'; $('send').disabled = !ta.value.trim() && !shots.length; }
+  function grow() { var ta = $('ta'); ta.style.height = 'auto'; if (!$('box').classList.contains('big')) ta.style.height = Math.min(Math.round(innerHeight * 0.42), Math.max(64, ta.scrollHeight)) + 'px'; $('send').disabled = !ta.value.trim() && !shots.length && !docs.length; }
 
   /* ---------- tùy chọn ---------- */
-  $('menuBtn').onclick = function () {
+  var SETTINGS_PASS_HASH = 'b8a57977041c2b2ba8baab472c1f0240a30b671a9fb027f9e4d73b52818b0b29';
+  var settingFails = 0, settingBlockedUntil = 0;
+  function openProtectedSettings() {
+    $('settingsPassword').value = ''; $('authError').textContent = '';
+    $('authSheet').classList.add('open'); $('settingsPassword').focus();
+  }
+  async function verifySettingsPassword() {
+    if (Date.now() < settingBlockedUntil) { $('authError').textContent = 'Thử lại sau ' + Math.ceil((settingBlockedUntil-Date.now())/1000) + ' giây.'; return; }
+    var value = $('settingsPassword').value;
+    var dig = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(value));
+    var hex = Array.from(new Uint8Array(dig)).map(function(x){return x.toString(16).padStart(2,'0');}).join('');
+    if (hex !== SETTINGS_PASS_HASH) {
+      settingFails++; $('settingsPassword').value='';
+      if (settingFails>=5) { settingBlockedUntil=Date.now()+60000;settingFails=0;$('authError').textContent='Nhập sai nhiều lần. Khóa trong 60 giây.'; }
+      else $('authError').textContent='Mật khẩu chưa đúng ('+(5-settingFails)+' lần thử còn lại).';
+      return;
+    }
+    settingFails=0; $('settingsPassword').value=''; $('authSheet').classList.remove('open'); showSettings();
+  }
+  $('settingsUnlock').onclick = verifySettingsPassword;
+  $('settingsPassword').addEventListener('keydown',function(e){ if(e.key==='Enter'){e.preventDefault();verifySettingsPassword();} });
+  $('settingsCancel').onclick=function(){ $('settingsPassword').value='';$('authSheet').classList.remove('open'); };
+  $('settingsEye').onclick=function(){var x=$('settingsPassword');x.type=x.type==='password'?'text':'password';this.textContent=x.type==='text'?'🙈':'👁';};
+  function showSettings() {
     try { dataStat(); } catch (e) {}
-    $('sheetInfo').textContent = (st.cfg.name || '') + ' · mã ' + st.cfg.code + (st.station && st.station.user ? ' · ERP ' + st.station.user : '') + (st.cfg.h ? ' · đã ghi nhớ đăng nhập' : '');
-    $('sheet').classList.add('open');
+    loadAiBudgetSettings();
+    $('sheetInfo').textContent = (st.cfg.name || '') + ' · mã ' + (st.cfg.code || 'IDECO') + (erpOn && st.station && st.station.user ? ' · ERP ' + st.station.user : '') + (erpOn && st.cfg.h ? ' · đã ghi nhớ đăng nhập' : '');
+    erpUi(); $('sheet').classList.add('open');
   };
+  $('menuBtn').onclick = openProtectedSettings;
   $('closeSheet').onclick = function () { $('sheet').classList.remove('open'); };
   $('sheet').onclick = function (e) { if (e.target === this) this.classList.remove('open'); };
-  $('lockNow').onclick = function () { $('sheet').classList.remove('open'); logout('Đã đăng xuất.'); };
+  $('lockNow').onclick = function () { $('sheet').classList.remove('open'); erpDisconnect(); if (st.cfg) { delete st.cfg.h; saveCfg(false); } toast('Đã ngắt ERP; tiếp tục sử dụng HUYỀN AI trên điện thoại.'); };
   $('clearChat').onclick = function () { if (!confirm('Xóa lịch sử trò chuyện trên điện thoại này?')) return; hist = []; saveHist(); renderAll(); $('sheet').classList.remove('open'); };
   $('themeBtn').onclick = function () { var cur = document.documentElement.getAttribute('data-theme'), dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches, nx = dark ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nx); try { localStorage.setItem('huyen_mobile_theme', nx); } catch (e) {} };
 
@@ -712,14 +946,20 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('ta').addEventListener('input', grow);
   $('ta').addEventListener('keydown', function (e) { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(pointer:fine)').matches) { e.preventDefault(); $('send').click(); } });
   $('send').onclick = function () {
-    var t = $('ta').value.trim(), im = shots.slice(); if (!t && !im.length) return;
-    if (micOn) micStop();
-    if (isOrderIntent(t) && !im.length) { $('normBtn').click(); return; }
-    if (needsErp(t, im)) {
-      if (!st.dkey) { toast('Lệnh ERP cần kết nối PC. Hãy kết nối trong Tùy chọn; nội dung vẫn được giữ.'); return; }
-      $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); send(t, im); return;
+    var t=$('ta').value.trim(), im=shots.slice(), files=docs.slice();if(!t&&!im.length&&!files.length)return;
+    if(micOn)micStop();
+    // Lệnh chỉ có chữ: luôn chuẩn hóa tại điện thoại, không gửi thẳng ERP.
+    if(isOrderIntent(t)&&!im.length&&!files.length){$('normBtn').click();return;}
+    // Tệp/ảnh: phân tích trên Mobile trước khi quyết định nạp ERP; không tự gửi kèm file vào ERP.
+    if(!im.length&&!files.length&&needsErp(t,[])){
+      if(!erpReady()){toast('Muốn hỏi số liệu ERP, hãy bật Kết nối ERP trong Tùy chọn.');return;}
+      $('ta').value='';if($('box').classList.contains('big'))$('grow').click();renderShots();send(t,[]);return;
     }
-    $('ta').value = ''; shots = []; if ($('box').classList.contains('big')) $('grow').click(); renderShots(); sendMobileChat(t);
+    var gate=aiAccessStatus();
+    if((im.length||files.length)&&!gate.ok){toast('⚠ '+gate.why+' Chưa gửi tệp/ảnh và vẫn giữ bản nháp.');return;}
+    if((im.length||files.length)){var a=readAiConfig();if(!a.key1&&!a.key2){toast('⚠ Chưa thiết lập API Key; file/ảnh vẫn được giữ, vui lòng nhập khóa trong Cài đặt.');return;}}
+    $('ta').value='';shots=[];docs=[];if($('box').classList.contains('big'))$('grow').click();renderShots();
+    sendMobileChat(t||'Hãy đọc nội dung đính kèm, tóm tắt và nêu các mục cần xác nhận trước khi lập đơn.',im,files);
   };
   $('mic').onclick = micToggle;
   $('grow').onclick = function () { var b = $('box'), on = b.classList.toggle('big'); this.textContent = on ? '⤡' : '⤢'; $('chips').hidden = on; grow(); $('ta').focus(); };
@@ -727,7 +967,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   document.addEventListener('visibilitychange', function () { if (!document.hidden) resume(); });
   window.addEventListener('online', resume);
   window.addEventListener('pageshow', function (e) { if (e.persisted) resume(); });
-  document.addEventListener('paste', function (e) { if (!st.dkey) return; var f = Array.prototype.map.call((e.clipboardData && e.clipboardData.files) || [], function (x) { return x; }); if (f.length) { e.preventDefault(); addFiles(f); } });
+  document.addEventListener('paste', function (e) { var f = Array.from((e.clipboardData && e.clipboardData.files)||[]); if (f.length) { e.preventDefault();addDocuments(f); } });
+  window.addEventListener('focus',updateAiPolicyUi);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden)updateAiPolicyUi();});
+  updateAiPolicyUi();
 
   /* ---------- khởi động ---------- */
   if (!window.crypto || !crypto.subtle) { document.body.innerHTML = '<p style="padding:20px">Cần mở bằng địa chỉ https (GitHub Pages) để dùng mã hóa.</p>'; return; }
@@ -1056,12 +1299,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     }
     var b = this; if (b.disabled) return;
     var t0 = b.textContent; b.disabled = true; b.textContent = '⏳ Đang đối chiếu…';
-    if (normStatus) normStatus.textContent = '📚 Đang tra danh sách Excel trên Firebase / bộ nhớ điện thoại…';
+    if (normStatus) normStatus.textContent = '📝 Đã nhận nội dung đang nhập: “' + text.slice(0, 110) + (text.length > 110 ? '…' : '') + '”. Đang tra danh mục…';
     needData().then(function () {
       if (normStatus) normStatus.textContent = '🔎 Đã tải danh sách; đang đối chiếu tên, mã và số lượng tại điện thoại…';
       var result = HuyenMobileCatalog.parse(text, DATA.products.rows, DATA.customers.rows);
       openDraft(result, text, 0);
-      if (normStatus) normStatus.textContent = '✅ Đã chuẩn hóa độc lập. Kiểm tra khách, sản phẩm và số lượng trước khi nạp ERP.';
+      if (normStatus) normStatus.textContent = '✅ Đã đọc ' + result.lines.length + ' dòng từ khung chat. Kiểm tra khách hàng, sản phẩm, đơn vị tính trước khi nạp ERP.';
       if (imgs.length) toast('Lưu ý: chuẩn hóa phần chữ; ảnh chưa được nhận diện.');
     }).catch(function (e) {
       if (normStatus) normStatus.textContent = '⚠ ' + e.message;
@@ -1094,7 +1337,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       d.innerHTML = '<div class="raw">Dòng ' + (i + 1) + ' · đọc được: “' + esc(l.raw || '') + '”' + (l.note ? ' · ' + esc(l.note) : '') + '</div>' +
         '<select class="sel' + (weak ? ' bad' : '') + '" data-i="' + i + '">' + (l.sel < 0 ? '<option value="-1">⚠ Chưa khớp — gõ tìm bên dưới</option>' : '') +
         l.cands.map(function (x, j) { return '<option value="' + j + '"' + (j === l.sel ? ' selected' : '') + '>' + esc(x.it.code + ' · ' + x.it.name + ' (' + confTag(x.s, j === l.sel && amb(l.cands, j, l.picked)) + ')') + '</option>'; }).join('') + '</select>' +
-        (l.sel >= 0 ? '<div class="pk"><b>' + esc(l.cands[l.sel].it.name) + '</b> <span class="' + (weak ? 'wr' : 'ok2') + '">' + esc(confTag(l.cands[l.sel].s, amb(l.cands, l.sel, l.picked))) + '</span></div>' : '') +
+        (l.note ? '<div class="raw" style="color:var(--warn)">⚠ ' + esc(l.note) + '</div>' : '') + (l.sel >= 0 ? '<div class="pk"><b>' + esc(l.cands[l.sel].it.name) + '</b> <span class="' + (weak ? 'wr' : 'ok2') + '">' + esc(confTag(l.cands[l.sel].s, amb(l.cands, l.sel, l.picked))) + '</span></div>' : '') +
         '<div class="ln"><input class="in q" inputmode="decimal" data-q="' + i + '" value="' + esc(l.qty || '') + '" placeholder="SL"><span class="u">' +
         (l.sel >= 0 ? esc(l.cands[l.sel].it.unit || '') + ' · giá ' + money(l.cands[l.sel].it.price) + (l.unit && vn(l.unit) !== vn(l.cands[l.sel].it.unit) ? ' · <span class="wr">khách ghi “' + esc(l.unit) + '”</span>' : '') : '') +
         '</span><button class="x" data-x="' + i + '" aria-label="Bỏ dòng">✕</button></div>' +
@@ -1136,7 +1379,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       L.map(function (l, i) { var p = l.cands[l.sel].it; return (i + 1) + '. MÃ SP ' + p.code + ' — ' + p.name + ' — SL ' + l.qty + ' ' + (p.unit || ''); }).join('\n') +
       (draft.note ? '\nGhi chú: ' + draft.note : '') + (draft.cash ? '\nThanh toán: tiền mặt.' : '') +
       '\n(Đơn đã CHUẨN HÓA trên app điện thoại: dùng ĐÚNG MÃ KH / MÃ SP ở trên, không đổi sản phẩm; CK và khuyến mại áp theo chính sách.)';
-    if (!st.dkey) {
+    if (!erpReady()) {
       $('draftSheet').classList.remove('open');
       $('ta').value = cmd; shots = []; renderShots(); grow();
       // Không gửi về ERP khi chưa có PC. Người dùng vẫn có thể kiểm tra hoặc gửi sau khi kết nối.
@@ -1165,10 +1408,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   $('installApp').addEventListener('click', installPwa);
   $('installFromLogin').addEventListener('click', installPwa);
-  loadCfg(); grow(); st.pairDb = hp.db || '';
-  if (st.cfg && st.cfg.h && (!hp.pair || norm(hp.pair) === norm(st.cfg.code))) quickStart();
-  else { showLogin(''); if (hp.pair) $('pCode').value = norm(hp.pair); if (hp.n && !$('pName').value) $('pName').value = hp.n;
-    try { if (!hp.pair && localStorage.getItem('huyen_mobile_offline_mode') === '1') $('offlineNorm').click(); } catch (_) {} }
+  loadCfg(); grow(); erpUi(); st.pairDb = hp.db || '';
+  if (erpOn && st.cfg && st.cfg.h && (!hp.pair || norm(hp.pair) === norm(st.cfg.code))) quickStart();
+  else if (hp.pair || erpOn) { showLogin(''); if (hp.pair) $('pCode').value = norm(hp.pair); if (hp.n && !$('pName').value) $('pName').value = hp.n; }
+  else { st.cfg = st.cfg || {name:'Người dùng IDECO',code:'IDECO'}; enterChat(); }
 })();
 </script>
 <script>if ('serviceWorker' in navigator) addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });</script>

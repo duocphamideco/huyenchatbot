@@ -90,49 +90,103 @@
     if (exact) return { customer: exact.name, code: exact.code };
     var code = /(?:m[aã]\s*kh|ma\s*kh|customer\s*code)\s*[:#-]?\s*([a-z0-9_.-]{3,40})/i.exec(text);
     if (code) return { customer: '', code: code[1] };
-    var re = /(?:kh[aá]ch\s*h[aà]ng|kh[aá]ch|nh[aà]\s*thu[oố]c|qu[aầ]y\s*thu[oố]c|[dđ][aạ]i\s*l[yý]|giao\s*cho|cho\s*kh[aá]ch)\s*[:\-]?\s*([^\n,;:]{3,75})/i;
+    var re = /(?:kh[aá]ch\s*h[aà]ng|kh[aá]ch|nh[aà]\s*thu[oố]c|qu[aầ]y\s*thu[oố]c|[dđ][aạ]i\s*l[yý]|giao\s*cho|cho\s*kh[aá]ch)\s*[:\-]?\s*([^\n,;:]{3,90})/i;
     var m = re.exec(text);
     if (!m) return { customer: '', code: '' };
-    var candidate = m[1].replace(/\b(?:[dđ][aặ]t|mua|l[aấ]y|g[oồ]m|c[aầ]n)\b.*$/i, '').replace(/\b\d+(?:[.,]\d+)?\s*(?:h[oộ]p|chai|l[oọ]|g[oó]i).*$/i, '').trim();
+    // Stops before either quantity style: "Bạch Liên 12 sản phẩm Wamlox", "Bạch Liên 12 hộp Wamlox".
+    var candidate = m[1].replace(/\s+\d+(?:[.,]\d+)?(?:\s|$).*$/i, '')
+      .replace(/\s+(?:mua|l[aấ]y|c[aầ]n|s[oố]\s*l[uượ]ng|thanh\s*to[aá]n|tr[aả]\s*ti[eề]n\s*m[aặ]t)\b.*$/i, '')
+      .replace(/\s+[dđ][aặ]t\s+(?:h[aà]ng|ti[eề]n|mua).*$/i, '').trim();
     return { customer: candidate.slice(0, 70), code: '' };
   }
-  function productNameFromFragment(fragment, rows) {
-    var exact = exactInText(fragment, rows, 'products');
+  function bareProductFragment(fragment, customer) {
+    var s = fold(fragment);
+    if (customer && customer.customer) {
+      var n = fold(customer.customer);
+      if (n.length >= 3) s = (' ' + s + ' ').replace(' ' + n + ' ', ' ').trim();
+    }
+    s = s.replace(/\b(?:thanh toan|tra tien|dat tien mat|tien mat|chuyen khoan|ck ngan hang|ghi chu|xuat hoa don|giao hang|giao ngay)\b.*$/, ' ');
+    s = s.replace(/^(?:(?:len|tao|lap) don(?: hang)?(?: cho)?\s+|(?:don hang cho|cho|cua|khach hang|khach|nha thuoc|quay thuoc|dai ly|tiem thuoc|san pham|mat hang|thuoc|loai|sp|la|gom|mua|dat|lay|can|ban|so luong|sl)\s+)+/, '');
+    s = s.replace(/\b(?:cho nha thuoc|cho khach hang|cho dai ly)\b/g, ' ');
+    s = s.replace(/^(?:(?:khach hang|khach|nha thuoc|quay thuoc|dai ly|tiem thuoc|san pham|mat hang|thuoc|loai|sp|la|gom|mua|dat|lay|can|ban|so luong|sl)\s+)+/, '');
+    return s.replace(/\s+/g, ' ').trim();
+  }
+  function productHint(fragment, rows) {
+    var t = ' ' + fold(fragment) + ' ', strongest = 0;
+    if (t.trim().length < 3) return 0;
+    (rows || []).forEach(function (r) {
+      var n = fold(r[1]), code = fold(r[0]);
+      if (code.length >= 3 && t.indexOf(' ' + code + ' ') >= 0) strongest = Math.max(strongest, 100);
+      if (n.length >= 4 && t.indexOf(' ' + n + ' ') >= 0) strongest = Math.max(strongest, 80);
+      // Product names from Excel may include strength/packaging absent from spoken text.
+      var parts = n.split(' ').filter(function (x) { return x.length >= 4 && !/^(thuoc|hang|chai|goi|san|pham|hop|vien|loai)$/.test(x); });
+      for (var i = 0; i < parts.length; i++) if (t.indexOf(' ' + parts[i] + ' ') >= 0) strongest = Math.max(strongest, 25);
+    });
+    return strongest;
+  }
+  function productNameFromFragment(fragment, rows, customer) {
+    var f = bareProductFragment(fragment, customer);
+    var exact = exactInText(f, rows, 'products');
     if (exact) return exact.name;
-    var f = plain(fragment).replace(/^(?:l[eệ]nh\s+)?(?:l[eê]n|t[aạ]o|l[aậ]p)\s*[dđ][oơ]n(?:\s*h[aà]ng)?(?:\s*cho)?/i,'')
-      .replace(/^(?:mua|[dđ][aặ]t|l[aấ]y|s[aả]n\s*ph[aẩ]m|thu[oố]c|h[aà]ng)\s*/i,'')
-      .replace(/^(?:cho|c[uủ]a)\s+(?:kh[aá]ch|nh[aà]\s*thu[oố]c|[dđ][aạ]i\s*l[yý])[^,;:]{0,65}/i,'')
-      .replace(/\s*(?:cho|giao\s*cho)\s+(?:kh[aá]ch|nh[aà]\s*thu[oố]c|[dđ][aạ]i\s*l[yý]).*$/i,'').replace(/^[\s,;:•.\-]+|[\s,;:•.\-]+$/g,'');
-    return f.slice(-90);
+    return f.slice(-100);
   }
   function parse(text, products, customers) {
     text = plain(text); if (!text) throw new Error('Chưa có nội dung đơn hàng để chuẩn hóa.');
     var lines = [], c = customerFromText(text, customers), chunks = text.split(/\n|[;]+/).map(plain).filter(Boolean);
     chunks.forEach(function (chunk) {
-      var all = [], m, q = new RegExp(QUANTITY.source, 'gi');
-      while ((m = q.exec(chunk))) { var quantity = Number(m[1].replace(',', '.')); if (quantity > 0 && quantity < 1000000) all.push({ index: m.index, end: m.index + m[0].length, qty: quantity, unit: m[2] }); }
+      var all = [], m;
+      function addMatch(index, end, qty, unit, kind) {
+        if (!(qty > 0 && qty < 1000000)) return;
+        if (all.some(function (x) { return index < x.end && end > x.index; })) return;
+        all.push({ index: index, end: end, qty: qty, unit: unit || '', kind: kind });
+      }
+      // 1. Quantities explicitly followed by physical units: 12 hộp, 32 chai, etc.
+      var q = new RegExp(QUANTITY.source, 'gi');
+      while ((m = q.exec(chunk))) addMatch(m.index, q.lastIndex, Number(m[1].replace(',', '.')), m[2], 'unit');
+      // 2. Natural speech without units: "12 sản phẩm Wamlox", "3 loại Hamifa".
+      var count = /(\d+(?:[.,]\d+)?)\s*(?:s[aả]n\s*ph[aẩ]m|s[ảa]n\s*ph[ẩa]m|m[aặ]t\s*h[aà]ng|sp|thu[oố]c|lo[aạ]i|[dđ][oơ]n\s*v[iị])\b/gi;
+      while ((m = count.exec(chunk))) addMatch(m.index, count.lastIndex, Number(m[1].replace(',', '.')), '', 'count');
+      // 3. "số lượng 12", "SL:12", "lấy 12" (unit optional).
+      var labelled = /(?:s[oố]\s*l[uượ]ng|\bsl\b|\bqty\b|l[aấ]y|mua|c[aầ]n)\s*[:=\-]?\s*(\d+(?:[.,]\d+)?)/gi;
+      while ((m = labelled.exec(chunk))) {
+        var at = m.index + m[0].lastIndexOf(m[1]);
+        addMatch(at, m.index + m[0].length, Number(m[1].replace(',', '.')), '', 'label');
+      }
+      // 4. "12 Wamlox" / "Wamlox 12" if clearly matched to a catalog product.
+      if (!all.length && Array.isArray(products) && products.length) {
+        var bare = /\b(\d{1,6})(?![\d.,])\b/g, candidate = [];
+        while ((m = bare.exec(chunk))) {
+          var after = fold(chunk.slice(bare.lastIndex, bare.lastIndex + 14));
+          if (/^(?:mg|mcg|ml|g|gr|kg|iu|ui|%|nam|thang|ngay|vnd|dong)\b/.test(after)) continue;
+          var before = chunk.slice(0, m.index), aft = chunk.slice(bare.lastIndex);
+          var a = bareProductFragment(before, c), b = bareProductFragment(aft, c);
+          var score = Math.max(productHint(a, products), productHint(b, products));
+          if (score >= 25) candidate.push({ index: m.index, end: bare.lastIndex, qty: Number(m[1]), unit: '', kind: 'bare' });
+        }
+        // Avoid guessing where multiple numbers remain plausible.
+        if (candidate.length === 1) addMatch(candidate[0].index, candidate[0].end, candidate[0].qty, '', 'bare');
+      }
+      all.sort(function (a, b) { return a.index - b.index; });
       all.forEach(function (x, i) {
         var prev = i ? all[i-1].end : 0, next = i + 1 < all.length ? all[i+1].index : chunk.length;
         var before = chunk.slice(prev, x.index), after = chunk.slice(x.end, next);
-        var pref = productNameFromFragment(before, products);
-        var prod = pref;
-        // e.g. “32 hộp dầu gội Hamifa” — after quantity contains the product.
-        if (!exactInText(before, products, 'products')) {
-          var aft = productNameFromFragment(after, products);
-          if (!pref || /(?:nh[aà]\s*thu[oố]c|kh[aá]ch|[dđ][aạ]i\s*l[yý])/.test(fold(pref)) || (aft && aft.length > pref.length && !/kh[aá]ch|giao\s*cho/i.test(aft))) prod = aft || pref;
-        }
-        prod = plain(prod);
-        if (!prod || prod.length < 2) prod = plain(before || after);
-        lines.push({ product: prod, raw: chunk.slice(Math.max(0, x.index - 95), Math.min(chunk.length, x.end + 60)), qty: x.qty, unit: x.unit, note: '' });
+        var pref = productNameFromFragment(before, products, c), aft = productNameFromFragment(after, products, c);
+        var bp = productHint(pref, products), ap = productHint(aft, products);
+        // With "12 sản phẩm Wamlox" the product is AFTER the quantity.
+        var prod = x.kind === 'count' && aft ? aft : (ap > bp ? aft : (bp > ap ? pref : (pref || aft)));
+        if (!prod || (x.kind === 'count' && ap >= bp)) prod = aft || pref;
+        if (!prod || prod.length < 2) prod = pref || aft;
+        if (!prod || prod.length < 2) return; // don't invent a product.
+        lines.push({ product: prod, raw: chunk.slice(Math.max(0, x.index - 100), Math.min(chunk.length, x.end + 95)), qty: x.qty, unit: x.unit, note: x.unit ? '' : 'Chưa nêu đơn vị — đối chiếu đơn vị Excel trước khi gửi ERP.' });
       });
       if (!all.length) {
-        // Explicit “MÃ SP … SL 32” without physical unit.
+        // Explicit "MÃ SP ... SL 32" without a physical unit.
         var re = /(?:m[aã]\s*sp|m[aã]\s*s[aả]n\s*ph[aẩ]m)\s*[:#-]?\s*([a-z0-9_.-]{3,40})[^\n]*?\b(?:sl|s[oố]\s*l[uượ]ng)\s*[:#-]?\s*(\d+(?:[.,]\d+)?)/ig;
         while ((m = re.exec(chunk))) lines.push({ product: m[1], raw: m[0], qty: Number(m[2].replace(',', '.')), unit: '', note: '' });
       }
     });
-    if (!lines.length) throw new Error('Không nhận diện được số lượng kèm đơn vị (ví dụ: “Dầu gội Hamifa 32 hộp”). Hãy bổ sung số lượng để chuẩn hóa.');
-    return { customer: c.customer, code: c.code, phone: '', address: '', lines: lines, note: '', cash: /ti[eề]n\s*m[aặ]t/i.test(text) };
+    if (!lines.length) throw new Error('Chưa xác định được dòng sản phẩm và số lượng. Ví dụ: “12 sản phẩm Wamlox”, “Wamlox 12 hộp” hoặc chọn tại 🧾 Đơn nhanh.');
+    return { customer: c.customer, code: c.code, phone: '', address: '', lines: lines, note: '', cash: /\b(tien mat|tra tien mat|thanh toan tien mat)\b/.test(fold(text)) };
   }
   /* Nhập Excel XLSX không phụ thuộc CDN: đọc ZIP central directory và XML bảng tính.
    * XLS cũ (BIFF) không được hỗ trợ; yêu cầu lưu thành .xlsx hoặc .csv. */
@@ -235,7 +289,41 @@
     if (!rows.length) throw new Error('Không có danh sách hợp lệ: phải có cột Mã và Tên trong Excel.');
     return rows;
   }
-  var api = { extract: extract, parse: parse, readExcel: readExcel, csvRows: csvRows, fold: fold };
+  /* Đọc tệp khách gửi ngay trên Mobile; chỉ giữ văn bản rút gọn, không ghi vào Firebase. */
+  async function readChatFile(file) {
+    var name=String(file&&file.name||'').toLowerCase();
+    if(!file||file.size>8*1024*1024)throw new Error('File lớn hơn 8 MB; vui lòng chia nhỏ.');
+    var text='';
+    if(/\.(csv|tsv|txt|md|json)$/.test(name)) text=(await file.text()).slice(0,60000);
+    else if(/\.xlsx$/.test(name)) {
+      var books=await xlsxRows(file);
+      text=books.slice(0,3).map(function(rows,i){return 'BẢNG '+(i+1)+'\n'+rows.slice(0,100).map(function(c){return (c||[]).slice(0,20).map(function(v){return String(v||'').slice(0,160);}).join(' | ');}).join('\n');}).join('\n\n');
+    } else if(/\.docx$/.test(name)) {
+      var zip=zipDirectory(new Uint8Array(await file.arrayBuffer()));
+      var xml=await zipText(zip,'word/document.xml');
+      if(!xml) throw new Error('Word DOCX không có nội dung văn bản.');
+      var doc=xmlDoc(xml);
+      text=Array.from(doc.getElementsByTagName('w:p')).map(function(p){return Array.from(p.getElementsByTagName('w:t')).map(function(t){return t.textContent;}).join('');}).filter(Boolean).join('\n');
+    } else if(/\.pdf$/.test(name)) {
+      // Thư viện được nạp khi thật sự có PDF; không tăng thời gian khởi động Mobile.
+      var pdf;
+      try{pdf=await import('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.min.mjs');}
+      catch(e){throw new Error('Không tải được bộ đọc PDF. Hãy kiểm tra Internet hoặc dùng ảnh/JPG/Excel.');}
+      pdf.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
+      var doc=await pdf.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
+      var parts=[];
+      for(var i=1;i<=Math.min(doc.numPages,10);i++){
+        var page=await doc.getPage(i),tc=await page.getTextContent();
+        parts.push('TRANG '+i+'\n'+tc.items.map(function(x){return x.str||'';}).join(' '));
+      }
+      text=parts.join('\n');
+      try{await doc.destroy();}catch(_){ }
+      if(!text.trim()) throw new Error('PDF ảnh quét không có văn bản. Hãy gửi ảnh JPG/PNG của trang đơn hàng.');
+    } else if(/\.xls$/.test(name)) throw new Error('Excel .xls cũ: vui lòng lưu lại dạng .xlsx hoặc .csv.');
+    else throw new Error('Hỗ trợ Excel .xlsx, PDF, Word .docx, CSV, TXT, JSON.');
+    return text.slice(0,15000);
+  }
+  var api = { extract: extract, parse: parse, readExcel: readExcel, readChatFile:readChatFile, csvRows: csvRows, fold: fold };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.HuyenMobileCatalog = api;
 })(typeof window === 'undefined' ? (typeof globalThis === 'undefined' ? this : globalThis) : window);

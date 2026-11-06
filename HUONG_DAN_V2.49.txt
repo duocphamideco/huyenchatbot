@@ -1,0 +1,33 @@
+HUYỀN MOBILE v2.49.0 — MẬT KHẨU CÀI ĐẶT • LỊCH AI & CREDIT • GỬI ẢNH VÀ FILE ĐƠN
+
+I. CẬP NHẬT PWA
+- Giải nén toàn bộ ZIP, đăng lên cùng thư mục /huyenchatbot/ của GitHub Pages (không bọc thêm thư mục con).
+- Giữ nguyên manifest.json, start_url, scope, ID ứng dụng và bộ biểu tượng. sw.js đổi cache sang v2.49.0.
+- Mở website sau khi cập nhật; nếu trang vẫn là bản cũ, đóng hẳn app và mở lại qua Chrome.
+
+II. MẬT KHẨU
+- Chạm nút ⋯ ở góc trên bên phải. Nhập mật khẩu quản trị đã thống nhất để mở Cài đặt.
+- Mỗi lần mở Cài đặt lại cần nhập mật khẩu; năm lần nhập sai bị tạm khóa 60 giây trong phiên.
+- Khóa này chỉ che giao diện của website tĩnh; không thay thế Firebase Rules hoặc xác thực máy chủ. Người biết cách xem source trong trình duyệt có thể vượt qua. Không coi đây là bảo vệ bí mật API tuyệt đối.
+
+III. LỊCH DÙNG AI, TRÁNH HAO CREDIT
+- Vào Cài đặt -> HUYỀN AI -> đặt API Key chính/dự phòng.
+- Tại "Lịch sử dụng AI & hạn mức credit" bật công tắc AI trực tuyến (mặc định tắt).
+- Chọn ngày bắt đầu/kết thúc nếu muốn; để trống nếu không giới hạn ngày. Chọn giờ bắt đầu/kết thúc mỗi ngày và số lượt tối đa trong 1 ngày cho từng điện thoại. Bấm Lưu.
+- Chỉ khi có hành động hỏi hoặc kiểm tra kết nối và đang nằm trong lịch/hạn mức, ứng dụng mới gửi yêu cầu API. Bật/tắt ERP là cơ chế độc lập, không tự bật AI.
+- Lượt gọi thử và API dự phòng có thể tính thêm một yêu cầu. Hạn mức chỉ được kiểm soát trên thiết bị này, không phải mức phí/credit thực tế hoặc tổng lượt của công ty. Để hạn chế trên tất cả điện thoại, cần proxy phía server có quota chung.
+
+IV. ĐÍNH KÈM FILE VÀ ẢNH
+- Chạm 📎 để chọn file đơn hàng .xlsx, .csv, .txt, .md, .json, .docx, .pdf (và ảnh .jpg/.png/.webp). Hoặc bấm 📷 để chụp ảnh / lấy từ thư viện.
+- File Word, Excel, CSV được đọc trên máy, trích văn bản tối đa 15.000 ký tự mỗi file và tối đa 4 file; PDF đọc tối đa 10 trang, phụ thuộc bộ đọc PDF tải từ CDN khi dùng. Giới hạn 8 MB mỗi file. Excel .xls cũ nên lưu lại .xlsx.
+- PDF ảnh quét chưa có chữ để trích; dùng ảnh chụp trang cần đọc.
+- Khi bấm Gửi và AI trực tuyến đang được phép, nội dung văn bản và ảnh đính kèm sẽ chuyển sang dịch vụ AI để phân tích. Không tự lưu đơn ERP, không tự nhập chiết khấu, và không ghi file đính kèm lên Firebase.
+- Nếu AI bị tắt/quá lịch/hết lượt hoặc chưa có khóa, file/ảnh vẫn ở ô soạn để xử lý khi bật lại.
+
+V. GIỮ NGUYÊN CÁC CHỨC NĂNG
+- Chuẩn hóa đơn bằng chữ tại Mobile độc lập PC; dùng dữ liệu sản phẩm/khách hàng từ Firebase.
+- ERP bật/tắt riêng, chỉ chuyển yêu cầu ERP thật đến PC.
+- Hàng đợi nhiều Mobile thuộc IDECO_SUITE trên PC, không thay đổi.
+- Logo PWA, khóa cài app và manifest như bản chạy được trước đây.
+
+LƯU Ý KIỂM THỬ: đã qua kiểm tra offline trên Chromium mô phỏng; chưa xác minh bằng khóa Kie/ERP thật hoặc trình duyệt Android riêng của anh.
