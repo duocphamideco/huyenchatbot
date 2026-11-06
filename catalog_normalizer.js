@@ -96,7 +96,7 @@
     // Stops before either quantity style: "Bạch Liên 12 sản phẩm Wamlox", "Bạch Liên 12 hộp Wamlox".
     var candidate = m[1].replace(/\s+\d+(?:[.,]\d+)?(?:\s|$).*$/i, '')
       .replace(/\s+(?:mua|l[aấ]y|c[aầ]n|s[oố]\s*l[uượ]ng|thanh\s*to[aá]n|tr[aả]\s*ti[eề]n\s*m[aặ]t)\b.*$/i, '')
-      .replace(/\s+[dđ][aặ]t\s+(?:h[aà]ng|ti[eề]n|mua).*$/i, '').trim();
+      .replace(/\s+[dđ][aặ]t(?:\s+h[aà]ng)?\b.*$/i, '').trim();
     return { customer: candidate.slice(0, 70), code: '' };
   }
   function bareProductFragment(fragment, customer) {
@@ -111,7 +111,15 @@
     s = s.replace(/^(?:(?:khach hang|khach|nha thuoc|quay thuoc|dai ly|tiem thuoc|san pham|mat hang|thuoc|loai|sp|la|gom|mua|dat|lay|can|ban|so luong|sl)\s+)+/, '');
     // "1 sản phẩm Wamlox 12 hộp" = một LOẠI sản phẩm, không phải tên thuốc "1 sản phẩm".
     s = s.replace(/^(?:1\s+(?:san pham|loai|mat hang|sp)\s+)+/, '');
-    s = s.replace(/\b(?:so luong|sl|qty)\s*$/, '');
+    // Tách tiền tố thao tác sau khi bỏ tên khách hàng đã nhận diện từ câu lệnh.
+    // Điều này tránh nhận nhầm "nhà thuốc" hoặc "lấy" làm tên sản phẩm.
+    var before;
+    do {
+      before=s;
+      s=s.replace(/^(?:(?:len|lap|tao)\s+don(?:\s+hang)?(?:\s+cho)?|don\s+hang(?:\s+cho)?|nha\s+thuoc|khach\s+hang|khach|quay\s+thuoc|dai\s+ly|don|cho|dat|lay|mua|can|gom|ban)(?:\s+|$)/,'').trim();
+    } while(s!==before);
+    s=s.replace(/^(?:1\s+(?:san\s+pham|loai|mat\s+hang|sp)\s+)/,'');
+    s=s.replace(/\b(?:so luong|sl|qty|dat|lay|mua|can)\s*$/, '');
     return s.replace(/\s+/g, ' ').trim();
   }
   function productHint(fragment, rows) {

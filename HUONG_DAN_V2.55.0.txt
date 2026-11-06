@@ -1,0 +1,46 @@
+HUYỀN MOBILE v2.55.0 — KIỂM TRA TRƯỚC VẬN HÀNH
+Ngày phát hành bản mã nguồn: 06/11/2026
+
+CẬP NHẬT
+1. Sao lưu nguyên thư mục HUYỀN MOBILE đang chạy.
+2. Giải nén và upload các tệp của bộ mới vào đúng thư mục GitHub Pages hiện tại. Giữ nguyên địa chỉ website /huyenchatbot/.
+3. Mở lại website/PWA và xác nhận trên đầu trang hiển thị v2.55.0. Nếu không phải v2.55.0, tải lại bằng trình duyệt, kiểm tra thời gian GitHub Pages triển khai và bộ nhớ đệm PWA.
+4. Chỉ đăng nhập bằng mật khẩu Mobile ở lần đầu trên một thiết bị: từ đó thiết bị tự vào chatbot. Không lưu mật khẩu dưới dạng văn bản thuần; khóa phiên không xuất được được lưu trong IndexedDB. Xóa dữ liệu trang web, chế độ riêng tư hoặc bấm Đăng xuất thì phải đăng nhập lại.
+5. Mật khẩu quản trị Cài đặt vẫn tách riêng với mật khẩu vào ứng dụng. Không cung cấp mật khẩu quản trị cho nhân viên không có quyền.
+
+CHẾ ĐỘ CHATBOT (ERP TẮT)
+- ERP mặc định TẮT ở mỗi lần mở ứng dụng. HUYỀN trả lời từ AI đã cấu hình trên Firebase, không cần PC.
+- Chức năng nhập file, ảnh, gợi ý khách/sản phẩm và chuẩn hóa đơn vẫn giữ.
+- Chat AI trực tuyến cần Internet, API Key hợp lệ và không bị quản trị tắt/giới hạn bởi chính sách lịch/hạn mức.
+- Hỏi thông tin ERP khi đang tắt: chatbot được phép giải thích chung nhưng không được bịa doanh số, tồn kho, công nợ hoặc khẳng định đã thao tác ERP.
+
+CHẾ ĐỘ ERP (BẬT)
+- Nhân viên bật công tắc ngay dưới tiêu đề, sau đó ghép PC nếu cần. Có nút ⟳ kiểm tra lại tình trạng trạm.
+- Trạng thái có các mức: PC offline, PC online nhưng ERP chưa kết nối, và ERP sẵn sàng.
+- Lệnh thực thi ERP chỉ được gửi khi trạm online và ERP sẵn sàng; PC offline thì giữ nguyên nội dung/đơn nháp, KHÔNG tự xếp một lệnh sẽ chạy bất ngờ khi PC mở lại.
+- Lệnh đặt hàng được chuẩn hóa trước trên Mobile, phải chọn đúng mã KH/SP, đơn vị và số lượng. Giá/CK/KM phải được Sales kiểm tra trên PC trước khi tạo chứng từ ERP.
+- Lệnh đã gửi nhưng bị mất phản hồi KHÔNG tự gửi lại bằng mã mới: kiểm tra trực tiếp chứng từ ERP và nhật ký xử lý trước.
+
+BỘ KIỂM THỬ NHÂN VIÊN NÊN CHẠY TRƯỚC KHI ĐƯA VÀO SỬ DỤNG
+A. Đăng nhập trên điện thoại A; đóng ứng dụng; mở lại, phải vào thẳng chat (không hỏi mật khẩu).
+B. Bấm Đăng xuất/Khóa ứng dụng; mở lại, phải hỏi mật khẩu. Xóa dữ liệu website cũng yêu cầu đăng nhập lại.
+C. Tắt PC và ERP; hỏi một câu thông thường và gửi một file đơn: Mobile phải phản hồi độc lập khi API và Internet hợp lệ.
+D. Tắt ERP; bấm gửi lệnh liên quan doanh số ERP: Mobile phải giải thích không có dữ liệu ERP thời gian thực, không tạo lệnh PC.
+E. Bật ERP nhưng PC offline: không được gửi lệnh và không mất nội dung nháp.
+F. PC mở và extension đã nối ERP: công tắc ERP báo sẵn sàng; gửi một lệnh truy vấn không thay đổi dữ liệu, kiểm tra kết quả.
+G. Chuẩn hóa đơn Bạch Liên 12 hộp Wamlox và Cẩm An 12 hộp Nykob, đối chiếu mã/đơn vị Excel.
+H. Tạo một đơn THỬ 1 dòng Hamifa 32 hộp; kiểm tra thủ công giá, chiết khấu và khuyến mại theo chương trình đang áp dụng, rồi mới cho phép lưu.
+I. Dùng hai điện thoại gửi hai đơn NHÁP cùng lúc, xác nhận PC nhận đúng từng lệnh, phản hồi đúng người; ngắt mạng PC khi đang chờ để đánh giá xử lý mất kết nối.
+J. Dùng điện thoại khác kiểm tra danh mục và API được đồng bộ từ Firebase; KHÔNG mở Rules công khai để giải quyết lỗi.
+
+KẾT QUẢ KIỂM THỬ TRONG MÔI TRƯỜNG TẠO FILE
+- Kiểm tra cú pháp JavaScript: đạt.
+- 16 phép kiểm tra mô phỏng/static ở mã nguồn, gồm chuẩn hóa đơn và khóa phiên không xuất được: đạt.
+- Manifest/PWA giữ nguyên định danh để cài đặt; đổi cache v2.55.0.
+- Chromium đang bị môi trường chạy thử chặn truy cập (ERR_BLOCKED_BY_ADMINISTRATOR), nên chưa hoàn tất kiểm thử giao diện trình duyệt thật.
+- CHƯA thử trực tiếp Kie/Firebase/ERP thật của công ty; không thể xác nhận mức chiết khấu hay độ trễ thực tế của PC/ERP.
+
+LƯU Ý TRIỂN KHAI
+- Đợt này CHỈ thay mã HUYỀN MOBILE; không thay mã IDECO_SUITE trên PC.
+- Firebase dùng khóa/mật khẩu dùng chung trên web tĩnh vẫn có rủi ro lộ dữ liệu và lạm dụng API. Cần xác thực và giới hạn quyền phía máy chủ cho vận hành nhiều nhân viên.
+- Cơ chế hàng đợi PC trong bản Suite hiện tại dùng nhận lệnh rồi xóa khỏi node chờ. Nếu PC dừng giữa bước nhận và xử lý, cần xem nhật ký ERP để xử lý; chưa bảo đảm giao dịch đầu-cuối đúng một lần. Không kích hoạt toàn công ty trước khi thử nghiệm lỗi mạng và đối soát chứng từ.

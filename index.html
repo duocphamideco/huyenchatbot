@@ -145,15 +145,39 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 @media(max-width:350px){.ai-limit-grid{grid-template-columns:1fr}}
 
 
+
+/* 2.54: công tắc ERP hiển thị ở màn hình chat, không cần mở Cài đặt quản trị */
+.erp-quickbar{flex:none;background:var(--card);padding:5px 11px 7px;border-bottom:1px solid var(--line)}
+.erp-quickbar .erp-control{margin:0;padding:6px 10px;border-radius:13px;display:flex;align-items:center;gap:14px;background:var(--bg)}
+.erp-quickbar .erp-switch{flex:1;min-width:0;font-size:14px}
+.erp-quickbar .erp-switch b{font-size:15px}
+.erp-quickbar .erp-switch small{font-size:11px;display:block;color:var(--dim);line-height:1.3;font-weight:400}
+.erp-quickbar #erpToggleInfo{font-size:11px;line-height:1.25;margin:0;max-width:185px;text-align:right}
+.erp-quickbar #connectPc{display:none!important}
+.erp-quickbar #erpRefresh{font-size:20px;line-height:1}
+.app-build{color:var(--dim);font-size:11px;font-weight:600;white-space:nowrap}
+.settings-build{font-size:12px;font-weight:600;color:var(--dim)}
+.version-tip{font-size:12px!important;margin:6px 0 9px!important}
+@media(max-width:480px){.erp-quickbar #erpToggleInfo{display:none}.erp-quickbar .erp-control{padding:5px 9px}.erp-quickbar .erp-switch small{font-size:10px}}
+
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="top" id="topBar">
     <img src="icon-192.png" alt="IDECO">
-    <div class="tt"><b>HUYỀN · Trợ lý IDECO</b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <div class="tt"><b>HUYỀN · Trợ lý IDECO <span class="app-build">v2.55.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
+  <!-- Nhân viên tự bật/tắt ERP ngoài phần Cài đặt quản trị. -->
+  <div class="erp-quickbar" id="erpQuickBar" role="region" aria-label="Bật tắt kết nối ERP" hidden>
+    <div class="erp-control" role="group" aria-label="Kết nối ERP">
+      <label class="erp-switch" for="erpToggle"><span><b>🔗 ERP <span id="erpShortStatus">Đang tắt</span></b><small>Chat AI độc lập · chỉ kết nối PC khi bật ERP</small></span><input id="erpToggle" type="checkbox" role="switch" aria-label="Bật kết nối ERP"><span class="switch-track" aria-hidden="true"></span></label>
+      <div id="erpToggleInfo" class="note" role="status" aria-live="polite">ERP đang tắt · không sử dụng máy trạm.</div>
+      <button id="erpRefresh" type="button" class="ghost" aria-label="Kiểm tra lại trạng thái trạm ERP" title="Kiểm tra trạm ERP" style="width:auto;min-width:38px;padding:7px 10px;margin:0" hidden>⟳</button>
+      <button class="ghost" id="connectPc" type="button" hidden>Thiết lập kết nối ERP</button>
+    </div>
+  </div>
   <section class="pairv" id="appLoginView" aria-labelledby="appLoginTitle">
     <div class="hero">
       <img src="icon-192.png" alt="IDECO">
@@ -226,32 +250,34 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   </div>
 </div>
 <div class="sheet" id="sheet"><div class="card">
-  <h2>Tùy chọn</h2>
+  <h2>Tùy chọn <span class="settings-build">v2.55.0</span></h2>
+  <p class="version-tip">Cài đặt AI và Excel dành cho quản trị; công tắc ERP cho nhân viên nằm trực tiếp ngoài màn hình chat.</p>
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
   <button class="ghost" id="appLogout" type="button">🔒 Khóa ứng dụng / Đăng xuất Mobile</button>
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
   <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
-  <div class="erp-control" role="group" aria-label="Kết nối ERP">
-    <label class="erp-switch" for="erpToggle"><span><b>🔗 Kết nối ERP</b><small>Mặc định tắt khi mở ứng dụng. Chỉ bật để làm việc với trạm PC.</small></span><input id="erpToggle" type="checkbox" role="switch" aria-label="Bật hoặc tắt kết nối ERP"><span class="switch-track" aria-hidden="true"></span></label>
-    <div id="erpToggleInfo" class="note" role="status" aria-live="polite">ERP đang tắt · trò chuyện và chuẩn hóa trên điện thoại.</div>
-    <button class="ghost" id="connectPc" type="button" hidden>Thiết lập kết nối ERP</button>
-  </div>
+  <button class="ghost" id="refreshApp" type="button">🔄 Kiểm tra cập nhật ứng dụng</button>
+
   <div class="dset ai-settings"><h3>🤖 HUYỀN AI — trả lời ngay trên Mobile</h3>
-    <div class="note">Chatbot hoạt động khi đăng nhập Mobile, không cần bật ERP hay PC. Cần Internet, khóa API hợp lệ và lịch AI đang cho phép. Chế độ trả lời đã tối ưu sẵn, không cần chọn cấu hình AI.</div>
+    <div class="note">Đăng nhập Mobile là có thể trò chuyện độc lập PC/ERP. Sau khi khóa API được tải từ Firebase, AI trực tuyến sẵn sàng; chỉ bị chặn nếu quản trị chủ động tắt hoặc bật lịch giới hạn.</div>
     <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
+    <label for="aiEndpoint">Endpoint AI (Kie)</label><input id="aiEndpoint" class="in" type="url" readonly value="https://api.kie.ai/openai/v1/responses" style="font-size:13px" aria-label="Endpoint AI hiện sử dụng">
+    <label for="aiModel">Model AI (đã thiết lập sẵn)</label><input id="aiModel" class="in" type="text" readonly value="deepseek-v4-1-flash" style="font-size:13px" aria-label="Model AI hiện sử dụng">
     <div class="note">Chỉ quản trị nhập khóa một lần. Sau khi chọn Excel, bấm <b>LƯU TẤT CẢ LÊN FIREBASE</b> ở cuối Cài đặt. Điện thoại khác tự tải khóa, lịch AI, danh sách khách hàng và sản phẩm.</div>
     <div class="row"><button class="pri" id="sharedSave" type="button" hidden>💾 Lưu API Key lên Firebase</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
     <div class="note" id="aiState" aria-live="polite"></div>
     <div id="sharedVaultStatus" role="status" aria-live="polite"></div>
     <div class="note">Nguồn Firebase: <code id="sharedVaultPath"></code></div>
-    <button class="ghost" id="sharedUnlockInSettings" type="button">⟳ Đồng bộ cấu hình AI từ Firebase</button>
+    <button class="ghost" id="sharedUnlockInSettings" type="button" hidden>⟳ Đồng bộ cấu hình AI từ Firebase</button>
     <div class="note">Khóa được mã hóa trên Firebase dựa trên mật khẩu đăng nhập Mobile; không có bước mở khóa bổ sung. <b>Lưu ý:</b> website tĩnh và mật khẩu chia sẻ không bảo vệ API Key như máy chủ xác thực. Cần giới hạn quyền Firebase và hạn mức API trước khi dùng đại trà.</div>
     <div class="dset" style="margin-top:10px">
-      <h3>⏱ Lịch sử dụng AI &amp; hạn mức credit</h3>
-      <label class="rem" for="aiGate"><input type="checkbox" id="aiGate"> Cho phép AI trực tuyến (mặc định tắt)</label>
-      <div class="note">Khi tắt, HUYỀN chỉ tra danh mục và chuẩn hóa trên máy; không gọi API. Công tắc này độc lập với ERP.</div>
+      <h3>⏱ Lịch tùy chọn &amp; hạn mức AI</h3>
+      <label class="rem" for="aiGate"><input type="checkbox" id="aiGate" checked> Cho phép chatbot AI trực tuyến (mặc định bật khi có API Key)</label>
+      <div class="note">Công tắc này độc lập ERP. Bỏ chọn để chủ động ngừng gọi AI và tiết kiệm credit.</div>
+      <label class="rem" for="aiScheduleGate"><input type="checkbox" id="aiScheduleGate"> Áp dụng giới hạn theo ngày và giờ (tùy chọn)</label>
+      <div class="note">Không tích chọn: AI dùng được cả ngày, vẫn tuân theo hạn mức lượt gọi/ngày. Tích chọn: giới hạn theo các ngày và giờ bên dưới.</div>
       <div class="ai-limit-grid">
         <div><label for="aiStartDate">Từ ngày (để trống = không giới hạn)</label><input class="in" type="date" id="aiStartDate"></div>
         <div><label for="aiEndDate">Đến ngày</label><input class="in" type="date" id="aiEndDate"></div>
@@ -262,7 +288,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <input class="in" type="number" inputmode="numeric" id="aiMaxDaily" min="1" max="1000" value="20">
       <button class="ghost" id="aiPolicySave" type="button" hidden>💾 Lưu lịch &amp; giới hạn AI</button>
       <div class="ai-plan-hint" id="aiPolicyState" role="status" aria-live="polite"></div>
-      <div class="note">Khi không nhắn tin hoặc AI đã tắt, ứng dụng không tự gọi API. Một lần gọi khóa dự phòng hoặc kiểm tra kết nối cũng tính một lượt. Giới hạn áp dụng theo thiết bị, theo ngày giờ trên máy; không phải hạn mức credit toàn tài khoản.</div>
+      <div class="note">Khi không nhắn tin hoặc AI đã tắt, ứng dụng không tự gọi API. Một lần gọi khóa dự phòng hoặc kiểm tra kết nối cũng tính một lượt trên máy này. Giới hạn áp dụng theo thiết bị, theo ngày giờ trên máy; không phải hạn mức credit toàn tài khoản.</div>
     </div>
     <div class="note">Bảo mật: trên website tĩnh, khóa API lưu trên thiết bị và được trình duyệt dùng trực tiếp. Chỉ nhập khóa trên thiết bị tin cậy; khi triển khai rộng nên sử dụng máy chủ bảo vệ khóa và giới hạn mức sử dụng.</div>
   </div>
@@ -365,7 +391,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   var LS = 'huyen_mobile_v2', LS_HIST = 'huyen_mobile_hist_v1', ERP_PREF = 'huyen_mobile_erp_switch_v248';
   var $ = function (id) { return document.getElementById(id); };
   var st = { cfg: null, sid: '', key: null, dkey: null, stES: null, station: null, pend: {} };
-  var hist = [], shots = [], docs = [];
+  var hist = [], shots = [], docs = [], dataBootStarted = false;
   // ERP opt-in: lệnh và truy vấn ERP không bao giờ chuyển qua PC khi công tắc tắt.
   var erpOn = false; // Mỗi lần mở ứng dụng ERP luôn TẮT, kể cả lần trước đã bật.
   try { localStorage.removeItem(ERP_PREF); } catch (_) {}
@@ -373,7 +399,9 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function erpReady() { return !!(erpOn && st.dkey); }
   function erpUi() {
     var toggle = $('erpToggle'); if (toggle) toggle.checked = erpOn;
-    var info = $('erpToggleInfo'); if (info) info.textContent = !erpOn ? 'Đang TẮT · không kết nối hoặc gửi lệnh ERP.' : (erpReady() ? 'Đã BẬT · sẵn sàng gửi lệnh đến trạm ERP.' : 'Đã BẬT · cần ghép cặp hoặc chờ máy trạm.');
+    var info = $('erpToggleInfo'); if (info) info.textContent = !erpOn ? 'Tắt · chat AI độc lập' : (!erpReady() ? 'Chưa ghép PC' : (!fresh() ? 'Chưa thấy PC online' : (st.station.erp ? (st.station.busy ? 'Đã kết nối · đang có lệnh chờ' : 'ERP sẵn sàng') : 'PC online nhưng ERP chưa kết nối')));
+    var badge = $('erpShortStatus'); if (badge) badge.textContent = !erpOn ? 'Đang tắt' : (stationOnlineReady() ? 'Sẵn sàng' : 'Chưa sẵn sàng');
+    var refresh=$('erpRefresh');if(refresh)refresh.hidden=!erpOn;
   }
   function erpDisconnect() {
     saveErpChoice(false);
@@ -453,7 +481,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     d.className = 'msg bot' + (m.status === 'error' ? ' err' : '');
     var h = m.status === 'done' ? '<div class="md">' + md(m.text) + '</div>' : m.status === 'error' ? '<div>⚠ ' + esc(m.text) + '</div>' : '<div class="run"><span class="spin"></span><span>' + esc(m.text || 'Đang xử lý…') + '</span></div>';
     if (m.steps && m.steps.length && m.status !== 'done') h += '<ul class="steps">' + m.steps.slice(-4).map(function (s) { return '<li>' + esc(String(s).split('\n')[0].slice(0, 140)) + '</li>'; }).join('') + '</ul>';
-    h += '<div class="meta"><span>' + fmtT(m.at) + (m.ms ? ' · ' + Math.round(m.ms / 1000) + ' giây' : '') + '</span>' + (m.status === 'done' ? '<button data-copy>📋 Chép</button>' : '') + (m.status === 'error' && m.q && !m.nImg ? '<button data-retry>↻ Gửi lại</button>' : '') + '</div>';
+    h += '<div class="meta"><span>' + fmtT(m.at) + (m.ms ? ' · ' + Math.round(m.ms / 1000) + ' giây' : '') + '</span>' + (m.status === 'done' ? '<button data-copy>📋 Chép</button>' : '') + (m.status === 'error' && m.q && !m.nImg && !needsErp(m.q,[]) ? '<button data-retry>↻ Thử lại</button>' : '') + '</div>';
     d.innerHTML = h;
     var c = d.querySelector('[data-copy]'); if (c) c.onclick = function () { copy(m.text); };
     var r = d.querySelector('[data-retry]'); if (r) r.onclick = function () { send(m.q, []); };
@@ -474,12 +502,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function copy(t) { (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(function () { toast('Đã chép'); }, function () { toast('Không chép được'); }); }
 
   /* ---------- trạng thái trạm ---------- */
-  function fresh() { var s = st.station; return !!(s && s.online && Date.now() - (s.at || 0) < 75000); }
+  function fresh() { var s = st.station; return !!(s && s.online && Date.now() - (s.at || 0) < 65000); }
+  function stationOnlineReady() { return !!(erpReady() && fresh() && st.station && st.station.erp); }
   function stationText() {
     var s = st.station, dot = $('dot'), t = $('stt');
     if (!erpOn || !st.key) { dot.className = 'dot'; t.textContent = 'HUYỀN AI độc lập · ERP đang tắt'; return false; }
     if (!fresh()) { dot.className = 'dot off'; t.textContent = 'Máy tính trạm đang offline'; return false; }
-    if (!s.erp) { dot.className = 'dot warn'; t.textContent = 'Trạm online · chưa kết nối ERP'; return true; }
+    if (!s.erp) { dot.className = 'dot warn'; t.textContent = 'Trạm online · chưa kết nối ERP'; return false; }
     dot.className = 'dot ok'; t.textContent = 'ERP đã kết nối' + (s.user ? ' · ' + s.user : '') + (s.busy ? ' · đang xử lý' + (s.queue ? ' (' + s.queue + ' chờ)' : '') : ''); return true;
   }
   function listen(path, onData) {
@@ -494,14 +523,27 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (st.stES) st.stES.close();
     st.stES = listen('station', function (box) {
       if (!box) { st.station = null; stationText(); return; }
-      dec(st.key, box).then(function (s) { st.station = s; stationText(); var w = stationWaiters; stationWaiters = []; w.forEach(function (f) { f(s); }); }, function () {});
+      dec(st.key, box).then(function (s) { if(!erpOn)return; st.station = s; stationText(); erpUi(); var w = stationWaiters; stationWaiters = []; w.forEach(function (f) { f(s); }); }, function () {});
     });
+    // Nhận trạng thái ngay bằng một GET; SSE tiếp tục giữ kết nối realtime.
+    netFetch(url('station'),{cache:'no-store'},6).then(function(r){return r.ok?r.json():null;}).then(function(box){
+      if(!box||!erpOn||!st.key)return;
+      return dec(st.key,box).then(function(s){if(!erpOn)return;st.station=s;stationText();erpUi();var w=stationWaiters;stationWaiters=[];w.forEach(function(f){f(s);});});
+    }).catch(function(){});
     clearInterval(watchStation.t); watchStation.t = setInterval(function () {
       stationText();
       if (!document.hidden && !fresh()) fetch(url('station') + '?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (box) { if (box) dec(st.key, box).then(function (s2) { st.station = s2; stationText(); }, function () {}); }).catch(function () {});
     }, 10000);
   }
-  function waitStation(ms) { if (fresh()) return Promise.resolve(st.station); return new Promise(function (res) { var t = setTimeout(function () { res(fresh() ? st.station : null); }, ms); stationWaiters.push(function (s) { clearTimeout(t); res(s && s.online ? s : null); }); }); }
+  function waitStation(ms) {
+    if(fresh())return Promise.resolve(st.station);
+    return new Promise(function(resolve){
+      var finished=false;
+      function done(s){if(finished)return;finished=true;clearTimeout(timer);stationWaiters=stationWaiters.filter(function(f){return f!==done;});resolve(s&&s.online?s:null);}
+      var timer=setTimeout(function(){done(fresh()?st.station:null);},ms);
+      stationWaiters.push(done);
+    });
+  }
 
   /* ---------- lệnh ---------- */
   function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 10); }
@@ -509,7 +551,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function send(text, imgs) {
     text = String(text || '').trim(); imgs = imgs || [];
     if ((!text && !imgs.length)) return;
-    if (!erpReady()) { toast('Cần bật Kết nối ERP trong Tùy chọn và ghép trạm trước khi gửi lệnh.'); return; }
+    if (!erpReady()) { toast('Bật ERP và ghép trạm PC trước khi gửi lệnh.'); return; }
+    if (!stationOnlineReady()) { toast('PC chưa sẵn sàng hoặc ERP chưa kết nối. Không gửi lệnh; hãy kiểm tra trạm rồi thử lại.'); return; }
     var online = stationText(), id = newId(), now = Date.now();
     hist.push({ role: 'me', text: text, at: now, imgs: imgs, nImg: imgs.length });
     var bot = { role: 'bot', id: id, status: 'sending', text: online ? (imgs.length ? 'Đang gửi ' + imgs.length + ' ảnh tới máy tính trạm…' : 'Đang gửi tới máy tính trạm…') : 'Trạm đang offline — lệnh sẽ được xử lý khi máy tính mở lại (trong 10 phút).', at: now, q: text, nImg: imgs.length };
@@ -530,7 +573,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     return /\b(erp|ton kho|cong no|doanh so|so lieu|don hang hom nay|don hang trong ngay|lich su don|truy xuat|xuat kho|nhap kho|hoa don|phieu xuat|doanh thu thang|bao cao tai chinh)\b/.test(t)
       && !/\b(la gi|giai thich|cach lam|huong dan chung)\b/.test(t);
   }
-  var AI_STORE = 'huyen_mobile_ai_v247', AI_MODEL = 'deepseek-v4-1-flash';
+  var AI_STORE = 'huyen_mobile_ai_v247', AI_MODEL = 'deepseek-v4-1-flash', AI_ENDPOINT = 'https://api.kie.ai/openai/v1/responses';
   // API config is encrypted on Firebase with a key derived from the Mobile login password.
   // No additional group unlock code; do not confuse this with server-side access control.
   var AI_SHARED_DB = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_ai_vault/v1';
@@ -549,7 +592,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   async function rememberDeviceAi() {
     if (!appDeviceVaultKey || !sharedAiConfig || (!sharedAiConfig.key1 && !sharedAiConfig.key2)) return;
     var iv=crypto.getRandomValues(new Uint8Array(12));
-    var content={key1:sharedAiConfig.key1,key2:sharedAiConfig.key2,policy:aiPolicy(),savedAt:Date.now(),expiry:Date.now()+7*86400000};
+    var content={key1:sharedAiConfig.key1,key2:sharedAiConfig.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,policy:aiPolicy(),savedAt:Date.now(),expiry:Date.now()+7*86400000};
     var encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},appDeviceVaultKey,new TextEncoder().encode(JSON.stringify(content)));
     try { localStorage.setItem(LOCAL_AI_VAULT,JSON.stringify({v:1,iv:sharedB64(iv),payload:sharedB64(new Uint8Array(encrypted))})); } catch (_) {}
   }
@@ -561,8 +604,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       var data=await crypto.subtle.decrypt({name:'AES-GCM',iv:sharedUnb64(record.iv)},appDeviceVaultKey,sharedUnb64(record.payload));
       var conf=JSON.parse(new TextDecoder().decode(data));
       if(!conf || !conf.expiry || Date.now()>conf.expiry || (!conf.key1&&!conf.key2)) { localStorage.removeItem(LOCAL_AI_VAULT);return false; }
-      sharedAiConfig={key1:conf.key1||'',key2:conf.key2||'',remember:false};
-      if(conf.policy && typeof conf.policy==='object') try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(conf.policy));}catch(_){}
+      sharedAiConfig={key1:conf.key1||'',key2:conf.key2||'',endpoint:AI_ENDPOINT,model:AI_MODEL,remember:false};
+      if(conf.policy && typeof conf.policy==='object') try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(migrateAiPolicy(conf.policy)));}catch(_){}
       $('sharedAccessBtn').style.display='none';
       updateAiPolicyUi(); loadAiSettings();
       return true;
@@ -582,9 +625,9 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       var bytes = await crypto.subtle.decrypt({name:'AES-GCM', iv:sharedUnb64(record.iv)}, legacyKey, sharedUnb64(record.payload));
       var conf = JSON.parse(new TextDecoder().decode(bytes));
       if (!conf || Date.now() >= conf.expiry || (!conf.key1 && !conf.key2)) return false;
-      sharedAiConfig = {key1:conf.key1 || '', key2:conf.key2 || '', remember:false};
+      sharedAiConfig = {key1:conf.key1 || '',key2:conf.key2 || '',endpoint:AI_ENDPOINT,model:AI_MODEL,remember:false};
       if (conf.policy && typeof conf.policy === 'object') {
-        try { localStorage.setItem(AI_POLICY_STORE, JSON.stringify(conf.policy)); } catch (_) {}
+        try { localStorage.setItem(AI_POLICY_STORE, JSON.stringify(migrateAiPolicy(conf.policy))); } catch (_) {}
       }
       await rememberDeviceAi(); // Mã hóa lại bằng mật khẩu đăng nhập Mobile mới.
       $('sharedAccessBtn').style.display = 'none';
@@ -644,9 +687,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var node=$('sharedVaultStatus');if(node){node.textContent=(isError?'⚠ ':'✅ ')+text;node.style.color=isError?'var(--err)':'var(--ok)';}
   }
   function cloudApplyPolicy(policy){
-    if(!policy||typeof policy!=='object')return;
-    var p=policy;
-    var normalized={enabled:!!p.enabled,fromDate:String(p.fromDate||''),toDate:String(p.toDate||''),fromTime:String(p.fromTime||'08:00'),toTime:String(p.toTime||'18:00'),dailyMax:Math.max(1,Math.min(1000,Number(p.dailyMax)||20))};
+    // Trạng thái "tắt" ở phiên bản cũ là giá trị mặc định bị lỗi; chỉ tắt theo schema 2 khi quản trị chủ động chọn.
+    var normalized=migrateAiPolicy(policy||{});
     try{localStorage.setItem(AI_POLICY_STORE,JSON.stringify(normalized));}catch(_){}
     updateAiPolicyUi();
   }
@@ -658,12 +700,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       if (!blob || !blob.kind) blob=await sharedFetch(AI_SHARED_DB+'.json');
       var config=await cloudOpen(blob);
       if(!appUnlocked) return false;
-      sharedAiConfig={key1:config.key1||'',key2:config.key2||'',remember:false};
+      sharedAiConfig={key1:config.key1||'',key2:config.key2||'',endpoint:AI_ENDPOINT,model:AI_MODEL,remember:false};
       cloudApplyPolicy(config.policy);
       $('sharedAccessBtn').style.display='none';
       await rememberDeviceAi();
       sharedSetUi('Đã đồng bộ cấu hình AI từ Firebase. Đang kiểm tra danh mục dùng chung…');
-      loadAiSettings();
+      loadAiSettings(); updateAiPolicyUi();
       Promise.resolve().then(async function(){
         var m=await firebaseWorkspaceGet(AI_SHARED_DB+'/syncMeta',18000).catch(function(){return null;});
         if (!m || m.schema!==1 || !m.products || !m.customers) return;
@@ -691,7 +733,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if(!cloudLoginKey){sharedSetUi('Hãy đăng nhập Mobile trước khi lưu.',true);return;}
     var b=this;b.disabled=true;b.textContent='⏳ Đang lưu Firebase…';
     try{
-      var config={key1:key1,key2:key2,policy:aiPolicy()};
+      var config={key1:key1,key2:key2,endpoint:AI_ENDPOINT,model:AI_MODEL,policy:aiPolicy()};
       var encrypted=await cloudSeal(config);
       await sharedFetch(AI_SHARED_DB+'.json',{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(encrypted)});
       // Verify an actual GET and successful decryption before announcing success.
@@ -724,10 +766,21 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   /* HUYỀN MOBILE: lịch gọi AI riêng biệt với ERP; không tạo lượt gọi nền. */
   var AI_POLICY_STORE = 'huyen_mobile_ai_credit_policy_v249';
   var AI_USAGE_STORE = 'huyen_mobile_ai_credit_usage_v249';
-  var AI_POLICY_DEFAULT = { enabled:false, fromDate:'', toDate:'', fromTime:'08:00', toTime:'18:00', dailyMax:20 };
+  var AI_POLICY_DEFAULT = { schema:2, enabled:true, scheduleEnabled:false, fromDate:'', toDate:'', fromTime:'08:00', toTime:'18:00', dailyMax:20 };
+  function migrateAiPolicy(value) {
+    var p=value&&typeof value==='object'?value:{};
+    // Trong các bản trước, enabled:false là MẶC ĐỊNH, không phải lựa chọn của quản trị;
+    // chuyển chính sách cũ để chat hoạt động khi đã có khóa, không bị lịch 08:00-18:00 chặn.
+    var modern=Number(p.schema)>=2;
+    return {schema:2, enabled:modern?p.enabled!==false:true,
+      scheduleEnabled:modern?!!p.scheduleEnabled:false,
+      fromDate:String(p.fromDate||''),toDate:String(p.toDate||''),
+      fromTime:String(p.fromTime||'08:00'),toTime:String(p.toTime||'18:00'),
+      dailyMax:Math.max(1,Math.min(1000,Number(p.dailyMax)||20))};
+  }
   function aiPolicy() {
     var v={}; try {v=JSON.parse(localStorage.getItem(AI_POLICY_STORE)||'{}')||{};}catch(_){}
-    return Object.assign({},AI_POLICY_DEFAULT,v);
+    return migrateAiPolicy(v);
   }
   function localDay(n){ var d=n||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
   function aiUsage() {
@@ -736,10 +789,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function aiAccessStatus(now) {
     now=now||new Date(); var p=aiPolicy(), day=localDay(now), hm=String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0'), u=aiUsage();
-    if (!p.enabled) return {ok:false,why:'AI trực tuyến đang TẮT. Chỉ tra cứu/chuẩn hóa cục bộ.'};
-    if (p.fromDate && day<p.fromDate) return {ok:false,why:'Chưa đến ngày AI được phép sử dụng.'};
-    if (p.toDate && day>p.toDate) return {ok:false,why:'Đã hết ngày cho phép dùng AI.'};
-    if (hm < p.fromTime || hm >= p.toTime) return {ok:false,why:'Ngoài giờ AI được phép chạy ('+p.fromTime+'–'+p.toTime+').'};
+    if (!p.enabled) return {ok:false,why:'Quản trị đã chủ động TẮT trò chuyện AI trực tuyến. Có thể bật lại trong Cài đặt.'};
+    if (p.scheduleEnabled && p.fromDate && day<p.fromDate) return {ok:false,why:'Chưa đến ngày AI được phép sử dụng.'};
+    if (p.scheduleEnabled && p.toDate && day>p.toDate) return {ok:false,why:'Đã hết ngày cho phép dùng AI.'};
+    if (p.scheduleEnabled && (hm < p.fromTime || hm >= p.toTime)) return {ok:false,why:'Ngoài giờ AI được phép chạy ('+p.fromTime+'–'+p.toTime+').'};
     if (u.count>=p.dailyMax) return {ok:false,why:'Đã đạt hạn mức '+p.dailyMax+' lượt/ngày trên máy này.'};
     return {ok:true,why:'AI trực tuyến đang BẬT trong lịch.', left: p.dailyMax-u.count};
   }
@@ -750,12 +803,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function loadAiBudgetSettings() {
     var p=aiPolicy();
-    $('aiGate').checked=!!p.enabled; $('aiStartDate').value=p.fromDate; $('aiEndDate').value=p.toDate;
+    $('aiGate').checked=!!p.enabled; $('aiScheduleGate').checked=!!p.scheduleEnabled; $('aiStartDate').value=p.fromDate; $('aiEndDate').value=p.toDate;
     $('aiStartTime').value=p.fromTime; $('aiEndTime').value=p.toTime; $('aiMaxDaily').value=p.dailyMax;
     updateAiPolicyUi();
   }
   $('aiPolicySave').onclick=function(){
-    var p={enabled:$('aiGate').checked,fromDate:$('aiStartDate').value,toDate:$('aiEndDate').value,fromTime:$('aiStartTime').value,toTime:$('aiEndTime').value,dailyMax:Number($('aiMaxDaily').value)};
+    var p={schema:2,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value,toDate:$('aiEndDate').value,fromTime:$('aiStartTime').value,toTime:$('aiEndTime').value,dailyMax:Number($('aiMaxDaily').value)};
     if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime){ $('aiPolicyState').textContent='⚠ Giờ kết thúc phải sau giờ bắt đầu trong cùng ngày.';return; }
     if(p.fromDate&&p.toDate&&p.fromDate>p.toDate){$('aiPolicyState').textContent='⚠ Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.';return;}
     if(!Number.isInteger(p.dailyMax)||p.dailyMax<1||p.dailyMax>1000){$('aiPolicyState').textContent='⚠ Hạn mức phải từ 1 đến 1000 lượt mỗi ngày.';return;}
@@ -775,7 +828,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       $('aiKey1').placeholder = a.key1 ? 'Đã có API Key chính trên Firebase (nhập để thay)' : 'Nhập API Key chính';
       $('aiKey2').placeholder = a.key2 ? 'Đã có khóa dự phòng (nhập để thay)' : 'API Key dự phòng (tùy chọn)';
     }
-    if($('aiState')) $('aiState').textContent = sharedAiConfig ? '✅ AI đang dùng cấu hình Firebase chung.' : (a.key1 || a.key2 ? '✅ AI sử dụng cấu hình đã lưu trên thiết bị.' : 'Chưa có cấu hình AI. Quản trị nhập API Key rồi bấm Lưu Firebase.');
+    if($('aiState')) $('aiState').textContent = sharedAiConfig ? '✅ Đã có khóa AI (đồng bộ Firebase hoặc bản đệm mã hóa trên điện thoại). Trạng thái gọi API: '+aiAccessStatus().why : (a.key1 || a.key2 ? '✅ AI có khóa đã lưu trên thiết bị. Trạng thái: '+aiAccessStatus().why : 'Chưa có API Key. Quản trị nhập khóa và bấm LƯU TẤT CẢ LÊN FIREBASE.');
   }
   $('aiTest').onclick = async function () {
     var existing=readAiConfig();
@@ -840,10 +893,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     return fetchAi(config,key,messages,images,files);
   }
   function fetchAi(config, key, messages, images, files) {
-    var ct = new AbortController(), timer = setTimeout(function(){ ct.abort(); }, 30000);
-    var system = 'Bạn là HUYỀN AI, trợ lý kinh doanh IDECO. Trả lời thân thiện, súc tích, chính xác bằng tiếng Việt. Hãy nhớ các câu trước trong hội thoại. Không bịa số liệu ERP, giá, chiết khấu hoặc khuyến mại; không khẳng định đã gửi đơn khi chưa xác minh. Nếu lệnh cần dữ liệu hoặc thao tác ERP, yêu cầu người dùng bật kết nối ERP trên Mobile. Không tiết lộ dữ liệu nội bộ.';
-    var recent = (messages || []).slice(-10).filter(function(m){return m && m.text;});
-    var prompt = recent.map(function(m){return (m.role==='bot'?'HUYỀN':'NGƯỜI DÙNG') + ': ' + String(m.text).slice(0,1800);}).join('\n\n') + '\n\nHUYỀN:';
+    var ct = new AbortController(), timer = setTimeout(function(){ ct.abort(); }, 24000);
+    var system = 'Bạn là HUYỀN AI, trợ lý kinh doanh IDECO. Trả lời thân thiện, súc tích, chính xác bằng tiếng Việt. Hãy nhớ các câu trước trong hội thoại. Bạn đang chạy độc lập trên Mobile, không có dữ liệu ERP thời gian thực. Không bịa số liệu ERP, giá, chiết khấu, tồn kho hoặc khuyến mại; không khẳng định đã gửi đơn khi chưa xác minh. Nếu người dùng hỏi dữ liệu/thao tác ERP thì giải thích cần bật kết nối ERP trên Mobile; vẫn có thể giải thích kiến thức chung. Không tự thực thi lệnh trên PC. Không tiết lộ dữ liệu nội bộ.';
+    var recent = (messages || []).slice(-8).filter(function(m){return m && m.text;});
+    var prompt = recent.map(function(m){return (m.role==='bot'?'HUYỀN':'NGƯỜI DÙNG') + ': ' + String(m.text).slice(0,1200);}).join('\n\n') + '\n\nHUYỀN:';
     var cleanFiles=(files||[]).slice(0,4), cleanImages=(images||[]).slice(0,4);
     if(cleanFiles.length) prompt+='\n\nCÁC TỆP ĐÍNH KÈM (chỉ đọc và phân tích, KHÔNG tự ghi ERP):\n'+cleanFiles.map(function(f){return '--- '+f.name+' ---\n'+String(f.text||'').slice(0,15000);}).join('\n\n');
     var content=[{ type:'input_text', text:prompt }];
@@ -852,7 +905,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       model: AI_MODEL, stream: false, reasoning: { effort: 'none' }, instructions: system,
       input: [{ role: 'user', content: content }]
     };
-    return fetch('https://api.kie.ai/openai/v1/responses', {
+    return fetch(AI_ENDPOINT, {
       method: 'POST', headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
       body: JSON.stringify(body), signal: ct.signal
     }).then(async function(r){
@@ -866,7 +919,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       if (!ans) throw new Error('AI chưa trả về nội dung. Hãy thử lại.');
       return ans.slice(0,12000);
     }).catch(function(e){
-      if (e && e.name === 'AbortError') throw new Error('AI quá 30 giây chưa phản hồi; kiểm tra mạng hoặc thử khóa dự phòng.');
+      if (e && e.name === 'AbortError') throw new Error('AI quá 24 giây chưa phản hồi; kiểm tra mạng hoặc thử khóa dự phòng.');
       throw e;
     }).finally(function(){ clearTimeout(timer); });
   }
@@ -938,9 +991,40 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     $('appLoginView').hidden = v !== 'app-login';
     $('pairView').hidden = v !== 'login';
     $('topBar').hidden = v !== 'chat';
+    if ($('erpQuickBar')) $('erpQuickBar').hidden = v !== 'chat';
     var chat = v === 'chat'; $('list').hidden = !chat; $('comp').hidden = !chat;
   }
   function loadCfg() { try { st.cfg = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) { st.cfg = null; } }
+  // Tin cậy thiết bị: lưu CryptoKey không cho xuất (extractable=false) vào IndexedDB cùng origin.
+  // Không lưu mật khẩu Mobile/API Key dạng văn bản; xóa dữ liệu website sẽ mất phiên tự đăng nhập.
+  var TRUST_KEY='ideco_mobile_trusted_device_v255';
+  async function trustedSave(){
+    if(!cloudLoginKey||!appDeviceVaultKey||!st.cfg)return false;
+    var record={v:1,cloudKey:cloudLoginKey,deviceKey:appDeviceVaultKey,savedAt:Date.now()};
+    var ok=await idbSet(TRUST_KEY,record);
+    if(ok){try{localStorage.setItem(TRUST_KEY,'1');}catch(_){} try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});}catch(_){}}
+    return ok;
+  }
+  async function trustedClear(){
+    try{localStorage.removeItem(TRUST_KEY);}catch(_){}
+    try{await idbDelete(TRUST_KEY);}catch(_){}
+  }
+  async function trustedRestore(){
+    try{
+      if(localStorage.getItem(TRUST_KEY)!=='1'||!st.cfg||!st.cfg.name)return false;
+      var record=await idbGet(TRUST_KEY);
+      if(!record||record.v!==1||!record.cloudKey||!record.deviceKey)return false;
+      if(record.cloudKey.type!=='secret'||record.deviceKey.type!=='secret')return false;
+      cloudLoginKey=record.cloudKey;appDeviceVaultKey=record.deviceKey;
+      appUnlocked=true;erpDisconnect();enterChat();
+      // Không chặn chat bởi Firebase: dùng khóa đệm, đồng bộ cấu hình nền khi online.
+      await restoreDeviceAi().catch(function(){});
+      if(navigator.onLine)autoLoadSharedAi(false).catch(function(e){
+        if(!readAiConfig().key1&&!readAiConfig().key2)toast('Chưa đồng bộ AI Firebase: '+e.message);
+      });
+      return true;
+    }catch(e){return false;}
+  }
   function showAppLogin(note) {
     view('app-login');
     $('appLoginError').textContent=note||'';
@@ -970,6 +1054,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       $('appLoginPassword').value='';
       appDeviceVaultKey=await getDeviceVaultKey(password).catch(function(){return null;});
       cloudLoginKey=await cloudKeyFromLogin(password);
+      await trustedSave().catch(function(){return false;});
       enterChat();
       restoreDeviceAi().then(function(){
         if(!navigator.onLine){if(!readAiConfig().key1&&!readAiConfig().key2)toast('Chưa có Internet để đồng bộ API Key Firebase.');return;}
@@ -1021,7 +1106,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (!pw) { msg('Nhập mật khẩu Kết nối ERP.'); $('pPw').focus(); return; }
     var btn = $('pairBtn'); btn.disabled = true; msg('⏳ Đang tìm máy tính trạm mã ' + code + '…');
     st.cfg = { code: code, name: name.slice(0, 40), db: (st.pairDb && /^https:\/\/[a-z0-9-]+\.firebaseio\.com\//.test(st.pairDb)) ? st.pairDb : ((st.cfg && st.cfg.db) || DB_DEFAULT) };
-    connect(code).then(function () { return waitStation(9000); }).then(function (s) {
+    connect(code).then(function () { return waitStation(6000); }).then(function (s) {
       if (!s) return fetch(url('station')).then(function (r) { if (r.status === 401 || r.status === 403) st.denied = true; }, function () { st.netFail = true; }).then(function () { return s; });
       return s;
     }).then(function (s) {
@@ -1038,8 +1123,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function enterChat() {
     if(!appUnlocked){showAppLogin();return;}
-    dataBoot = dataInit().catch(function () {}); // Nạp dữ liệu cục bộ không chặn giao diện; chuẩn hóa sẽ đợi dữ liệu này.
-    view('chat'); loadHist(); renderAll(); stationText();
+    if (!dataBootStarted) { dataBootStarted=true; dataBoot=dataInit().catch(function () {}); loadHist(); } // Không nạp lại lịch sử đang có tin chờ.
+    view('chat'); erpUi(); renderAll(); stationText();
     if (erpReady()) retrackAll();
   }
   /* vào nhanh: đã ghi nhớ → vào thẳng màn hình chat, kiểm tra lại với trạm ở nền */
@@ -1047,7 +1132,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if (!erpOn) { enterChat(); return; }
     connect(st.cfg.code).then(function () { return dataKey(st.cfg.code, st.cfg.h); }).then(function (dk) {
       if (!erpOn) return; st.dkey = dk; erpUi(); enterChat();
-      waitStation(9000).then(function (s) {
+      waitStation(6000).then(function (s) {
         if (!s) return; // trạm offline: vẫn cho soạn, lệnh xếp hàng khi trạm mở
         verify(st.cfg.h).catch(function (e) { if (/mật khẩu/i.test(e.message)) logout('Mật khẩu ERP trên máy tính đã đổi — nhập lại.'); });
       });
@@ -1061,6 +1146,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     enterChat(); toast('✨ Chế độ chuẩn hóa độc lập. Không cần mở PC.');
   };
   $('connectPc').onclick = function () { $('sheet').classList.remove('open'); showLogin('Nhập thông tin ghép cặp để bật xử lý ERP.'); };
+  $('erpRefresh').onclick=function(){
+    if(!erpOn){toast('ERP đang tắt. Chat trên điện thoại không cần PC.');return;}
+    if(!st.key){showLogin('Vui lòng ghép máy tính trạm trước khi kiểm tra.');return;}
+    var btn=this;btn.disabled=true;stationText();
+    watchStation();
+    setTimeout(function(){btn.disabled=false;erpUi();},1500);
+    toast('Đang làm mới trạng thái ERP từ Firebase…');
+  };
   $('erpToggle').onchange = function () {
     if (!this.checked) {
       erpDisconnect(); toast('ERP đã tắt. Chat AI và chuẩn hóa vẫn hoạt động trên Mobile.'); return;
@@ -1225,7 +1318,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('lockNow').onclick = function () { $('sheet').classList.remove('open'); erpDisconnect(); if (st.cfg) { delete st.cfg.h; saveCfg(false); } toast('Đã ngắt ERP; tiếp tục sử dụng HUYỀN AI trên điện thoại.'); };
   $('appLogout').onclick = function () {
     $('sheet').classList.remove('open');
-    erpDisconnect(); appUnlocked=false; appDeviceVaultKey=null; cloudLoginKey=null; sharedAiConfig=null;
+    erpDisconnect(); trustedClear().catch(function(){}); appUnlocked=false; appDeviceVaultKey=null; cloudLoginKey=null; sharedAiConfig=null;
     try {sessionStorage.removeItem(AI_STORE);}catch(_){}
     $('sharedAccessBtn').style.display='';
     $('sharedAccessBtn').textContent='⟳ Tải lại AI dùng chung từ Firebase';
@@ -1244,7 +1337,13 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     if(isOrderIntent(t)&&!im.length&&!files.length){$('normBtn').click();return;}
     // Tệp/ảnh: phân tích trên Mobile trước khi quyết định nạp ERP; không tự gửi kèm file vào ERP.
     if(!im.length&&!files.length&&needsErp(t,[])){
-      if(!erpReady()){toast('Muốn hỏi số liệu ERP, hãy bật Kết nối ERP trong Tùy chọn.');return;}
+      if(!erpOn){
+        // Khi ERP tắt, chatbot vẫn trò chuyện; chỉ nói rõ không có dữ liệu ERP thực tế.
+        $('ta').value='';if($('box').classList.contains('big'))$('grow').click();renderShots();
+        sendMobileChat(t,[],[]);return;
+      }
+      if(!erpReady()){toast('Đã bật ERP nhưng chưa ghép máy trạm PC. Nội dung vẫn được giữ trong ô nhập.');return;}
+      if(!stationOnlineReady()){toast('Trạm PC hoặc ERP chưa sẵn sàng. Nội dung được giữ nguyên để thử lại sau.');return;}
       $('ta').value='';if($('box').classList.contains('big'))$('grow').click();renderShots();send(t,[]);return;
     }
     var gate=aiAccessStatus();
@@ -1276,7 +1375,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   var DATA = { products: null, customers: null }, dataLoading = {}, dataBoot = Promise.resolve();
   function idb() { return new Promise(function (res, rej) { if (!window.indexedDB) return rej(new Error('no idb')); var r = indexedDB.open('huyen_mobile_data', 1); r.onupgradeneeded = function () { r.result.createObjectStore('kv'); }; r.onsuccess = function () { res(r.result); }; r.onerror = function () { rej(r.error); }; }); }
   function idbGet(k) { return idb().then(function (db) { return new Promise(function (res) { var q = db.transaction('kv').objectStore('kv').get(k); q.onsuccess = function () { res(q.result || null); }; q.onerror = function () { res(null); }; }); }).catch(function () { return null; }); }
-  function idbSet(k, v) { return idb().then(function (db) { return new Promise(function (res) { var t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = function () { res(true); }; t.onerror = function () { res(false); }; }); }).catch(function () { return false; }); }
+  function idbSet(k, v) { return idb().then(function (db) { return new Promise(function (res) { var t = db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = function () { res(true); db.close(); }; t.onerror = function () { res(false); db.close(); }; }); }).catch(function () { return false; }); }
+  function idbDelete(k) { return idb().then(function(db){return new Promise(function(res){var t=db.transaction('kv','readwrite');t.objectStore('kv').delete(k);t.oncomplete=function(){db.close();res(true);};t.onerror=function(){db.close();res(false);};});}).catch(function(){return false;}); }
   function dataKeyName(w) { return 'firebase-excel-v1:' + w; } // Không phụ thuộc mã ghép cặp/ID máy trạm.
   function catalogSources() {
     var v = {}; try { v = JSON.parse(localStorage.getItem(CAT_SETTINGS_KEY) || '{}') || {}; } catch (_) {}
@@ -1694,6 +1794,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       toast('✅ Đã chuẩn hóa và điền lệnh. Muốn nạp ERP: kết nối PC rồi bấm Gửi.');
       return;
     }
+    if (!stationOnlineReady()) { toast('ERP chưa sẵn sàng trên PC. Đơn nháp vẫn được giữ, không gửi để tránh nhầm hoặc xử lý muộn.'); return; }
     $('draftSheet').classList.remove('open');
     $('ta').value = ''; shots = []; renderShots(); grow();
     send(cmd, []); draft = null;
@@ -1714,6 +1815,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var tip = ios ? 'Trên iPhone: Safari → nút Chia sẻ → Thêm vào Màn hình chính → Thêm.' : 'Trên Android: Chrome → menu ⋮ → Cài đặt ứng dụng hoặc Thêm vào màn hình chính. Mở bằng HTTPS.';
     alert(tip);
   }
+  $('refreshApp').addEventListener('click', async function(){
+    var btn=this;btn.disabled=true;btn.textContent='⏳ Đang kiểm tra bản mới…';
+    try {
+      if ('serviceWorker' in navigator) { var reg=await navigator.serviceWorker.getRegistration();if(reg) await reg.update(); }
+      var target=new URL(location.href);target.searchParams.set('version','2.54.1');target.searchParams.set('reload',String(Date.now()));
+      location.replace(target.href);
+    } catch(e) { toast('⚠ Không cập nhật được: '+e.message);btn.disabled=false;btn.textContent='🔄 Kiểm tra cập nhật ứng dụng'; }
+  });
   $('installApp').addEventListener('click', installPwa);
   $('installFromLogin').addEventListener('click', installPwa);
   $('installFromAppLogin').addEventListener('click', installPwa);
@@ -1755,7 +1864,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     finally{clearTimeout(tm);}
   }
   function workspacePolicyFromForm(){
-    var p={enabled:$('aiGate').checked,fromDate:$('aiStartDate').value||'',toDate:$('aiEndDate').value||'',
+    var p={schema:2,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value||'',toDate:$('aiEndDate').value||'',
       fromTime:$('aiStartTime').value||'08:00',toTime:$('aiEndTime').value||'18:00',dailyMax:Number($('aiMaxDaily').value)};
     if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime)
       throw new Error('Giờ kết thúc phải sau giờ bắt đầu.');
@@ -1813,7 +1922,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var products=await workspaceRows('products');
     var customers=await workspaceRows('customers');
     workspaceUi('🔎 Đã kiểm tra '+products.length+' sản phẩm, '+customers.length+' khách hàng. Đang mã hóa API Key…');
-    var env=await cloudSeal({key1:keys.key1,key2:keys.key2,policy:policy});
+    var env=await cloudSeal({key1:keys.key1,key2:keys.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,policy:policy});
     var version=Date.now();
     var payload=Object.assign({},env,{
       config:env,
@@ -1839,7 +1948,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       JSON.stringify(check.policy)!==JSON.stringify(policy))
       throw new Error('Dữ liệu Firebase đọc lại chưa khớp. Không thể xác nhận lưu thành công.');
     // Only mutate application state after successful remote read-back.
-    sharedAiConfig={key1:check.key1,key2:check.key2,remember:false};
+    sharedAiConfig={key1:check.key1,key2:check.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,remember:false};
     cloudApplyPolicy(check.policy);
     var sources={products:AI_SHARED_DB+'/catalogs/products',customers:AI_SHARED_DB+'/catalogs/customers',uploadBase:catalogSources().uploadBase};
     localStorage.setItem(CAT_SETTINGS_KEY,JSON.stringify(sources));initCatalogInputs();
@@ -1871,13 +1980,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     finally{b.disabled=false;b.textContent='⟳ Đồng bộ tất cả từ Firebase về máy này';}
   };
   // Do not allow the obsolete local-only save buttons to mislead users.
-  ['sharedSave','saveCatalog','uploadExcel','aiPolicySave'].forEach(function(id){
+  ['sharedSave','sharedUnlockInSettings','saveCatalog','uploadExcel','aiPolicySave'].forEach(function(id){
     var btn=$(id);if(btn){btn.hidden=true;btn.style.display='none';btn.onclick=function(){$('saveEverything').click();};}
   });
   showWorkspaceCounts();
   loadCfg(); grow(); saveErpChoice(false); erpUi(); st.pairDb = hp.db || '';
-  // Đăng nhập Mobile độc lập. KHÔNG kết nối Firebase bridge/PC khi chưa bật ERP.
-  showAppLogin();
+  // Tự phục hồi phiên trên chính thiết bị đã đăng nhập; tuyệt đối KHÔNG tự bật ERP.
+  // Xóa dữ liệu trang web/trình duyệt hoặc bấm Đăng xuất -> phải nhập mật khẩu lại.
+  showAppLogin('Đang khôi phục phiên đăng nhập đã lưu trên điện thoại…');
+  trustedRestore().then(function(ok){if(!ok)showAppLogin('');}).catch(function(){showAppLogin('');});
   if (hp.pair) $('pCode').value=norm(hp.pair);
   if (hp.n && !($('appLoginName').value||'').trim()) $('appLoginName').value=hp.n;
 })();
