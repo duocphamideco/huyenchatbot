@@ -146,6 +146,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 
 
 
+/* 2.56: ERP luôn có nút rõ ràng ở thanh tiêu đề và thanh công tắc phụ. */
+.erp-head-btn{flex:none;border:1px solid var(--line);border-radius:12px;background:#fff4f1;color:#af2a20;font-size:12px;font-weight:800;padding:10px 9px;min-height:39px;white-space:nowrap}
+.erp-head-btn[aria-pressed="true"]{background:#dcfce7;border-color:#a6d4b7;color:#176d3e}
+.erp-quickbar[hidden]{display:none!important}
+#dataMiniBar{display:flex;align-items:center;gap:8px;background:var(--card);border-bottom:1px solid var(--line);padding:3px 10px 5px}
+#dataMiniBar[hidden]{display:none!important}
+#dataMiniStatus{font-size:11px;line-height:1.3;color:var(--dim);flex:1}
+#dataRefreshQuick{font-weight:800;border:1px solid var(--line);border-radius:10px;background:var(--chip);color:var(--red);padding:4px 11px;flex:none;cursor:pointer}
+@media(max-width:440px){.erp-head-btn{padding:9px 6px;font-size:11px}}
 /* 2.54: công tắc ERP hiển thị ở màn hình chat, không cần mở Cài đặt quản trị */
 .erp-quickbar{flex:none;background:var(--card);padding:5px 11px 7px;border-bottom:1px solid var(--line)}
 .erp-quickbar .erp-control{margin:0;padding:6px 10px;border-radius:13px;display:flex;align-items:center;gap:14px;background:var(--bg)}
@@ -166,7 +175,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <div class="app" id="app">
   <header class="top" id="topBar">
     <img src="icon-192.png" alt="IDECO">
-    <div class="tt"><b>HUYỀN · Trợ lý IDECO <span class="app-build">v2.55.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <div class="tt"><b>HUYỀN · Trợ lý IDECO <span class="app-build">v2.56.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <button class="erp-head-btn" id="headerErpToggle" type="button" aria-label="Bật kết nối ERP" aria-pressed="false">🔗 ERP <span id="erpHeaderState">TẮT</span></button>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
   <!-- Nhân viên tự bật/tắt ERP ngoài phần Cài đặt quản trị. -->
@@ -178,6 +188,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       <button class="ghost" id="connectPc" type="button" hidden>Thiết lập kết nối ERP</button>
     </div>
   </div>
+  <div id="dataMiniBar" hidden><span id="dataMiniStatus" role="status" aria-live="polite">📚 Đang khôi phục danh sách đã lưu…</span><button id="dataRefreshQuick" type="button" title="Đồng bộ lại hai danh sách từ Firebase" aria-label="Đồng bộ lại danh sách khách hàng và sản phẩm từ Firebase">⟳</button></div>
   <section class="pairv" id="appLoginView" aria-labelledby="appLoginTitle">
     <div class="hero">
       <img src="icon-192.png" alt="IDECO">
@@ -250,7 +261,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   </div>
 </div>
 <div class="sheet" id="sheet"><div class="card">
-  <h2>Tùy chọn <span class="settings-build">v2.55.0</span></h2>
+  <h2>Tùy chọn <span class="settings-build">v2.56.0</span></h2>
   <p class="version-tip">Cài đặt AI và Excel dành cho quản trị; công tắc ERP cho nhân viên nằm trực tiếp ngoài màn hình chat.</p>
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
@@ -313,6 +324,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="note" id="dLoadInfo" role="status" aria-live="polite">Bấm ⟳ để đồng bộ danh sách từ Firebase. Nếu không tải được, kiểm tra nguồn URL và quyền đọc dữ liệu.</div>
     <input class="in" id="dFind" placeholder="Tra nhanh: tên / mã SP, tên KH, SĐT…" style="margin-top:10px" autocomplete="off">
     <div class="dres" id="dRes"></div>
+    <div class="note"><b>Lưu ý:</b> Ô chọn tệp Excel luôn trống sau khi tải lại trang do quy định của trình duyệt. Dữ liệu Excel đã lưu trên Firebase và bản đệm thiết bị vẫn được giữ; kiểm tra số khách hàng/sản phẩm bên dưới để xác nhận. Không cần chọn lại tệp mỗi lần mở app.</div>
     <div class="note">Hai danh sách Excel đã đồng bộ thành dữ liệu trên Firebase được tải <b>thẳng về điện thoại</b>, lưu bản đệm để tra cứu khi offline. ✨ Chuẩn hóa chữ/giọng nói ngay trên máy, <b>không gọi PC hoặc ERP</b>. Ảnh đơn hàng chưa hỗ trợ OCR ở chế độ này. Chỉ bước 📤 Nạp đơn lên ERP mới yêu cầu máy tính trạm.</div>
   </div>
   <div class="dset ideco-sync-panel" id="sharedSyncPanel">
@@ -402,6 +414,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var info = $('erpToggleInfo'); if (info) info.textContent = !erpOn ? 'Tắt · chat AI độc lập' : (!erpReady() ? 'Chưa ghép PC' : (!fresh() ? 'Chưa thấy PC online' : (st.station.erp ? (st.station.busy ? 'Đã kết nối · đang có lệnh chờ' : 'ERP sẵn sàng') : 'PC online nhưng ERP chưa kết nối')));
     var badge = $('erpShortStatus'); if (badge) badge.textContent = !erpOn ? 'Đang tắt' : (stationOnlineReady() ? 'Sẵn sàng' : 'Chưa sẵn sàng');
     var refresh=$('erpRefresh');if(refresh)refresh.hidden=!erpOn;
+    var head=$('headerErpToggle');if(head){head.setAttribute('aria-pressed',String(erpOn));head.setAttribute('aria-label',erpOn?'Tắt kết nối ERP':'Bật kết nối ERP');}
+    var headText=$('erpHeaderState');if(headText)headText.textContent=!erpOn?'TẮT':(stationOnlineReady()?'SẴN SÀNG':'BẬT');
   }
   function erpDisconnect() {
     saveErpChoice(false);
@@ -489,7 +503,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function renderAll() {
     var list = $('list'); list.innerHTML = '';
-    if (!hist.length) { list.innerHTML = '<div class="empty"><img src="' + document.querySelector('.top img').src + '" alt=""><b>Chào ' + esc(st.cfg && st.cfg.name || 'anh/chị') + ' 👋</b>Hỏi Huyền, tìm sản phẩm, lập đơn nháp ngay trên điện thoại. Khi cần xử lý dữ liệu ERP, bật kết nối trong Tùy chọn. Ví dụ:<br>“Lên đơn nhà thuốc Bạch Liên 14 hộp Wamlox 5mg”<br>“Doanh số tháng này theo nhân viên”<div class="slogan">'+SLOGAN+'</div></div>'; return; }
+    if (!hist.length) { list.innerHTML = '<div class="empty"><img src="' + document.querySelector('.top img').src + '" alt=""><b>Chào ' + esc(st.cfg && st.cfg.name || 'anh/chị') + ' 👋</b>Hỏi Huyền, tìm sản phẩm, lập đơn nháp ngay trên điện thoại. Khi cần xử lý dữ liệu ERP, bật nút 🔗 ERP ngay trên thanh tiêu đề. Ví dụ:<br>“Lên đơn nhà thuốc Bạch Liên 14 hộp Wamlox 5mg”<br>“Doanh số tháng này theo nhân viên”<div class="slogan">'+SLOGAN+'</div></div>'; return; }
     hist.forEach(function (m) { list.appendChild(renderMsg(m)); });
     list.scrollTop = list.scrollHeight;
   }
@@ -705,21 +719,17 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       $('sharedAccessBtn').style.display='none';
       await rememberDeviceAi();
       sharedSetUi('Đã đồng bộ cấu hình AI từ Firebase. Đang kiểm tra danh mục dùng chung…');
+      if($('dataMiniStatus'))$('dataMiniStatus').textContent='⏳ Đã nhận cấu hình AI, đang kiểm tra danh sách khách hàng và sản phẩm trên Firebase…';
       loadAiSettings(); updateAiPolicyUi();
       Promise.resolve().then(async function(){
-        var m=await firebaseWorkspaceGet(AI_SHARED_DB+'/syncMeta',18000).catch(function(){return null;});
-        if (!m || m.schema!==1 || !m.products || !m.customers) return;
-        var remote={products:AI_SHARED_DB+'/catalogs/products',customers:AI_SHARED_DB+'/catalogs/customers',uploadBase:catalogSources().uploadBase};
-        localStorage.setItem(CAT_SETTINGS_KEY,JSON.stringify(remote));
-        initCatalogInputs();
-        var results=await Promise.allSettled([dataLoad('products',true),dataLoad('customers',true)]);
-        if(results.some(function(x){return x.status==='rejected';})) {
-          sharedSetUi('Đã đồng bộ API; còn lỗi tải danh mục. Bấm Đồng bộ tất cả để xem chi tiết.',true);
-          return;
-        }
-        sharedSetUi('Đã đồng bộ API, lịch AI, '+DATA.customers.rows.length+' khách hàng, '+DATA.products.rows.length+' sản phẩm từ Firebase.');
+        await syncWorkspaceCatalogs();
+        sharedSetUi('Đã xác minh API, lịch AI, '+DATA.customers.rows.length+' khách hàng, '+DATA.products.rows.length+' sản phẩm từ Firebase.');
         showWorkspaceCounts();
-      }).catch(function(e){sharedSetUi('Đã tải API; chưa tải đủ danh mục: '+e.message,true);});
+      }).catch(function(e){
+        // Không xóa bản đệm đang dùng khi Firebase lỗi, và không báo đồng bộ đủ.
+        sharedSetUi('API sẵn sàng; danh sách vẫn giữ bản đã lưu. Chưa đồng bộ mới: '+e.message,true);
+        dataStat();
+      });
       if(showMessage)toast('✅ Đã đồng bộ AI từ Firebase.');
       return true;
     })().finally(function(){cloudFetchRunning=null;});
@@ -766,13 +776,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   /* HUYỀN MOBILE: lịch gọi AI riêng biệt với ERP; không tạo lượt gọi nền. */
   var AI_POLICY_STORE = 'huyen_mobile_ai_credit_policy_v249';
   var AI_USAGE_STORE = 'huyen_mobile_ai_credit_usage_v249';
-  var AI_POLICY_DEFAULT = { schema:2, enabled:true, scheduleEnabled:false, fromDate:'', toDate:'', fromTime:'08:00', toTime:'18:00', dailyMax:20 };
+  var AI_POLICY_DEFAULT = { schema:3, enabled:true, scheduleEnabled:false, fromDate:'', toDate:'', fromTime:'08:00', toTime:'18:00', dailyMax:20 };
   function migrateAiPolicy(value) {
     var p=value&&typeof value==='object'?value:{};
     // Trong các bản trước, enabled:false là MẶC ĐỊNH, không phải lựa chọn của quản trị;
     // chuyển chính sách cũ để chat hoạt động khi đã có khóa, không bị lịch 08:00-18:00 chặn.
     var modern=Number(p.schema)>=2;
-    return {schema:2, enabled:modern?p.enabled!==false:true,
+    var explicitGate=Number(p.schema)>=3;
+    // Không kế thừa AI tắt do lỗi mặc định ở các bản cũ (schema 1/2).
+    return {schema:3, enabled:explicitGate?p.enabled!==false:true,
       scheduleEnabled:modern?!!p.scheduleEnabled:false,
       fromDate:String(p.fromDate||''),toDate:String(p.toDate||''),
       fromTime:String(p.fromTime||'08:00'),toTime:String(p.toTime||'18:00'),
@@ -808,7 +820,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     updateAiPolicyUi();
   }
   $('aiPolicySave').onclick=function(){
-    var p={schema:2,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value,toDate:$('aiEndDate').value,fromTime:$('aiStartTime').value,toTime:$('aiEndTime').value,dailyMax:Number($('aiMaxDaily').value)};
+    var p={schema:3,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value,toDate:$('aiEndDate').value,fromTime:$('aiStartTime').value,toTime:$('aiEndTime').value,dailyMax:Number($('aiMaxDaily').value)};
     if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime){ $('aiPolicyState').textContent='⚠ Giờ kết thúc phải sau giờ bắt đầu trong cùng ngày.';return; }
     if(p.fromDate&&p.toDate&&p.fromDate>p.toDate){$('aiPolicyState').textContent='⚠ Ngày kết thúc phải bằng hoặc sau ngày bắt đầu.';return;}
     if(!Number.isInteger(p.dailyMax)||p.dailyMax<1||p.dailyMax>1000){$('aiPolicyState').textContent='⚠ Hạn mức phải từ 1 đến 1000 lượt mỗi ngày.';return;}
@@ -992,6 +1004,8 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     $('pairView').hidden = v !== 'login';
     $('topBar').hidden = v !== 'chat';
     if ($('erpQuickBar')) $('erpQuickBar').hidden = v !== 'chat';
+    if ($('dataMiniBar')) $('dataMiniBar').hidden = v !== 'chat';
+    if ($('headerErpToggle')) $('headerErpToggle').hidden = v !== 'chat';
     var chat = v === 'chat'; $('list').hidden = !chat; $('comp').hidden = !chat;
   }
   function loadCfg() { try { st.cfg = JSON.parse(localStorage.getItem(LS) || 'null'); } catch (e) { st.cfg = null; } }
@@ -1123,7 +1137,17 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   }
   function enterChat() {
     if(!appUnlocked){showAppLogin();return;}
-    if (!dataBootStarted) { dataBootStarted=true; dataBoot=dataInit().catch(function () {}); loadHist(); } // Không nạp lại lịch sử đang có tin chờ.
+    if (!dataBootStarted) {
+      dataBootStarted=true;
+      dataBoot=dataInit().then(function(){
+        // Khi khởi động, báo ngay số dòng cache; tải mới từ Firebase chạy riêng.
+        dataStat();
+        if(navigator.onLine && (!DATA.customers || !DATA.products)) {
+          Promise.allSettled(['customers','products'].filter(function(w){return !DATA[w];}).map(function(w){return dataLoad(w,true);})).then(dataStat);
+        }
+      }).catch(function(e){setDataLoadInfo('⚠ Không đọc được dữ liệu lưu: '+e.message);});
+      loadHist();
+    } // Không nạp lại lịch sử khi chuyển chế độ ERP.
     view('chat'); erpUi(); renderAll(); stationText();
     if (erpReady()) retrackAll();
   }
@@ -1153,6 +1177,11 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     watchStation();
     setTimeout(function(){btn.disabled=false;erpUi();},1500);
     toast('Đang làm mới trạng thái ERP từ Firebase…');
+  };
+  $('headerErpToggle').onclick=function(){
+    if(!appUnlocked)return;
+    var toggle=$('erpToggle');toggle.checked=!erpOn;
+    toggle.dispatchEvent(new Event('change',{bubbles:true}));
   };
   $('erpToggle').onchange = function () {
     if (!this.checked) {
@@ -1522,8 +1551,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   function dataInit() {
     return Promise.all(['products', 'customers'].map(function (w) {
       return idbGet(dataKeyName(w)).then(function (rec) {
-        if (rec && rec.rows && rec.store === catalogSources()[w]) DATA[w] = prep(w, rec);
-        // Chỉ nhận bộ nhớ cùng nguồn tránh lấy nhầm dữ liệu của dự án Firebase khác.
+        var expected=catalogSources()[w];
+        var sharedNode=AI_SHARED_DB+'/catalogs/'+w;
+        if (rec && Array.isArray(rec.rows) && rec.rows.length && (rec.store===expected || rec.store===sharedNode)) {
+          DATA[w]=prep(w,rec);
+        }
+        // Chỉ dùng bản đệm đã từng được tải từ nguồn đang chọn hoặc kho chung có xác minh.
       });
     })).then(dataStat);
   }
@@ -1535,6 +1568,12 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
         : lb + ': <span class="wr">chưa tải Firebase</span>';
     }
     e.innerHTML = line('products', 'sản phẩm') + '<br>' + line('customers', 'khách hàng');
+    var mini=$('dataMiniStatus');
+    if(mini){
+      var cp=DATA.products&&DATA.products.rows&&DATA.products.rows.length||0;
+      var cc=DATA.customers&&DATA.customers.rows&&DATA.customers.rows.length||0;
+      mini.textContent=cp&&cc?'📚 Đã có '+cc.toLocaleString('vi-VN')+' khách hàng · '+cp.toLocaleString('vi-VN')+' sản phẩm (bộ nhớ/Firebase)':'📚 Chưa tải đủ danh mục: '+cc+' khách hàng · '+cp+' sản phẩm. Có thể đồng bộ trong Cài đặt.';
+    }
   }
   /* ---- chuẩn hóa chữ & so gần đúng (giống extension: Dice cặp ký tự, bỏ quy cách, giữ hàm lượng) ---- */
   function vn(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').replace(/[()\[\],.;:\/\\_\-+'"]/g, ' ').replace(/\s+/g, ' ').trim(); }
@@ -1819,7 +1858,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var btn=this;btn.disabled=true;btn.textContent='⏳ Đang kiểm tra bản mới…';
     try {
       if ('serviceWorker' in navigator) { var reg=await navigator.serviceWorker.getRegistration();if(reg) await reg.update(); }
-      var target=new URL(location.href);target.searchParams.set('version','2.54.1');target.searchParams.set('reload',String(Date.now()));
+      var target=new URL(location.href);target.searchParams.set('version','2.56.0');target.searchParams.set('reload',String(Date.now()));
       location.replace(target.href);
     } catch(e) { toast('⚠ Không cập nhật được: '+e.message);btn.disabled=false;btn.textContent='🔄 Kiểm tra cập nhật ứng dụng'; }
   });
@@ -1864,7 +1903,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     finally{clearTimeout(tm);}
   }
   function workspacePolicyFromForm(){
-    var p={schema:2,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value||'',toDate:$('aiEndDate').value||'',
+    var p={schema:3,enabled:$('aiGate').checked,scheduleEnabled:$('aiScheduleGate').checked,fromDate:$('aiStartDate').value||'',toDate:$('aiEndDate').value||'',
       fromTime:$('aiStartTime').value||'08:00',toTime:$('aiEndTime').value||'18:00',dailyMax:Number($('aiMaxDaily').value)};
     if(!/^\d{2}:\d{2}$/.test(p.fromTime)||!/^\d{2}:\d{2}$/.test(p.toTime)||p.fromTime>=p.toTime)
       throw new Error('Giờ kết thúc phải sau giờ bắt đầu.');
@@ -1980,6 +2019,17 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     finally{b.disabled=false;b.textContent='⟳ Đồng bộ tất cả từ Firebase về máy này';}
   };
   // Do not allow the obsolete local-only save buttons to mislead users.
+  $('dataRefreshQuick').onclick=async function(){
+    var button=this; button.disabled=true;button.textContent='…';
+    var label=$('dataMiniStatus');
+    if(label)label.textContent='⏳ Đang tải lại 2 danh sách từ Firebase…';
+    try {
+      await syncWorkspaceCatalogs();
+      toast('✅ Đã cập nhật '+DATA.customers.rows.length+' khách hàng, '+DATA.products.rows.length+' sản phẩm.');
+    } catch (e) {
+      dataStat(); toast('⚠ Chưa tải được danh sách mới: '+e.message);
+    } finally {button.disabled=false;button.textContent='⟳';}
+  };
   ['sharedSave','sharedUnlockInSettings','saveCatalog','uploadExcel','aiPolicySave'].forEach(function(id){
     var btn=$(id);if(btn){btn.hidden=true;btn.style.display='none';btn.onclick=function(){$('saveEverything').click();};}
   });

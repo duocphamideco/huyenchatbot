@@ -1,0 +1,57 @@
+HUYỀN MOBILE v2.56.0 — HOTFIX ERP / CHAT AI / DANH SÁCH FIREBASE
+=================================================================
+
+CẬP NHẬT
+1. Sao lưu repository đang chạy.
+2. Giải nén ZIP. Tải các tệp lên NGAY THƯ MỤC GỐC của repo GitHub Pages
+   đang chạy HUYỀN MOBILE (/huyenchatbot/). Không lồng thêm thư mục.
+3. Truy cập website và kiểm tra tên phiên bản v2.56.0 trên tiêu đề.
+   Nếu vẫn là phiên bản cũ: kiểm tra GitHub Pages đã deploy đúng thư mục;
+   trong Cài đặt (nếu có), chọn 'Kiểm tra cập nhật ứng dụng', hoặc mở URL
+   website thêm ?v=2.56.0 để xác định bản máy chủ. Tránh xóa dữ liệu trang web
+   khi chỉ muốn cập nhật vì thao tác đó sẽ mất phiên đăng nhập và cache trên máy.
+4. Đăng nhập Mobile bằng mật khẩu ứng dụng đã thiết lập; Cài đặt quản trị dùng
+   mật khẩu quản trị riêng, giữ nguyên như phiên bản trước.
+
+SAU KHI MỞ ỨNG DỤNG
+- Nút '🔗 ERP TẮT' nằm trên thanh tiêu đề, nhân viên tự bật khi cần PC.
+- Khi ERP TẮT: hỏi đáp AI vẫn chạy qua cấu hình Kie lưu Firebase;
+  không thực hiện thao tác trạm PC.
+- Khi ERP BẬT: yêu cầu ghép PC nếu chưa có kết nối, kiểm tra trạng thái ERP
+  trước khi gửi lệnh cần dữ liệu/chứng từ.
+- Ngay dưới thanh trạng thái có số lượng khách hàng và sản phẩm đã tải,
+  kèm nút ⟳ tải lại hai danh sách từ Firebase, không cần Cài đặt quản trị.
+
+CÀI ĐẶT FIREBASE
+- Đã có cấu hình chung: ứng dụng đọc khóa API mã hóa, lịch AI và 2 danh sách
+  từ node Firebase chung sau khi đăng nhập; không cần nhập file Excel mỗi lần.
+- Nếu lần đầu chưa có dữ liệu: quản trị chọn Excel sản phẩm và khách hàng,
+  nhập API Key cần thiết, nhấn 'LƯU TẤT CẢ LÊN FIREBASE'.
+- Chỉ coi là lưu thành công nếu thông báo 'ĐÃ LƯU VÀ ĐỌC LẠI THÀNH CÔNG'
+  và hiển thị đúng số dòng.
+- Ô 'Chọn tệp Excel' luôn về trống sau khi tải lại trang: đây là cơ chế
+  riêng tư mặc định của trình duyệt. DỮ LIỆU ĐÃ ĐỒNG BỘ vẫn được giữ ở Firebase.
+- Nếu mạng lỗi, dữ liệu đã xác minh và lưu trong IndexedDB được ưu tiên giữ lại.
+  Máy mới cần Internet và Firebase cho phép đọc để đồng bộ lần đầu.
+
+CHAT AI
+- Endpoint: https://api.kie.ai/openai/v1/responses
+- Model: deepseek-v4-1-flash (không bắt nhân viên chọn model).
+- Phiên bản này chuyển cấu hình AI bị tắt mặc định từ v2.55.0 trở về BẬT.
+  Lịch chỉ áp dụng nếu quản trị bật 'giới hạn theo lịch'.
+- Nếu quản trị cố ý tắt chatbot trên phiên bản mới, ứng dụng vẫn tôn trọng.
+- Cần API Key Kie còn hiệu lực, còn credit, mạng Internet và Firebase Rules phù hợp.
+
+KIỂM TRA TRƯỚC VẬN HÀNH
+1. Mở lại PWA: thấy v2.56.0 và nút ERP TẮT trên tiêu đề.
+2. ERP TẮT: hỏi 'Chào Huyền'; kiểm tra có phản hồi Kie thực sự.
+3. Kiểm tra số dòng KH và SP, nhấn ⟳ rồi mở lại ứng dụng, kiểm tra vẫn còn.
+4. Dùng một điện thoại khác đăng nhập: so sánh số dòng danh sách.
+5. Bật ERP và thử 1 đơn nội bộ với PC: đối chiếu chính xác mã, giá,
+   chiết khấu, ưu đãi, tránh gửi lại đơn khi chưa xác minh ERP.
+
+LƯU Ý AN TOÀN
+- Cấu hình mã hóa dùng chung qua mật khẩu của web tĩnh không thay thế
+  Firebase Authentication/backend có phân quyền. Không mở quyền đọc/ghi
+  Firebase công khai khi có dữ liệu khách hàng hoặc API Key trả phí.
+- Chưa kiểm thử thực tế với Firebase công ty, khóa Kie thật, hoặc PC ERP thật.
