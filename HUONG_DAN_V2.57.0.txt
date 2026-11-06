@@ -1,0 +1,34 @@
+HUYỀN MOBILE v2.57.0 — KHÔI PHỤC EXCEL FIREBASE KHI MỞ LẠI
+
+I. CẬP NHẬT
+1. Sao lưu mã đang chạy và sao lưu danh mục khách hàng/sản phẩm hiện có từ Firebase.
+2. Giải nén ZIP, upload tất cả file ứng dụng vào đúng thư mục GitHub Pages hiện tại.
+3. Mở trang, kiểm tra phiên bản v2.57.0. Nếu đang dùng PWA, tải lại từ website rồi mở lại ứng dụng.
+
+II. XÁC NHẬN DỮ LIỆU SAU KHỞI ĐỘNG
+1. Vào Cài đặt -> Danh sách Excel trên Firebase.
+2. Đọc khung "Danh sách đã lưu". Phải có số khách hàng, sản phẩm ở 2 nguồn:
+   - FIREBASE ĐÃ LƯU: xác minh từ dữ liệu thực tế và metadata trên máy chủ.
+   - TRÊN THIẾT BỊ: dữ liệu đã tải về thiết bị, có thể tra cứu offline nếu bản đệm lưu thành công.
+3. Ô "Choose File / No file chosen" luôn trống sau khi mở lại vì trình duyệt cấm tự khôi phục đường dẫn file trên điện thoại. KHÔNG có nghĩa dữ liệu đã mất.
+4. Nếu Firebase hiện đã lưu nhưng thiết bị đang 0 dòng: có thể tải đang chạy. Nếu mạng chậm, chờ thông báo hoặc bấm "Đồng bộ tất cả từ Firebase về máy này".
+5. Nếu cả 2 dữ liệu đều 0, chọn Excel khách hàng/sản phẩm, nhập API Key nếu cần, bấm "LƯU TẤT CẢ LÊN FIREBASE". Chỉ tính là xong khi hiển thị ĐÃ LƯU VÀ ĐỌC LẠI THÀNH CÔNG.
+6. Đóng và mở lại. Khung trạng thái phải hiển thị số dòng đã lưu. Thử tiếp trên điện thoại khác.
+
+III. NHỮNG LỖI ĐÃ SỬA
+- Danh mục khôi phục trực tiếp lúc khởi động, không còn lệ thuộc khóa/API chatbot.
+- Không bỏ qua đồng bộ Firebase chỉ vì đã có bản đệm cũ.
+- Giữ danh sách lưu cũ từ node Excel Mobile khi thay đổi URL sang node dùng chung.
+- Không ghi đè danh sách đang chạy bằng bản đệm cũ tải chậm.
+- Bổ sung trạng thái số dòng Firebase, số dòng trên máy, tên file đã lưu, thời điểm lưu.
+- Báo rõ nếu IndexedDB không cho lưu bản đệm; không nhầm với lỗi lưu Firebase.
+- Chỉ hiển thị FIREBASE ĐÃ LƯU sau khi xác minh đúng số dòng cả hai danh sách.
+- Tăng cache PWA để tải bản mới.
+
+IV. GIỚI HẠN KIỂM THỬ
+- Đã kiểm tra cú pháp JS, đọc file CSV, thử luồng đồng bộ / khởi động mới bằng Firebase giả lập và kiểm tra dữ liệu thiếu.
+- Môi trường không cho mở website trong Chromium; chưa kiểm thử thao tác đầy đủ trên trình duyệt/thiết bị thật.
+- Chưa kiểm chứng đọc/ghi trên Firebase thật của IDECO. Cần thử trên trang GitHub Pages của công ty.
+- Không thay đổi dữ liệu trên Firebase thật từ bộ kiểm tra này.
+
+LƯU Ý: Không đưa API Key và dữ liệu khách hàng lên Firebase cho người ngoài đọc. Nên sử dụng Firebase Authentication, Database Rules và máy chủ trung gian bảo vệ API Key khi triển khai nhiều nhân viên.
