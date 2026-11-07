@@ -1,0 +1,27 @@
+HUYỀN MOBILE v2.62.0 — PHÂN LUỒNG ERP VÀ CHATBOT
+
+CÀI BẢN CẬP NHẬT
+Giải nén, cập nhật các file trong ZIP lên đúng thư mục website Mobile hiện tại. Cần thay index.html, catalog_normalizer.js và sw.js cùng lúc. Mở lại ứng dụng và kiểm tra nhãn v2.62.0. Giữ địa chỉ website, dữ liệu Firebase và thông tin ghép nối hiện có.
+
+ERP BẬT
+Mọi lượt chat chuyển tới PC đã ghép nối, bao gồm câu hỏi tiếp nối, lệnh đơn hàng và ảnh. PC phải đang hoạt động, mở Huyền Sales và kết nối ERP. Mobile không báo hoàn thành trước khi nhận kết quả từ trạm. Chức năng thực thi cụ thể vẫn do Huyền Sales trên PC hỗ trợ.
+Không còn tự mở bảng Chuẩn hóa khi nhập lệnh tạo đơn trong chat; nút Chuẩn hóa riêng vẫn giữ nguyên để đối chiếu mã khách, mã hàng trước khi gửi.
+Trạm Sales 2.43.9 nhận tối đa 6.000 ký tự và 4 ảnh/lượt. File ngắn được chuyển thành văn bản kèm lệnh. File vượt giới hạn hoặc chỉ trích được một phần bị chặn, bản nháp được giữ để chia nhỏ hoặc tắt ERP phân tích trước. Không tự mặc định tạo đơn chỉ vì người dùng đính kèm ảnh.
+
+ERP TẮT
+Chat thường trả lời đúng chủ đề; không tự kéo nội dung sản phẩm sang câu hỏi kiến thức chung. Câu hỏi chưa rõ tiêu chí được hỏi lại.
+Chuyên gia dùng kho công ty và chỉ dẫn đã lưu. Nếu kho trống nhưng có file/ảnh, vẫn phân tích được nội dung anh gửi. Cả hai chế độ hiển thị câu trả lời dần khi API hỗ trợ streaming.
+Các câu như “Tóm tắt lại file đó”, “Phân tích thêm ảnh đó” dùng lại đính kèm của lượt liền trước trong phiên đang mở. Tải lại trang thì cần gửi lại file/ảnh để phân tích nguyên bản; lịch sử không lưu bản gốc đính kèm.
+Không được xem là hoàn tất thao tác ERP khi ERP tắt.
+
+FILE VÀ ẢNH
+Tối đa 4 file, mỗi file 8 MB; tối đa 4 ảnh. Chờ đọc xong đính kèm rồi gửi.
+Excel XLSX: đọc tối đa 3 bảng, 100 dòng/bảng, 20 cột, 160 ký tự/ô. PDF có chữ: tối đa 10 trang. Mỗi file trích tối đa 14.000 ký tự. Nếu vượt giới hạn, thông báo đi cùng nội dung gửi AI; không được coi phần trích là toàn bộ tài liệu.
+PDF quét không có chữ: gửi ảnh JPG/PNG của các trang cần đọc. PDF vừa chữ vừa ảnh sẽ nêu trang không trích được văn bản. XLS cũ cần đổi sang XLSX/CSV.
+
+DỮ LIỆU DÙNG CHUNG
+Giữ cơ chế v2.61: Lưu tất cả lên Firebase, kiểm tra thông báo lưu và đọc lại thành công. Máy khác đăng nhập cùng cấu hình Mobile để nhận API AI, danh mục và kho/chỉ dẫn Chuyên gia. Phiên đăng nhập, lịch sử chat và ghép nối ERP vẫn riêng từng thiết bị.
+
+KIỂM TRA PHÁT HÀNH
+Đã kiểm tra cú pháp và hành vi bằng mô phỏng API/Firebase: đồng bộ qua hai phiên thiết bị, phân luồng ERP, giới hạn file, đổi trạm khi đang mã hóa, streaming, ngữ cảnh file/ảnh và ngăn lẫn chủ đề.
+Đã đối chiếu giao thức nhận lệnh với mã Huyền Sales 2.43.9. Chưa chạy thao tác trên ERP thật, chưa gọi API Kie thật hoặc đo tốc độ mạng thực tế; cần thử trên môi trường của công ty sau khi cập nhật.

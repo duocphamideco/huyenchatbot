@@ -309,11 +309,12 @@
   async function readChatFile(file) {
     var name=String(file&&file.name||'').toLowerCase();
     if(!file||file.size>8*1024*1024)throw new Error('File lớn hơn 8 MB; vui lòng chia nhỏ.');
-    var text='';
-    if(/\.(csv|tsv|txt|md|json)$/.test(name)) text=(await file.text()).slice(0,60000);
+    var text='', limits=[];
+    if(/\.(csv|tsv|txt|md|json)$/.test(name)) text=await file.text();
     else if(/\.xlsx$/.test(name)) {
       var books=await xlsxRows(file);
-      text=books.slice(0,3).map(function(rows,i){return 'BẢNG '+(i+1)+'\n'+rows.slice(0,100).map(function(c){return (c||[]).slice(0,20).map(function(v){return String(v||'').slice(0,160);}).join(' | ');}).join('\n');}).join('\n\n');
+      if(books.length>3||books.some(function(rows){return rows.length>100||rows.some(function(c){return c.length>20||c.some(function(v){return String(v==null?'':v).length>160;});});}))limits.push('Excel: tối đa 3 bảng, 100 dòng/bảng, 20 cột và 160 ký tự/ô; không kết luận tổng toàn bộ file từ phần trích.');
+      text=books.slice(0,3).map(function(rows,i){return 'BẢNG '+(i+1)+'\n'+rows.slice(0,100).map(function(c){return (c||[]).slice(0,20).map(function(v){return String(v==null?'':v).slice(0,160);}).join(' | ');}).join('\n');}).join('\n\n');
     } else if(/\.docx$/.test(name)) {
       var zip=zipDirectory(new Uint8Array(await file.arrayBuffer()));
       var xml=await zipText(zip,'word/document.xml');
@@ -327,17 +328,21 @@
       catch(e){throw new Error('Không tải được bộ đọc PDF. Hãy kiểm tra Internet hoặc dùng ảnh/JPG/Excel.');}
       pdf.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.10.38/pdf.worker.min.mjs';
       var doc=await pdf.getDocument({data:new Uint8Array(await file.arrayBuffer())}).promise;
-      var parts=[];
+      var parts=[], scanned=[];
+      if(doc.numPages>10)limits.push('PDF: chỉ đọc 10/'+doc.numPages+' trang đầu.');
       for(var i=1;i<=Math.min(doc.numPages,10);i++){
         var page=await doc.getPage(i),tc=await page.getTextContent();
-        parts.push('TRANG '+i+'\n'+tc.items.map(function(x){return x.str||'';}).join(' '));
+        var pageText=tc.items.map(function(x){return x.str||'';}).join(' ').trim();
+        if(pageText)parts.push('TRANG '+i+'\n'+pageText);else scanned.push(i);
       }
       text=parts.join('\n');
+      if(scanned.length)limits.push('Không trích được văn bản trang '+scanned.join(', ')+'. Cần gửi ảnh các trang này để đọc.');
       try{await doc.destroy();}catch(_){ }
       if(!text.trim()) throw new Error('PDF ảnh quét không có văn bản. Hãy gửi ảnh JPG/PNG của trang đơn hàng.');
     } else if(/\.xls$/.test(name)) throw new Error('Excel .xls cũ: vui lòng lưu lại dạng .xlsx hoặc .csv.');
     else throw new Error('Hỗ trợ Excel .xlsx, PDF, Word .docx, CSV, TXT, JSON.');
-    return text.slice(0,15000);
+    if(text.length>14000)limits.push('Chỉ gửi 14.000/'+text.length+' ký tự đầu; phần còn lại chưa được phân tích.');
+    return (limits.length?'[GIỚI HẠN ĐỌC: '+limits.join(' ') +']\n':'')+text.slice(0,14000);
   }
   var api = { extract: extract, parse: parse, readExcel: readExcel, readChatFile:readChatFile, csvRows: csvRows, fold: fold };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
