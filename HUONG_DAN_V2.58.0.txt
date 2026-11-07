@@ -1,0 +1,17 @@
+HUYỀN MOBILE v2.58.0 — CHUYÊN GIA IDECO KHI ERP TẮT
+
+Cập nhật
+1. Giải nén ZIP và chép index.html, sw.js lên đúng nơi đang chạy HUYỀN MOBILE. Các file còn lại trong ZIP dùng cho cài đặt mới.
+2. Mở lại ứng dụng trên cùng địa chỉ cũ. Nếu còn hiển thị v2.57.0, dùng Kiểm tra cập nhật ứng dụng rồi mở lại.
+
+Thiết lập lần đầu trên từng thiết bị
+1. Đăng nhập Mobile, chọn ⋯ và mở Cài đặt bằng mật khẩu quản trị hiện dùng.
+2. Mở mục Chế độ Chuyên gia IDECO. Xem hoặc sửa ô Chỉ dẫn phản hồi.
+3. Bấm Nạp kho tri thức gốc từ file Tổng IDECO rồi chọn file HTML Tổng đã gửi. Có thể nhập trực tiếp thông tin công ty hoặc sao chép các mục bổ sung từ Cài đặt Huyền trong file Tổng.
+4. Rà soát nội dung, nhất là ngày hiệu lực và đối tượng áp dụng. Bấm Lưu cấu hình Chuyên gia trên thiết bị.
+
+Sử dụng
+• Tắt ERP, bấm Chuyên gia trên màn hình chat và đặt câu hỏi. Huyền dùng thông tin công ty đã lưu, hiểu câu hỏi tiếp nối và nêu dữ liệu còn thiếu.
+• Bấm lại Chuyên gia để về chat thường. Chế độ tự tắt khi bật ERP và mặc định tắt khi mở lại ứng dụng.
+• Chế độ Chuyên gia dùng dịch vụ AI, lịch và hạn mức sẵn có. Cần Internet và API Key hoạt động. Khi dùng Chuyên gia, nội dung đã lưu được gửi đến dịch vụ AI để xử lý.
+• Kho Chuyên gia được mã hóa và lưu riêng trên thiết bị, tối đa 48.000 ký tự. Nội dung bổ sung lưu ở Firebase của file Tổng cần sao chép thủ công. Excel và AI dùng chung tiếp tục dùng thiết lập Firebase hiện có.

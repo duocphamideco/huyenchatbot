@@ -1,0 +1,13 @@
+HUYỀN MOBILE v2.61.0 — CÀI ĐẶT DÙNG CHUNG TRÊN FIREBASE
+
+Cập nhật index.html và sw.js trên nơi đang chạy Mobile. Trên các máy, mở lại ứng dụng và kiểm tra phiên bản v2.61.0.
+
+1. Vào Cài đặt trên máy quản trị, kiểm tra dữ liệu đang có và bấm LƯU TẤT CẢ LÊN FIREBASE.
+   Nếu khóa Kie đã lưu và Mobile đã nhận khóa, không cần nhập lại.
+2. Các nút Lưu AI, Lưu nguồn danh mục, Lưu Excel và Lưu Chuyên gia cũng cho phép cập nhật từng phần.
+3. Sau khi thấy thông báo Firebase đã lưu và đọc lại khớp, mở bản v2.61.0 trên máy khác và đăng nhập HUYỀN MOBILE. AI, lịch và hạn mức AI, danh mục, nguồn đã cấu hình, cùng kho và chỉ dẫn Chuyên gia tự tải khi có Internet.
+4. Khi cần dùng Chuyên gia, chọn chế độ đó trong chat. Khi máy mới chưa có bản đệm, câu hỏi đầu tiên sẽ chờ bản kho từ Firebase.
+5. Khóa Kie và kho Chuyên gia được mã hóa bằng cấu hình đăng nhập Mobile. Phiên đăng nhập, lịch sử chat, giao diện sáng/tối và ghép nối ERP được quản lý riêng theo máy.
+6. Kho Chuyên gia từng lưu riêng trên máy ở bản cũ cần bấm Lưu Chuyên gia hoặc Lưu tất cả một lần từ máy có kho. Nếu thấy lỗi Firebase HTTP 401/403, kiểm tra quyền đọc/ghi của dự án Firebase đang dùng.
+
+Nút Kiểm tra kết nối AI trong Cài đặt thử gọi Kie sau khi khóa đã được nhận. Kiểm thử phát hành dùng hai phiên trình duyệt mô phỏng và Firebase mô phỏng.

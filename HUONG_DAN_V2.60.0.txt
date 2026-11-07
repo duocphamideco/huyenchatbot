@@ -1,0 +1,16 @@
+HUYỀN MOBILE v2.60.0 — CHAT THƯỜNG VÀ LƯU EXCEL DÙNG CHUNG
+
+Cập nhật index.html và sw.js trên nơi đang chạy Mobile. Trên các thiết bị, mở lại ứng dụng và kiểm tra phiên bản v2.60.0. Nếu còn thấy bản cũ, dùng Kiểm tra cập nhật ứng dụng trong Cài đặt.
+
+Chat thường
+• Tắt Chuyên gia. Khi hỏi một chủ đề mới, Mobile gửi riêng câu hỏi mới. Khi tiếp nối rõ ràng, Mobile đính kèm tối đa hai lượt hội thoại gần nhất của bản này.
+• “AI là quốc gia hàng đầu?” sẽ được hỏi tiêu chí ngay trên thiết bị. Có thể trả lời “Theo GDP” để tiếp tục.
+• Khi dịch vụ AI gửi từng phần, chữ hiển thị dần và thời gian trả lời được hiển thị sau khi hoàn tất.
+
+Lưu Excel từ máy A và kiểm tra ở máy B
+1. Mở Cài đặt → Danh sách Excel trên Firebase. Chọn một hoặc cả hai tệp rồi bấm LƯU EXCEL LÊN FIREBASE.
+2. Chờ thông báo “Firebase đã lưu và đọc lại khớp”. Có thể cập nhật từng danh sách riêng, kể cả khi chưa thiết lập khóa AI.
+3. Mở HUYỀN MOBILE v2.60.0 trên máy B. Sau khi đăng nhập, danh sách tải về từ nguồn dùng chung. Nếu app đang mở, có thể bấm nút ⟳ cạnh số dòng danh mục để tải ngay.
+4. Nếu thấy HTTP 401 hoặc 403, quyền Firebase của nguồn đang dùng cần được quản trị kiểm tra. Ứng dụng hiển thị lỗi thay vì báo đã lưu.
+
+Kiểm thử đã chạy với API và Firebase mô phỏng, dùng luồng đọc CSV của ứng dụng. Thời gian phản hồi thực tế và quyền ghi/đọc Firebase cần xác nhận trên hệ thống đang chạy.

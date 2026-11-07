@@ -1,0 +1,11 @@
+HUYỀN MOBILE v2.59.0 — KHO TRI THỨC HUYỀN CHATBOT
+
+1. Cập nhật index.html và sw.js trên địa chỉ HUYỀN MOBILE đang dùng.
+2. Trong Cài đặt → Chế độ Chuyên gia IDECO, bấm Nạp hồ sơ Huyền và chọn HUYEN_CHATBOT_KHO_GOC_VA_CHI_DAN.json. Tệp hồ sơ nội bộ được nạp từ Cài đặt.
+3. Bấm Đồng bộ toàn bộ kho bổ sung từ Huyền Chatbot. Nếu Firebase không cho đọc, vào Quản trị Huyền trong file Tổng → Kho tri thức → Xuất JSON rồi chọn bản xuất qua nút Nạp hồ sơ Huyền.
+4. Xem tài liệu đã nạp, sau đó bấm Lưu cấu hình Chuyên gia trên thiết bị.
+5. Tắt ERP và bật Chuyên gia ở màn hình chat để sử dụng.
+
+Mobile lưu toàn văn kho gốc và các mục bổ sung dưới dạng mã hóa trên thiết bị.
+Khi hỏi, Mobile ưu tiên các đoạn liên quan, gửi tối đa khoảng 12.000 ký tự dữ kiện mỗi lượt tới AI, kèm chỉ dẫn và hội thoại cần thiết.
+Muốn cập nhật tài liệu mới, bấm Đồng bộ lại rồi Lưu. Các cấu hình API, Excel, ERP của Mobile giữ theo phiên bản đang dùng.
