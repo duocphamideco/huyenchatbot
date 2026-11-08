@@ -1,0 +1,11 @@
+HUYỀN MOBILE v2.63.0 — CHUYỂN AI THEO CÔNG TẮC ERP, KHÔNG HIỆN TÊN MODEL
+
+Bật kết nối ERP PC: trên giao diện hiển thị HUYỀN ERP. Mobile chọn GPT-6.1 Terra qua Kie.ai (gpt-6-1-terra; /codex/v1/responses) khi cần gọi AI trực tiếp từ Mobile. Các lệnh ERP chuyển qua extension trên PC nên extension PC cũng phải cấu hình Terra.
+
+Tắt kết nối ERP: trên giao diện hiển thị HUYỀN TRỢ LÝ. Chat AI độc lập dùng DeepSeek V4.1 Flash qua Kie.ai (deepseek-v4-1-flash; /openai/v1/responses).
+
+Không hiển thị tên model hoặc endpoint trên giao diện hoặc trong Cài đặt; chuyển tự động bên trong và giữ nguyên cấu hình khóa/lịch từ Firebase.
+
+CẬP NHẬT: Giải nén ZIP và chép nội dung vào repository huyenchatbot, giữ nguyên cấu trúc file. Tải lại website/PWA sau khi service worker cập nhật. Không cần xóa dữ liệu Firebase.
+
+GIỚI HẠN: Kết nối ERP thực thi lệnh trên extension PC. File HUYỀN MOBILE này không tự sửa hoặc ép model trong extension PC; cần kiểm tra cấu hình Terra của extension đó. Chưa thử bằng API Key thật hay PC thật.

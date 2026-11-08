@@ -176,13 +176,14 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 
 
 .catalog-persist{white-space:pre-line;margin-top:10px;padding:12px 13px;border-radius:13px;border:1px solid var(--line);background:var(--card);font-size:13px;font-weight:650;line-height:1.65;color:var(--ink)}
+/* Trên giao diện chỉ hiển thị HUYỀN ERP hoặc HUYỀN TRỢ LÝ; model định tuyến nội bộ. */
 </style>
 </head>
 <body>
 <div class="app" id="app">
   <header class="top" id="topBar">
     <img src="icon-192.png" alt="IDECO">
-    <div class="tt"><b>HUYỀN · Trợ lý IDECO <span class="app-build">v2.62.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <div class="tt"><b><span id="appModeTitle">HUYỀN TRỢ LÝ</span> <span class="app-build">v2.63.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="erp-head-btn" id="headerErpToggle" type="button" aria-label="Bật kết nối ERP" aria-pressed="false">🔗 ERP <span id="erpHeaderState">TẮT</span></button>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
@@ -269,7 +270,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   </div>
 </div>
 <div class="sheet" id="sheet"><div class="card">
-  <h2>Tùy chọn <span class="settings-build">v2.62.0</span></h2>
+  <h2>Tùy chọn <span class="settings-build">v2.63.0</span></h2>
   <p class="version-tip">Cài đặt AI và Excel dành cho quản trị; công tắc ERP cho nhân viên nằm trực tiếp ngoài màn hình chat.</p>
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
@@ -300,8 +301,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     <div class="note">Đăng nhập Mobile là có thể trò chuyện độc lập PC/ERP. Sau khi khóa API được tải từ Firebase, AI trực tuyến sẵn sàng; chỉ bị chặn nếu quản trị chủ động tắt hoặc bật lịch giới hạn.</div>
     <label for="aiKey1">API Key chính</label><input id="aiKey1" class="in" type="password" autocomplete="off" placeholder="Nhập khóa truy cập AI">
     <label for="aiKey2">API Key dự phòng (tùy chọn)</label><input id="aiKey2" class="in" type="password" autocomplete="off" placeholder="Tự chuyển khi key chính giới hạn/lỗi">
-    <label for="aiEndpoint">Endpoint AI (Kie)</label><input id="aiEndpoint" class="in" type="url" readonly value="https://api.kie.ai/openai/v1/responses" style="font-size:13px" aria-label="Endpoint AI hiện sử dụng">
-    <label for="aiModel">Model AI (đã thiết lập sẵn)</label><input id="aiModel" class="in" type="text" readonly value="deepseek-v4-1-flash" style="font-size:13px" aria-label="Model AI hiện sử dụng">
+    <div class="note" id="aiRouteInfo" aria-live="polite">Chế độ hiện tại: HUYỀN TRỢ LÝ. Cấu hình AI tự chuyển khi bật hoặc tắt ERP PC, không cần chọn thủ công.</div>
     <div class="note">Bấm <b>Lưu AI lên Firebase</b> để lưu khóa Kie và lịch AI. Khi mở trên thiết bị khác, đăng nhập Mobile để tự nhận cấu hình đã lưu.</div>
     <div class="row"><button class="pri" id="sharedSave" type="button">☁ Lưu AI lên Firebase</button><button class="ghost" id="aiTest" type="button">✓ Kiểm tra kết nối AI</button></div>
     <div class="note" id="aiState" aria-live="polite"></div>
@@ -462,6 +462,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var refresh=$('erpRefresh');if(refresh)refresh.hidden=!erpOn;
     var head=$('headerErpToggle');if(head){head.setAttribute('aria-pressed',String(erpOn));head.setAttribute('aria-label',erpOn?'Tắt kết nối ERP':'Bật kết nối ERP');}
     var headText=$('erpHeaderState');if(headText)headText.textContent=!erpOn?'TẮT':(stationOnlineReady()?'SẴN SÀNG':'BẬT');
+    updateAiRouteUi();
   }
   function erpDisconnect() {
     saveErpChoice(false);
@@ -639,7 +640,23 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     return /\b(erp|ton kho|cong no|doanh so|so lieu|don hang hom nay|don hang trong ngay|lich su don|truy xuat|xuat kho|nhap kho|hoa don|phieu xuat|doanh thu thang|bao cao tai chinh)\b/.test(t)
       && !/\b(la gi|giai thich|cach lam|huong dan chung)\b/.test(t);
   }
-  var AI_STORE = 'huyen_mobile_ai_v247', AI_MODEL = 'deepseek-v4-1-flash', AI_ENDPOINT = 'https://api.kie.ai/openai/v1/responses';
+  var AI_STORE = 'huyen_mobile_ai_v247';
+  // ROUTING 2 MODELS — cả hai dùng API Kie.ai, không chuyển sang b.ai.
+  // AI_MODEL/AI_ENDPOINT giữ cho dữ liệu Firebase mã hóa tương thích bản cũ.
+  // LƯU Ý: lệnh ERP được gửi đến extension PC để xử lý; model trên PC phải cấu hình Terra.
+  var AI_ROUTES = Object.freeze({
+    erp: Object.freeze({name:'GPT-6.1 Terra', model:'gpt-6-1-terra', endpoint:'https://api.kie.ai/codex/v1/responses', effort:'medium'}),
+    offline: Object.freeze({name:'DeepSeek V4.1 Flash', model:'deepseek-v4-1-flash', endpoint:'https://api.kie.ai/openai/v1/responses', effort:'none'})
+  });
+  var AI_MODEL = AI_ROUTES.offline.model, AI_ENDPOINT = AI_ROUTES.offline.endpoint;
+  function activeAiRoute() { return erpOn ? AI_ROUTES.erp : AI_ROUTES.offline; }
+  function updateAiRouteUi() {
+    // Không hiển thị tên model/API ở giao diện; lựa chọn thực luôn nằm trong activeAiRoute().
+    var label = erpOn ? 'HUYỀN ERP' : 'HUYỀN TRỢ LÝ';
+    if ($('appModeTitle')) $('appModeTitle').textContent = label;
+    if ($('aiRouteInfo')) $('aiRouteInfo').textContent = 'Chế độ hiện tại: ' + label + '. Cấu hình AI tự chuyển theo công tắc ERP PC, không cần chọn model thủ công.';
+    document.title = label + ' · IDECO';
+  }
   // API config is encrypted on Firebase with a key derived from the Mobile login password.
   // No additional group unlock code; do not confuse this with server-side access control.
   var AI_SHARED_DB = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_huyen_mobile_ai_vault/v1';
@@ -658,7 +675,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   async function rememberDeviceAi() {
     if (!appDeviceVaultKey || !sharedAiConfig || (!sharedAiConfig.key1 && !sharedAiConfig.key2)) return;
     var iv=crypto.getRandomValues(new Uint8Array(12));
-    var content={key1:sharedAiConfig.key1,key2:sharedAiConfig.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,policy:aiPolicy(),savedAt:Date.now(),expiry:Date.now()+7*86400000};
+    var content={key1:sharedAiConfig.key1,key2:sharedAiConfig.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,modelRoutes:{erp:AI_ROUTES.erp.model,offline:AI_ROUTES.offline.model},policy:aiPolicy(),savedAt:Date.now(),expiry:Date.now()+7*86400000};
     var encrypted=await crypto.subtle.encrypt({name:'AES-GCM',iv:iv},appDeviceVaultKey,new TextEncoder().encode(JSON.stringify(content)));
     try { localStorage.setItem(LOCAL_AI_VAULT,JSON.stringify({v:1,iv:sharedB64(iv),payload:sharedB64(new Uint8Array(encrypted))})); } catch (_) {}
   }
@@ -868,6 +885,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       $('aiKey1').placeholder = a.key1 ? 'Đã có API Key chính trên Firebase (nhập để thay)' : 'Nhập API Key chính';
       $('aiKey2').placeholder = a.key2 ? 'Đã có khóa dự phòng (nhập để thay)' : 'API Key dự phòng (tùy chọn)';
     }
+    updateAiRouteUi();
     if($('aiState')) $('aiState').textContent = sharedAiConfig ? '✅ Đã có khóa AI (đồng bộ Firebase hoặc bản đệm mã hóa trên điện thoại). Trạng thái gọi API: '+aiAccessStatus().why : (a.key1 || a.key2 ? '✅ AI có khóa đã lưu trên thiết bị. Trạng thái: '+aiAccessStatus().why : 'Đang chờ cấu hình AI. Dùng nút Đồng bộ cấu hình AI nếu máy chưa nhận được khóa đã lưu.');
   }
   $('aiTest').onclick = async function () {
@@ -878,14 +896,15 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       catch (error) { $('aiState').textContent = '⚠ Chưa đọc được khóa đã lưu. ' + error.message; return; }
     }
     var b=this,original=b.textContent;b.disabled=true;b.textContent='⏳ Đang thử…';
-    $('aiState').textContent='Đang kiểm tra kết nối AI…';
+    var route=activeAiRoute();
+    $('aiState').textContent='Đang kiểm tra kết nối AI cho '+(erpOn ? 'HUYỀN ERP' : 'HUYỀN TRỢ LÝ')+'…';
     var keys=[a.key1,a.key2].filter(Boolean),result=null,error=null;
     try{
       for(var i=0;i<keys.length;i++){
         try{result=await callAiWithLimit(a,keys[i],[{role:'me',text:'Chào Huyền, chỉ trả lời OK.'}]);break;}
         catch(e){error=e;if(e.aiBlocked)break;}
       }
-      $('aiState').textContent=result?('✅ Kết nối Kie thành công: '+result.slice(0,100)):('⚠ Chưa gọi được Kie: '+(error ? (error.httpStatus ? 'HTTP '+error.httpStatus+' · ' : '')+error.message : 'Chưa có phản hồi'));
+      $('aiState').textContent=result?('✅ Kết nối AI hoạt động: '+result.slice(0,100)):('⚠ Kết nối AI gặp lỗi: '+(error ? (error.httpStatus ? 'HTTP '+error.httpStatus+' · ' : '')+error.message : 'Chưa có phản hồi'));
     }finally{b.disabled=false;b.textContent=original;}
   };
   function localCatalogReply(text) {
@@ -1253,7 +1272,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     return fetchAi(config,key,messages,images,files,expert,onProgress);
   }
   function fetchAi(config, key, messages, images, files, expert, onProgress) {
-    var ct = new AbortController(), wait = 24000, timer;
+    var ct = new AbortController(), wait = erpOn ? 65000 : 24000, timer;
     function restartTimer() { clearTimeout(timer); timer = setTimeout(function(){ ct.abort(); }, wait); }
     restartTimer();
     var system = 'Bạn là Huyền, trợ lý AI đa chủ đề. Trả lời trực tiếp câu hỏi mới nhất bằng ngôn ngữ người dùng, ngắn gọn và chính xác. Chỉ dùng ngữ cảnh trước nếu câu hỏi nối tiếp rõ ràng. Khi thiếu tiêu chí có thể thay đổi kết luận, hỏi một câu làm rõ. Không tự đưa sản phẩm hay dữ liệu IDECO vào câu hỏi kiến thức chung. Chỉ khi người dùng hỏi ERP, nói rõ không thể xác minh dữ liệu hoặc thao tác ERP trong chat này. Không bịa số liệu, nguồn hoặc xếp hạng hiện hành.';
@@ -1277,8 +1296,11 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
         return {role: m.role === 'bot' ? 'assistant' : 'user', content:m.text};
       }).concat(input);
     }
-    var body = {model: AI_MODEL, stream: !!onProgress, reasoning: {effort:'none'}, instructions: system, input: input};
-    return fetch(AI_ENDPOINT, {
+    // Chốt model theo trạng thái ERP tại thời điểm BẮT ĐẦU request.
+    // Cấu hình Firebase lưu từ phiên cũ KHÔNG được ghi đè lựa chọn model theo công tắc.
+    var route = activeAiRoute();
+    var body = {model: route.model, stream: !!onProgress, reasoning: {effort:route.effort}, instructions: system, input: input};
+    return fetch(route.endpoint, {
       method: 'POST', headers: { 'Content-Type':'application/json', 'Authorization':'Bearer ' + key },
       body: JSON.stringify(body), signal: ct.signal
     }).then(async function(r){
@@ -1294,7 +1316,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
       if (!ans) throw new Error('AI chưa trả về nội dung. Hãy thử lại.');
       return ans.slice(0,12000);
     }).catch(function(e){
-      if (e && e.name === 'AbortError') throw new Error('Kết nối AI không có thêm dữ liệu trong 24 giây. Anh có thể thử gửi lại.');
+      if (e && e.name === 'AbortError') throw new Error('Kết nối AI không có thêm dữ liệu trong '+Math.round(wait/1000)+' giây. Anh có thể thử gửi lại.');
       throw e;
     }).finally(function(){ clearTimeout(timer); });
   }
@@ -2287,7 +2309,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var btn=this;btn.disabled=true;btn.textContent='⏳ Đang kiểm tra bản mới…';
     try {
       if ('serviceWorker' in navigator) { var reg=await navigator.serviceWorker.getRegistration();if(reg) await reg.update(); }
-      var target=new URL(location.href);target.searchParams.set('version','2.62.0');target.searchParams.set('reload',String(Date.now()));
+      var target=new URL(location.href);target.searchParams.set('version','2.63.0');target.searchParams.set('reload',String(Date.now()));
       location.replace(target.href);
     } catch(e) { toast('⚠ Không cập nhật được: '+e.message);btn.disabled=false;btn.textContent='🔄 Kiểm tra cập nhật ứng dụng'; }
   });
@@ -2436,7 +2458,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
         keys = {key1:typedPrimary || old.key1 || '',key2:typedBackup || old.key2 || ''};
         if (keys.key1 || keys.key2) {
           policy = workspacePolicyFromForm();
-          env = await cloudSeal({key1:keys.key1,key2:keys.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,policy:policy});
+          env = await cloudSeal({key1:keys.key1,key2:keys.key2,endpoint:AI_ENDPOINT,model:AI_MODEL,modelRoutes:{erp:AI_ROUTES.erp.model,offline:AI_ROUTES.offline.model},policy:policy});
           Object.assign(patch,env,{config:env});
         } else if (mode === 'ai') {
           throw new Error('Máy chưa nhận được khóa đã lưu. Dùng Đồng bộ cấu hình AI để kiểm tra Firebase.');
