@@ -33,6 +33,7 @@ button{font:inherit;color:inherit;cursor:pointer}
 .tt{flex:1;min-width:0}.tt b{display:block;font-size:17px;letter-spacing:-.2px;color:var(--red)}.tt small{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--dim);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .dot{width:9px;height:9px;border-radius:50%;background:#cbd5e1;flex:none}.dot.ok{background:#22c55e;box-shadow:0 0 0 3px rgba(34,197,94,.25)}.dot.warn{background:#f59e0b}.dot.off{background:#ef4444}
 .ib{width:44px;height:44px;border-radius:14px;border:1px solid var(--line);background:var(--card);font-size:20px;flex:none;color:var(--ink)}
+#clearChatTop{width:38px;font-size:17px}
 /* chat */
 .list{flex:1;overflow-y:auto;padding:16px 12px 10px;display:flex;flex-direction:column;gap:12px;overscroll-behavior:contain}
 .msg{max-width:90%;padding:12px 15px;border-radius:18px;box-shadow:var(--shadow);font-size:16.5px;overflow-wrap:anywhere}
@@ -183,8 +184,9 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <div class="app" id="app">
   <header class="top" id="topBar">
     <img src="icon-192.png" alt="IDECO">
-    <div class="tt"><b><span id="appModeTitle">HUYỀN TRỢ LÝ</span> <span class="app-build">v2.65.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <div class="tt"><b><span id="appModeTitle">HUYỀN TRỢ LÝ</span> <span class="app-build">v2.65.1</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="erp-head-btn" id="headerErpToggle" type="button" aria-label="Bật kết nối ERP" aria-pressed="false">🔗 ERP <span id="erpHeaderState">TẮT</span></button>
+    <button class="ib" id="clearChatTop" type="button" aria-label="Xóa lịch sử trò chuyện" title="Xóa lịch sử trò chuyện">🗑</button>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
   </header>
   <!-- Nhân viên tự bật/tắt ERP ngoài phần Cài đặt quản trị. -->
@@ -270,10 +272,10 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   </div>
 </div>
 <div class="sheet" id="sheet"><div class="card">
-  <h2>Tùy chọn <span class="settings-build">v2.65.0</span></h2>
+  <h2>Tùy chọn <span class="settings-build">v2.65.1</span></h2>
   <p class="version-tip">Cài đặt AI và Excel dành cho quản trị; công tắc ERP cho nhân viên nằm trực tiếp ngoài màn hình chat.</p>
   <p id="sheetInfo"></p>
-  <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button><button class="ghost" id="clearChat" style="margin:0">🧹 Xóa lịch sử</button></div>
+  <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button></div>
   <button class="ghost" id="appLogout" type="button">🔒 Khóa ứng dụng / Đăng xuất Mobile</button>
   <button class="ghost" id="themeBtn">🌓 Đổi giao diện sáng/tối</button>
   <button class="ghost" id="installApp">📲 Cài ứng dụng lên màn hình chính</button>
@@ -542,19 +544,34 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     d.className = 'msg bot' + (m.status === 'error' ? ' err' : '');
     var h = (m.status === 'done' || m.status === 'streaming') ? '<div class="md">' + md(m.text) + '</div>' : m.status === 'error' ? '<div>⚠ ' + esc(m.text) + '</div>' : '<div class="run"><span class="spin"></span><span>' + esc(m.text || 'Đang xử lý…') + '</span></div>';
     if (m.steps && m.steps.length && m.status !== 'done') h += '<ul class="steps">' + m.steps.slice(-4).map(function (s) { return '<li>' + esc(String(s).split('\n')[0].slice(0, 140)) + '</li>'; }).join('') + '</ul>';
-    h += '<div class="meta"><span>' + fmtT(m.at) + (m.ms ? ' · ' + Math.round(m.ms / 1000) + ' giây' : '') + '</span>' + (m.status === 'done' ? '<button data-copy>📋 Chép</button>' : '') + (m.status === 'error' && m.q && !m.nImg && !needsErp(m.q,[]) ? '<button data-retry>↻ Thử lại</button>' : '') + '</div>';
+    h += '<div class="meta"><span>' + fmtT(m.at) + (m.ms ? ' · ' + Math.round(m.ms / 1000) + ' giây' : '') + '</span>' + (m.status === 'done' ? '<button data-copy>📋 Chép</button>' : '') + (m.status === 'done' || m.status === 'error' ? '<button data-del title="Xóa tin này">🗑</button>' : '') + (m.status === 'error' && m.q && !m.nImg && !needsErp(m.q,[]) ? '<button data-retry>↻ Thử lại</button>' : '') + '</div>';
     d.innerHTML = h;
     var c = d.querySelector('[data-copy]'); if (c) c.onclick = function () { copy(m.text); };
     var r = d.querySelector('[data-retry]'); if (r) r.onclick = function () { send(m.q, []); };
+    var x = d.querySelector('[data-del]'); if (x) x.onclick = function () { delMsg(m); };
     return d;
+  }
+  /* v2.65.1: XÓA LỊCH SỬ — xóa từng tin (nút 🗑 dưới câu trả lời, nhấn giữ tin mình gửi) / xóa toàn bộ (🗑 trên thanh tiêu đề). */
+  function delMsg(m) {
+    if (!m || !confirm('Xóa tin nhắn này khỏi lịch sử?')) return;
+    var i = hist.indexOf(m); if (i < 0) return;
+    m.deleted = true; hist.splice(i, 1); saveHist(); renderAll(); toast('🗑 Đã xóa tin nhắn.');
+  }
+  function clearHistAll() {
+    if (!hist.length) { toast('Lịch sử trò chuyện đang trống.'); return false; }
+    var busy = hist.filter(function (m) { return m.role === 'bot' && m.status !== 'done' && m.status !== 'error'; }).length;
+    if (!confirm('Xóa toàn bộ ' + hist.length + ' tin nhắn trên điện thoại này?' + (busy ? '\n(' + busy + ' lệnh đang xử lý vẫn chạy tiếp trên máy tính, chỉ ẩn khỏi màn hình.)' : '') + '\nKhông khôi phục được.')) return false;
+    hist.forEach(function (m) { m.deleted = true; }); hist = []; saveHist(); renderAll(); toast('🧹 Đã xóa lịch sử trò chuyện.');
+    return true;
   }
   function renderAll() {
     var list = $('list'); list.innerHTML = '';
     if (!hist.length) { list.innerHTML = '<div class="empty"><img src="' + document.querySelector('.top img').src + '" alt=""><b>Chào ' + esc(st.cfg && st.cfg.name || 'anh/chị') + ' 👋</b>Hỏi Huyền, tìm sản phẩm, lập đơn nháp ngay trên điện thoại. Khi cần xử lý dữ liệu ERP, bật nút 🔗 ERP ngay trên thanh tiêu đề. Ví dụ:<br>“Lên đơn nhà thuốc Bạch Liên 14 hộp Wamlox 5mg”<br>“Doanh số tháng này theo nhân viên”<div class="slogan">'+SLOGAN+'</div></div>'; return; }
-    hist.forEach(function (m) { list.appendChild(renderMsg(m)); });
+    hist.forEach(function (m) { var el = renderMsg(m); if (m.role !== 'bot') el.addEventListener('contextmenu', function (e) { e.preventDefault(); delMsg(m); }); list.appendChild(el); }); // nhấn giữ tin của mình = xóa (câu trả lời có nút 🗑, vẫn bôi chọn chữ được)
     list.scrollTop = list.scrollHeight;
   }
   function upsert(m) {
+    if (m && m.deleted) return; // tin đã xóa: lệnh nền (ERP) trả kết quả muộn không hiện lại
     var list = $('list'), old = m.id ? list.querySelector('[data-id="' + m.id + '"]') : null, near = list.scrollHeight - list.scrollTop - list.clientHeight < 140;
     var el = renderMsg(m);
     if (old) old.replaceWith(el); else { var e = list.querySelector('.empty'); if (e) e.remove(); list.appendChild(el); }
@@ -1842,7 +1859,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     $('sharedAccessBtn').textContent='⟳ Tải lại AI dùng chung từ Firebase';
     showAppLogin('Đã khóa ứng dụng. Nhập mật khẩu Mobile để sử dụng tiếp.');
   };
-  $('clearChat').onclick = function () { if (!confirm('Xóa lịch sử trò chuyện trên điện thoại này?')) return; hist = []; saveHist(); renderAll(); $('sheet').classList.remove('open'); };
+  $('clearChatTop').onclick = clearHistAll;
   $('themeBtn').onclick = function () { var cur = document.documentElement.getAttribute('data-theme'), dark = cur ? cur === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches, nx = dark ? 'light' : 'dark'; document.documentElement.setAttribute('data-theme', nx); try { localStorage.setItem('huyen_mobile_theme', nx); } catch (e) {} };
 
   /* ---------- soạn tin ---------- */
@@ -2526,7 +2543,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
     var btn=this;btn.disabled=true;btn.textContent='⏳ Đang kiểm tra bản mới…';
     try {
       if ('serviceWorker' in navigator) { var reg=await navigator.serviceWorker.getRegistration();if(reg) await reg.update(); }
-      var target=new URL(location.href);target.searchParams.set('version','2.65.0');target.searchParams.set('reload',String(Date.now()));
+      var target=new URL(location.href);target.searchParams.set('version','2.65.1');target.searchParams.set('reload',String(Date.now()));
       location.replace(target.href);
     } catch(e) { toast('⚠ Không cập nhật được: '+e.message);btn.disabled=false;btn.textContent='🔄 Kiểm tra cập nhật ứng dụng'; }
   });

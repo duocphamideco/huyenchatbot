@@ -1,0 +1,11 @@
+HUYỀN MOBILE v2.65.1 — 09/11/2026
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.65.1.
+
+XÓA LỊCH SỬ TRÒ CHUYỆN — NGAY TRÊN MÀN HÌNH CHAT (không còn trong Tùy chọn)
+- Nút 🗑 trên thanh tiêu đề (cạnh nút ⋯): xóa toàn bộ lịch sử trên điện thoại này (hỏi xác nhận 1 lần, báo số tin sẽ xóa).
+- Xóa từng tin: bấm 🗑 dưới câu trả lời của Huyền; tin mình gửi thì nhấn giữ → xác nhận xóa.
+- Lệnh ERP đang chạy trên máy tính vẫn chạy tiếp, chỉ ẩn khỏi màn hình; kết quả về muộn không hiện lại tin đã xóa.
+- Lịch sử chỉ lưu trên điện thoại; xóa xong không khôi phục được.
+
+(Giữ toàn bộ nâng cấp v2.65.0: mã máy trạm IDECO, AI chuẩn hóa đoán tên thuốc/khách thông minh.)
