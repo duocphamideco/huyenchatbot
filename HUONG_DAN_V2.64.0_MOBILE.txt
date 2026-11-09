@@ -1,0 +1,24 @@
+HUYỀN MOBILE v2.64.0 — 08/11/2026
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.64.0.
+BẮT BUỘC cập nhật cùng IDECO SUITE 1.0.29 (Huyền Sales 2.44.1) trên máy tính trạm — phần đọc ảnh trên PC nằm ở bản đó.
+
+1) CHỤP ĐƠN VIẾT TAY → CHUẨN HÓA (trước đây báo "chưa hỗ trợ OCR ảnh")
+- Chụp/chọn ảnh đơn (tối đa 4) → bấm Chuẩn hóa. Không cần gõ chữ.
+- ERP BẬT + trạm PC sẵn sàng: ảnh gửi cho máy tính đọc (Gemini 4 Argon → dự phòng GPT 6.1 Terra), có danh mục ERP
+  và danh sách khách chuẩn → kết quả về bảng Chuẩn hóa. PC lỗi → điện thoại tự đọc tiếp.
+- ERP TẮT: điện thoại tự đọc bằng GPT 6.1 Terra, gợi ý tên SP/khách từ danh mục đã tải.
+- Bảng Chuẩn hóa tự chọn mã SP/khách gần đúng nhất (chịu được viết tắt, không dấu, sai chính tả); dòng chưa chắc
+  được đánh dấu ⚠ để anh chọn lại. Không bịa sản phẩm hay số lượng.
+- Ảnh chụp giữ độ nét cao hơn (2000px) để đọc chữ viết tay rõ hơn.
+
+2) CHỌN MODEL TỰ ĐỘNG (không hiện tên model trên giao diện)
+- ERP BẬT (HUYỀN ERP): lệnh truy cập ERP / lên đơn do Huyền PC xử lý bằng GPT 6.1 Terra.
+- ERP TẮT (HUYỀN TRỢ LÝ):
+  • Hỏi chữ thông thường → DeepSeek V4.1 Flash (nhanh nhất).
+  • Có ảnh, hoặc bật Chế độ Chuyên gia → GPT 6.1 Terra suy luận thấp (đọc ảnh, phân tích chính xác hơn, vẫn nhanh).
+  • Terra lỗi khi không có ảnh → tự trả lời bằng DeepSeek Flash; khóa chính lỗi → tự dùng khóa dự phòng.
+
+KIỂM THỬ: Chrome thật với API KIE, kho ảnh KIE và Firebase giả lập — 7/7 kịch bản đạt (chọn model, đọc ảnh đơn trên
+điện thoại, đoán đúng mã SP/khách, đổi khóa dự phòng, gửi ảnh cho PC đọc qua lệnh mã hóa, chat có ảnh/không ảnh).
+CHƯA thử với API KIE thật, ERP thật và ảnh đơn viết tay thật — hãy thử 2–3 đơn mẫu trước khi dùng đại trà.

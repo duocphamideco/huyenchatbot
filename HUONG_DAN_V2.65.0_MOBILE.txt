@@ -1,0 +1,23 @@
+HUYỀN MOBILE v2.65.0 — 09/11/2026
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.65.0.
+Cập nhật cùng IDECO SUITE 1.0.34 (Huyền Sales 2.45.0) trên máy tính trạm.
+
+1) MÃ GHÉP MÁY TRẠM = "IDECO" (nội bộ công ty)
+- Ô mã luôn điền sẵn IDECO; chỉ cần nhập tên + mật khẩu 🔗 Kết nối ERP.
+- Điện thoại đã lưu mã cũ 12 ký tự (do PC bản cũ tự sinh) → tự chuyển về IDECO, không phải đăng nhập lại.
+- Gõ mã khác mà không thấy trạm → app tự thử lại bằng IDECO.
+
+2) AI CHUẨN HÓA ĐOÁN THÔNG MINH — không báo "không tìm thấy"
+- So khớp theo cách đọc tiếng Việt: sai chính tả, không dấu, đọc gần âm, viết tắt chữ đầu
+  (vd "uamlok" → Wamlox, "xomastop" → Somastop, "bac lieng" → NT Bạch Liên, "bl" → Bạch Liên).
+- Luôn đưa ra tên GẦN NHẤT kèm % khớp; dòng chưa chắc có dấu ⚠ để chạm chọn lại.
+- Câu lệnh không theo mẫu (bộ tách không nhận dòng nào) → Huyền vẫn quét cả câu, đoán sản phẩm + số lượng + khách.
+- Ô tìm khách/sản phẩm (Đơn nhanh, bảng Chuẩn hóa, Tùy chọn) không trùng tiền tố → hiện "💡 Có phải ý anh/chị là…".
+- Chat hỏi về tên thuốc/khách (giá, mã, công dụng…): app đính kèm tên gần nhất trong danh mục để AI trả lời
+  "Ý anh/chị là … phải không?" thay vì "không tìm thấy". Câu hỏi kiến thức chung không bị chèn dữ liệu IDECO.
+- Ảnh đơn: AI luôn ghi tên SP/khách gần nhất (không để trống); ảnh không ra dòng nào → tự đoán từ chữ đọc được.
+
+3) NẠP ĐƠN NHANH HƠN
+- Chỉ dừng khi TÊN SẢN PHẨM chưa chắc. Khách đoán gần đúng hoặc ĐVT khác vẫn nạp; máy tính tự lưu đơn và ghi chú
+  "BẢNG NÀY LÀ NHÁP, BẠN NÊN XEM LẠI KHI GỞI KHÁCH HÀNG".
