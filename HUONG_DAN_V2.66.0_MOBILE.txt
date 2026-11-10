@@ -1,0 +1,29 @@
+HUYỀN MOBILE v2.66.0 — 10/11/2026
+Cập nhật cùng IDECO SUITE 1.0.50 (Huyền Sales 2.53.0) trên máy tính trạm.
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.66.0.
+
+1) KẾT NỐI ERP MỘT CHẠM
+- Lần đầu: nhập tên + mật khẩu 🔗 Kết nối ERP (mã máy trạm IDECO điền sẵn), để ô "Ghi nhớ đăng nhập" được tích.
+- Các lần sau: chạm nút 🔗 ERP trên thanh tiêu đề là nối lại ngay bằng mã máy trạm + khóa đã ghi nhớ trên điện thoại, không nhập lại.
+  App báo "ERP sẵn sàng sau … giây"; máy tính offline thì báo rõ và tự nối lại khi máy tính mở ERP; lỗi mạng thì báo và cho chạm thử lại
+  (bản cũ đứng im không báo gì).
+- Máy tính trạm bản 2.53.0 đã ghi nhớ kết nối ERP: điện thoại coi trạm là sẵn sàng ngay cả khi ERP trên máy tính chưa bấm kết nối —
+  máy tính tự kết nối ERP khi nhận lệnh.
+- Vì an toàn, mỗi lần mở app ERP vẫn ở trạng thái TẮT cho tới khi chạm 🔗 ERP (giữ nguyên như bản cũ).
+
+2) NẠP ĐƠN KHÔNG DỪNG VÌ TÊN CHƯA CHẮC
+- Tên sản phẩm chưa chắc không còn chặn nút nạp: gửi sản phẩm gần đúng nhất kèm dấu [SP ĐOÁN GẦN ĐÚNG…].
+- Khách chưa khớp danh sách trên điện thoại: gửi nguyên tên đã đọc, máy tính lấy khách gần đúng nhất trong ERP.
+- Dòng không đọc được sản phẩm / thiếu số lượng: bỏ dòng đó, ghi rõ trong lệnh (không còn hộp hỏi xác nhận).
+- Máy tính lưu đơn và ghi chú "Bạn kiểm tra lại thông tin trước khi gửi khách" cho mọi đơn có điểm đoán.
+
+3) PDF SCAN
+- Đính kèm PDF là ảnh quét (không có lớp chữ): app tự chuyển các trang scan thành ảnh (tối đa 4 ảnh/lượt) để AI đọc chữ và bảng biểu;
+  bấm ✨ Chuẩn hóa nếu là đơn hàng. PDF có chữ vẫn đọc như cũ.
+
+ĐÃ KIỂM TRA: mở app trên Chromium giả lập iPhone 13 và Pixel 7 không lỗi, không tràn ngang; lệnh nạp đơn với khách chưa khớp + SP chưa chắc
++ dòng không đọc được tạo đúng nội dung; trạng thái trạm (sẵn sàng / tự kết nối / chưa kết nối / offline) đúng.
+CHƯA KIỂM TRA: ghép với máy tính trạm và Firebase thật, chuyển PDF scan thành ảnh trên điện thoại thật (cần mạng tải bộ đọc PDF).
+
+(Giữ toàn bộ tính năng v2.65.1.)
