@@ -1,0 +1,10 @@
+HUYỀN MOBILE v2.68.0 – KHO CHUYÊN GIA
+1. ERP tắt → bật Chuyên gia để hỏi theo nguồn IDECO.
+2. Cài đặt → Chuyên gia: chọn mục để sửa hoặc bấm Thêm mục, nhập tiêu đề và nội dung. Xóa mục chỉ xóa bản nháp cho đến khi lưu.
+3. Micro: cấp quyền, nói tiếng Việt, bấm Dừng. Nếu trình duyệt không hỗ trợ, dùng micro bàn phím điện thoại.
+4. Chuẩn hóa: dùng cấu hình AI hiện có; tối đa 10.000 ký tự/lần; giữ số liệu, đánh dấu chỗ mơ hồ, xem lại trước khi lưu. Có hoàn tác. Không tự lưu kết quả AI.
+5. Bấm Lưu Chuyên gia lên Firebase. Giữ cơ chế mã hóa và đọc lại xác minh của phiên bản gốc. Nguồn cũ và chỉ dẫn vẫn được giữ.
+6. Trước mỗi câu hỏi Chuyên gia, ứng dụng kiểm tra bản nguồn Firebase mới nhất. Khi không xác nhận được nguồn, báo lỗi thay vì tiếp tục bằng bản cũ.
+7. AI phải dẫn tên mục nguồn, không tự suy diễn chính sách hoặc điều kiện còn thiếu. Kho lớn vẫn chọn trích đoạn phù hợp; câu trả lời phải nói rõ nếu chưa có đủ căn cứ. Không thể bảo đảm AI luôn chính xác tuyệt đối; cần kiểm tra quyết định quan trọng với tài liệu gốc.
+Cài đặt: giải nén, thay các tệp lên cùng thư mục website, mở lại ứng dụng và kiểm tra cập nhật.
+Kiểm tra: cú pháp toàn bộ script; mô phỏng thêm/sửa/xóa bản nháp. Chưa kiểm tra gọi AI, micro hoặc lưu Firebase thật vì không có phiên đăng nhập/cấu hình của người dùng. Môi trường kiểm tra chặn khởi chạy trình duyệt nên chưa xác minh giao diện trực quan.
