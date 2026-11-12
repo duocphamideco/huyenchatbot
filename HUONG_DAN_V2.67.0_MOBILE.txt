@@ -1,0 +1,23 @@
+HUYỀN MOBILE v2.67.0 — 11/11/2026
+Cập nhật cùng IDECO SUITE 1.0.53 (Huyền Sales 2.54.0) trên máy tính trạm. Nên cập nhật CẢ HAI; bản Mobile này vẫn chạy với máy tính 2.53.0
+(khi đó chỉ có phần nới thời gian và thông báo rõ hơn, chưa có hỏi trực tiếp / tự kết nối ERP).
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.67.0.
+
+SỬA LỖI "BẬT ERP, GÕ LỆNH NHƯNG BÁO KHÔNG KẾT NỐI MÁY TRẠM / KHÔNG PHẢN HỒI"
+1) Không còn từ chối gửi chỉ vì "chưa thấy PC": bản cũ coi trạm offline nếu nhịp báo cũ hơn 65 giây tính theo đồng hồ hai máy —
+   đồng hồ máy tính lệch điện thoại hơn 1 phút, hoặc tab ERP nằm nền, là chặn gửi. Nay: cửa sổ 150 giây, tự đo độ lệch đồng hồ,
+   và khi chưa chắc thì điện thoại HỎI THẲNG máy tính (máy tính 2.54.0 trả lời ngay) rồi mới gửi lệnh.
+2) Máy tính online là gửi được: ERP trên máy tính chưa bấm kết nối thì máy tính tự kết nối ERP khi nhận lệnh (cần máy tính đang đăng nhập ERP).
+   Thanh trạng thái: "ERP đã kết nối" / "Trạm online · PC tự kết nối ERP khi có lệnh" / "Trạm online · máy tính chưa đăng nhập ERP" /
+   "Máy tính trạm chưa phản hồi".
+3) Gửi rồi mà 25 giây máy tính chưa nhận: app hỏi lại; trạm im lặng thì THU HỒI lệnh (không để chạy muộn trên ERP) và báo
+   "Máy tính trạm không phản hồi… CHƯA chạy trên ERP" kèm cách xử lý. Nội dung đang soạn / đơn nháp được giữ nguyên khi chưa gửi được.
+4) Nút làm mới trạng thái ERP và nút 🔗 ERP một chạm: hỏi thẳng máy tính, báo kết quả trong vài giây.
+5) Trên máy tính không cần mở riêng bảng "📱 Trạm điện thoại" nữa: bấm 🔗 Kết nối ERP trong Huyền Sales là trạm tự bật (mã IDECO).
+
+ĐÃ KIỂM TRA: Chromium giả lập điện thoại + Firebase giả lập + máy tính trạm giả lập (triet.js 2.54.0): ghép trạm bằng mã IDECO + mật khẩu,
+gửi lệnh và nhận trả lời, đồng hồ lệch 7 phút vẫn nối/gửi được, máy tính ngắt ERP → tự kết nối khi nhận lệnh, máy tính tắt → báo rõ và thu hồi lệnh.
+CHƯA KIỂM TRA: điện thoại thật, Firebase thật, ERP thật.
+
+(Giữ toàn bộ tính năng v2.66.0.)

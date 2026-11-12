@@ -1,9 +1,9 @@
-/* HUYỀN TRỢ LÝ — v2.66.0
+/* HUYỀN TRỢ LÝ — v2.67.0
    Giữ cách cài PWA bản gốc: manifest id /huyenchatbot/, start_url ./, scope ./.
    Network-first cho giao diện, offline fallback; không chặn kích hoạt nếu thiếu một tệp.
    Không can thiệp API, Firebase, ERP, và không xóa cache của app khác.
 */
-var CACHE = 'huyen-tro-ly-v2-66-0';
+var CACHE = 'huyen-tro-ly-v2-67-0';
 var SHELL = ['./', './index.html', './manifest.json', './catalog_normalizer.js', './icon-192.png', './icon-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', function(event) {
