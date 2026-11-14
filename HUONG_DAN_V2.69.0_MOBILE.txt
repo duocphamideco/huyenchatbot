@@ -1,0 +1,19 @@
+HUYỀN MOBILE v2.69.0 — 14/11/2026
+ĐỒNG BỘ SKILL & LỆNH MẪU VỚI EXTENSION IDECO SUITE (cần máy tính trạm chạy Huyền Sales 2.63.0 / IDECO SUITE 1.0.62)
+
+1) 🏪 ĐƠN LC · 🏪 ĐƠN PMC (THUỐC) — trên thanh chip, cạnh 🧾 Đơn nhanh
+   - BẬT công tắc ERP (đã ghép máy tính trạm).
+   - Chụp / chọn ảnh đơn của Long Châu hoặc Pharmacity (📷), hoặc đính kèm file (📎), hoặc dán chữ đơn vào ô nhập → bấm chip.
+   - Chưa có ảnh mà bấm chip → app mở chụp ảnh; chọn xong app TỰ GỬI.
+   - Máy tính chạy đúng skill đơn chuỗi như trên PC: đối chiếu Bảng giá chào trong Cài đặt (dùng ảnh gốc), báo
+     ✅ đúng / ⚠ lệch giá (cần báo lại chuỗi) / ⛔ không có trong bảng giá; KHÔNG lên SP ngoài bảng giá, KHÔNG thay SP khác;
+     tự lên & lưu đơn ERP công nợ 60 ngày. Kết quả hiện trên điện thoại.
+2) 📋 LỆNH MẪU — các chip viền nét đứt sau 🏪
+   - Cùng danh sách với Huyền trên máy tính (Firebase ideco_prompt_templates). Admin sửa bằng nút ✎ trên thanh Lệnh mẫu
+     của Huyền máy tính → điện thoại tự cập nhật khi mở lại app.
+   - Bấm 1 lệnh → câu lệnh điền vào ô nhập, chỗ [tên khách hàng]… được bôi chọn sẵn — gõ đè rồi Gửi. Ngày tự điền.
+   - Các chip cũ (Lên đơn, Tra giá, Tồn kho, Đơn hôm nay, Công nợ, Doanh số) giữ nguyên.
+
+CẬP NHẬT: chép toàn bộ file trong ZIP lên repository huyenchatbot (thay index.html và sw.js), mở lại app, thấy nhãn v2.69.0.
+ĐÃ KIỂM TRA: cú pháp toàn bộ script; chạy thử trên Chrome cỡ màn hình điện thoại (chip hiện đúng, lệnh mẫu điền đúng và bôi chọn
+[tên khách hàng], ngày tự điền, tải danh sách từ Firebase, nhắc bật ERP). Chưa thử gửi thật tới máy tính trạm.

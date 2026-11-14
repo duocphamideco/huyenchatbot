@@ -109,6 +109,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 .toast{position:fixed;left:50%;bottom:calc(var(--safeB) + 150px);transform:translateX(-50%);background:#1c1413;color:#fff;padding:10px 15px;border-radius:12px;font-size:14.5px;opacity:0;transition:opacity .2s;pointer-events:none;max-width:90vw;z-index:10}.toast.show{opacity:.95}
 /* 2.43.0: dữ liệu ERP + chuẩn hóa đơn */
 .chip.ai{background:var(--red);color:#fff;border-color:var(--red)}
+.chip.chain.lc{background:#eef4ff;color:#1d4ed8;border-color:#93b4f5}.chip.chain.pmc{background:#ecfbf3;color:#047857;border-color:#86d3b0}.chip.tpl{border-style:dashed}
 .dset{margin-top:14px;padding:12px;border:1px solid var(--line);border-radius:16px;background:var(--bg)}.dset h3{margin:0 0 6px;font-size:16px}
 .dstat{font-size:14px;color:var(--dim);line-height:1.6}.dstat b{color:var(--ink)}.upload-area{border-top:1px solid var(--line);padding-top:10px;margin-top:13px}.upload-area label{font-size:12px;margin-top:10px}.upload-area input{max-width:100%}
 .dres{max-height:34vh;overflow:auto;margin-top:8px;font-size:14px}.dres div{padding:7px 2px;border-top:1px dashed var(--line)}.dres small{color:var(--dim)}
@@ -184,7 +185,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
 <div class="app" id="app">
   <header class="top" id="topBar">
     <img src="icon-192.png" alt="IDECO">
-    <div class="tt"><b><span id="appModeTitle">HUYỀN TRỢ LÝ</span> <span class="app-build">v2.68.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
+    <div class="tt"><b><span id="appModeTitle">HUYỀN TRỢ LÝ</span> <span class="app-build">v2.69.0</span></b><small><span class="dot" id="dot"></span><span id="stt">Chưa đăng nhập</span></small></div>
     <button class="erp-head-btn" id="headerErpToggle" type="button" aria-label="Bật kết nối ERP" aria-pressed="false">🔗 ERP <span id="erpHeaderState">TẮT</span></button>
     <button class="ib" id="clearChatTop" type="button" aria-label="Xóa lịch sử trò chuyện" title="Xóa lịch sử trò chuyện">🗑</button>
     <button class="ib" id="menuBtn" aria-label="Tùy chọn">⋯</button>
@@ -272,7 +273,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   </div>
 </div>
 <div class="sheet" id="sheet"><div class="card">
-  <h2>Tùy chọn <span class="settings-build">v2.68.0</span></h2>
+  <h2>Tùy chọn <span class="settings-build">v2.69.0</span></h2>
   <p class="version-tip">Cài đặt AI và Excel dành cho quản trị; công tắc ERP cho nhân viên nằm trực tiếp ngoài màn hình chat.</p>
   <p id="sheetInfo"></p>
   <div class="row" style="margin-top:4px"><button class="ghost" id="lockNow" style="margin:0">🔐 Xóa ghép ERP</button></div>
@@ -1849,7 +1850,7 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   var attachmentPending=0, attachmentQueue=Promise.resolve();
   function queueAttachments(task){
     attachmentPending++;
-    attachmentQueue=attachmentQueue.then(task).catch(function(e){toast('Không đọc được tệp: '+e.message);}).finally(function(){attachmentPending--;});
+    attachmentQueue=attachmentQueue.then(task).catch(function(e){toast('Không đọc được tệp: '+e.message);}).finally(function(){attachmentPending--;if(typeof chainArm!=='undefined'&&chainArm)setTimeout(chainArmCheck,200);});
     return attachmentQueue;
   }
   function addFiles(list){var files=Array.from(list||[]);return queueAttachments(function(){return readImages(files);});}
@@ -2077,6 +2078,105 @@ label{display:block;font-size:14px;font-weight:650;margin:14px 0 6px;color:var(-
   $('mic').onclick = micToggle;
   $('grow').onclick = function () { var b = $('box'), on = b.classList.toggle('big'); this.textContent = on ? '⤡' : '⤢'; $('chips').hidden = on; grow(); $('ta').focus(); };
   Array.prototype.forEach.call(document.querySelectorAll('.chip[data-t]'), function (b) { b.onclick = function () { var ta = $('ta'); ta.value = b.dataset.t + ta.value; grow(); ta.focus(); try { ta.setSelectionRange(ta.value.length, ta.value.length); } catch (e) {} }; });
+  /* =====================================================================
+   * v2.69.0 — 🏪 ĐƠN LC / 🏪 ĐƠN PMC (THUỐC) + 📋 LỆNH MẪU — ĐỒNG BỘ VỚI EXTENSION IDECO SUITE (Huyền Sales ≥ 2.63.0)
+   *  • 2 chip 🏪: chụp / chọn ảnh đơn của chuỗi (hoặc đính kèm file, hoặc dán chữ đơn) → bấm chip → gửi máy tính trạm.
+   *    Máy tính chạy ĐÚNG skill đơn chuỗi như trên PC: đối chiếu Bảng giá chào trong Cài đặt, báo lệch giá,
+   *    KHÔNG lên SP ngoài bảng giá chào, KHÔNG thay SP khác, tự lên & lưu đơn ERP công nợ 60 ngày.
+   *    Chưa có ảnh mà bấm chip → mở chụp ảnh; chọn xong app TỰ GỬI.
+   *  • Lệnh mẫu: tải từ CÙNG danh sách Firebase (ideco_prompt_templates) mà admin sửa bằng nút ✎ trên Huyền máy tính.
+   *    Bấm → điền vào ô nhập, chỗ [cần điền] được bôi chọn sẵn; ngày {dau_thang} {hom_nay}… tự điền.
+   * ===================================================================== */
+  var CHAIN_BTNS = [
+    { k: 'long_chau', btn: 'Đơn LC', label: 'FPT Long Châu', cls: 'lc' },
+    { k: 'pharmacity', btn: 'Đơn PMC (Thuốc)', label: 'Pharmacity', cls: 'pmc' }
+  ];
+  var TPL_URL = 'https://minhtriet-bb978-default-rtdb.firebaseio.com/ideco_prompt_templates/list.json', TPL_CACHE = 'huyen_mobile_tpl_v269';
+  var TPL_DEFAULT = [
+    { label: '🧾 Lên đơn theo chính sách', text: 'Lên giúp đơn hàng cho khách hàng [tên khách hàng]: [sản phẩm – số lượng]. Áp chiết khấu theo chính sách quy định, rồi bấm lưu đơn hàng.' },
+    { label: '💲 Đơn CK riêng + thu hộ', text: 'Lên giúp đơn hàng này cho khách hàng [tên khách hàng]: [sản phẩm – số lượng], với mức chiết khấu [sản phẩm: …%], thu hộ (COD), bấm lưu đơn hàng.' },
+    { label: '💵 Đơn tiền mặt', text: 'Lên giúp đơn hàng cho khách hàng [tên khách hàng]: [sản phẩm – số lượng], chiết khấu theo chính sách, khách trả tiền mặt, bấm lưu đơn hàng.' },
+    { label: '📅 Đơn công nợ', text: 'Lên giúp đơn hàng cho khách hàng [tên khách hàng]: [sản phẩm – số lượng], chiết khấu theo chính sách, công nợ [30] ngày, bấm lưu đơn hàng.' },
+    { label: '📊 Excel đơn thuốc trong kỳ', text: 'Chạy xuất file Excel các đơn hàng thuốc trong kỳ từ {dau_thang} đến {hom_nay}.' },
+    { label: '📄 PDF đơn hàng chi tiết', text: 'Chạy xuất các đơn hàng chi tiết PDF trong kỳ từ {dau_thang} đến {hom_nay}.' },
+    { label: '💳 Công nợ đến hiện nay', text: 'Vào menu ERP Công nợ, xuất thông tin công nợ khách hàng đến hiện nay ({hom_nay}) ra file Excel.' },
+    { label: '🧾 Hóa đơn của khách', text: 'Xuất hóa đơn khách hàng [tên khách hàng] từ {dau_thang} đến {hom_nay}.' },
+    { label: '📦 Phiếu xuất kho chi tiết', text: 'Xuất phiếu xuất kho chi tiết từ {dau_thang} đến {hom_nay}.' },
+    { label: '📈 Kết quả kinh doanh', text: 'Phân tích kết quả kinh doanh tháng này so với tháng trước, nêu điểm bất thường và đề xuất.' }
+  ];
+  function tplClean(v) {
+    var a = Array.isArray(v) ? v : Object.keys(v || {}).map(function (k) { return v[k]; });
+    return a.filter(function (x) { return x && String(x.text || '').trim(); }).map(function (x) { return { label: String(x.label || x.text).trim().slice(0, 60), text: String(x.text).trim().slice(0, 1500) }; }).slice(0, 40);
+  }
+  function tplPad(n) { return n < 10 ? '0' + n : '' + n; }
+  function tplFill(text, now) {
+    var d = now || new Date(), f = function (x) { return tplPad(x.getDate()) + '/' + tplPad(x.getMonth() + 1) + '/' + x.getFullYear(); };
+    var first = new Date(d.getFullYear(), d.getMonth(), 1), pFirst = new Date(d.getFullYear(), d.getMonth() - 1, 1), pLast = new Date(d.getFullYear(), d.getMonth(), 0);
+    var mon = new Date(d); mon.setDate(d.getDate() - ((d.getDay() + 6) % 7));
+    var map = { hom_nay: f(d), dau_thang: f(first), dau_tuan: f(mon), dau_nam: '01/01/' + d.getFullYear(), thang_truoc_dau: f(pFirst), thang_truoc_cuoi: f(pLast), thang: (d.getMonth() + 1) + '/' + d.getFullYear() };
+    return String(text || '').replace(/\{(hom_nay|dau_thang|dau_tuan|dau_nam|thang_truoc_dau|thang_truoc_cuoi|thang)\}/g, function (_, k) { return map[k]; });
+  }
+  function tplLocal() { try { var v = JSON.parse(localStorage.getItem(TPL_CACHE) || 'null'); if (Array.isArray(v) && v.length) return v; } catch (_) {} return null; }
+  var tplList = tplLocal() || TPL_DEFAULT, tplAt = 0;
+  function tplRefresh(force) {
+    if (!force && Date.now() - tplAt < 5 * 60000) return Promise.resolve(tplList);
+    tplAt = Date.now();
+    return fetch(TPL_URL + '?_=' + Date.now(), { cache: 'no-store' }).then(function (r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+      .then(function (v) { var L = tplClean(v); if (L.length) { tplList = L; try { localStorage.setItem(TPL_CACHE, JSON.stringify(L)); } catch (_) {} } renderTplChips(); return tplList; })
+      .catch(function () { renderTplChips(); return tplList; });
+  }
+  function tplSelectNext(ta, from) {
+    var v = ta.value, i = v.indexOf('[', from || 0); if (i < 0 && from) i = v.indexOf('[');
+    if (i < 0) { try { ta.setSelectionRange(v.length, v.length); } catch (_) {} return false; }
+    var j = v.indexOf(']', i); if (j < 0) return false;
+    try { ta.setSelectionRange(i, j + 1); } catch (_) {}
+    return true;
+  }
+  function tplPut(text) {
+    var ta = $('ta'); ta.value = tplFill(text); grow(); ta.focus(); tplSelectNext(ta, 0);
+  }
+  /* 🏪 chip đơn chuỗi */
+  var chainArm = null;
+  function chainChip(c) {
+    if (!erpOn) { toast('🏪 ' + c.btn + ' chạy trên máy tính trạm: BẬT công tắc ERP rồi bấm lại.'); return; }
+    if (!erpReady()) { toast('🏪 ' + c.btn + ': chưa ghép máy tính trạm (Huyền Sales trên PC).'); return; }
+    if (attachmentPending) { chainArm = { c: c, until: Date.now() + 180000 }; toast('Đang đọc ảnh / tệp — xong sẽ tự gửi ' + c.btn + '.'); return; }
+    var ta = $('ta'), extra = ta.value.trim();
+    if (shots.length || docs.length || extra.length > 15) {
+      chainArm = null;
+      ta.value = '🏪 ' + c.btn + ': kiểm tra giá theo Bảng giá chào trong Cài đặt và lên đơn ERP' + (extra && !/🏪\s*Đơn/.test(extra) ? '\n' + extra : '');
+      $('send').click(); return;
+    }
+    chainArm = { c: c, until: Date.now() + 180000 };
+    toast('Chụp hoặc chọn ảnh đơn ' + c.label + ' — chọn xong Huyền tự gửi ' + c.btn + '.');
+    try { $('camSheet').classList.add('open'); } catch (_) { $('fShot').click(); }
+  }
+  function chainArmCheck() {
+    if (!chainArm) return;
+    if (Date.now() > chainArm.until) { chainArm = null; return; }
+    if (attachmentPending) { setTimeout(chainArmCheck, 300); return; }
+    if (shots.length || docs.length) { var c = chainArm.c; chainArm = null; chainChip(c); }
+  }
+  function renderTplChips() {
+    var bar = $('chips'); if (!bar) return;
+    Array.prototype.forEach.call(bar.querySelectorAll('.chip.tpl,.chip.chain'), function (x) { x.remove(); });
+    var anchor = $('quickOrder') || $('normBtn'), after = anchor ? anchor.nextSibling : bar.firstChild;
+    var put = function (el) { bar.insertBefore(el, after); };
+    CHAIN_BTNS.forEach(function (c) {
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip chain ' + c.cls; b.textContent = '🏪 ' + c.btn;
+      b.title = 'Chụp/đính kèm đơn ' + c.label + ' → kiểm tra giá chào và tự lên đơn ERP'; b.onclick = function () { chainChip(c); }; put(b);
+    });
+    var have = {}; Array.prototype.forEach.call(bar.querySelectorAll('.chip[data-t]'), function (x) { have[x.textContent.trim()] = 1; });
+    tplList.forEach(function (t) {
+      if (have[t.label]) return;
+      var b = document.createElement('button'); b.type = 'button'; b.className = 'chip tpl'; b.textContent = t.label; b.title = tplFill(t.text);
+      b.onclick = function () { tplPut(t.text); }; put(b);
+    });
+  }
+  renderTplChips();
+  tplRefresh(true);
+  document.addEventListener('visibilitychange', function () { if (!document.hidden) tplRefresh(false); });
+  $('ta').addEventListener('keydown', function (e) { if (e.key === 'Tab' && !e.shiftKey && /\[[^\]]*\]/.test(this.value)) { if (tplSelectNext(this, this.selectionEnd)) e.preventDefault(); } });
   function resumeCatalogSync() {
     if (!appUnlocked || !navigator.onLine || workspaceSaving || Date.now() - resumeCatalogSync.at < 20000) return;
     resumeCatalogSync.at = Date.now();
